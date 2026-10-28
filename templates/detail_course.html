@@ -1,8 +1,7 @@
-<!doctype html>
-
-<html dir="rtl" lang="fa">
-  <head>
-    <meta charset="utf-8" />
+{% extends "base.html" %}
+{% block title %}آکادمی حسین طاهری{% endblock %}
+{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="web_standard" name="shell-type" />
     <style>
@@ -175,9 +174,9 @@
     </script>
     <link rel="stylesheet" href="/static/css/site-header.css" />
     <script src="/static/js/site-header.js" defer></script>
-  </head>
-  <body class="bg-background font-body-md text-on-surface-variant antialiased">
-    <header class="fixed top-0 left-0 right-0 z-50 flex flex-col">
+{% endblock %}
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block header %}<header class="fixed top-0 left-0 right-0 z-50 flex flex-col">
       <div
         class="h-10 bg-primary-container text-on-primary flex items-center shadow-sm"
       >
@@ -297,8 +296,8 @@
           </div>
         </div>
       </div>
-    </header>
-    <main class="w-full pt-[132px] bg-background min-h-screen">
+    </header>{% endblock %}
+{% block content %}<main class="w-full pt-[132px] bg-background min-h-screen">
       <div class="flex flex-col w-full">
         <!-- Top Ambient Glow -->
         <div class="relative w-full overflow-hidden">
@@ -2587,7 +2586,8 @@
         </script>
       </div>
     </main>
-    <footer class="w-full bg-background pt-space-xl pb-space-lg">
+{% endblock %}
+{% block footer %}<footer class="w-full bg-background pt-space-xl pb-space-lg">
       <div class="max-w-7xl mx-auto px-margin">
         <div
           class="rounded-[22px] border border-border p-8 bg-card shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] grid grid-cols-1 lg:grid-cols-[1fr_0.72fr_1fr] gap-8"
@@ -2800,6 +2800,4 @@
           است.
         </div>
       </div>
-    </footer>
-  </body>
-</html>
+    </footer>{% endblock %}

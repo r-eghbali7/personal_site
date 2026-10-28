@@ -1,9 +1,9 @@
-<!doctype html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="utf-8" />
+{% extends "base.html" %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ project.title }}</title>
+    
     <style>
       body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
       main { max-width: 760px; margin: 40px auto; padding: 24px; background: white; border: 1px solid #dce4e0; border-radius: 8px; }
@@ -11,9 +11,10 @@
       button { background: #075d4f; border: 0; border-radius: 6px; color: white; padding: 10px 18px; font: inherit; cursor: pointer; }
       #result { margin-top: 16px; }
     </style>
-  </head>
-  <body>
-    <main>
+{% endblock %}
+{% block body_class %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}<main>
       <p><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></p>
       <h1>{{ project.title }}</h1>
       <div>{{ project.description|linebreaks }}</div>
@@ -46,5 +47,5 @@
         form.reset();
       });
     </script>
-  </body>
-</html>
+{% endblock %}
+{% block footer %}{% endblock %}

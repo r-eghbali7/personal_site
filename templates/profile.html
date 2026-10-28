@@ -1,11 +1,10 @@
-<!doctype html>
-
-<html dir="rtl" lang="fa">
-  <head>
-    <meta charset="utf-8" />
+{% extends "base.html" %}
+{% block title %}DevAcademy | آکادمی توسعه دهندگان حسین طاهری{% endblock %}
+{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="web_standard" name="shell-type" />
-    <title>DevAcademy | آکادمی توسعه دهندگان حسین طاهری</title>
+    
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
       rel="stylesheet"
@@ -172,11 +171,9 @@
         },
       };
     </script>
-  </head>
-  <body
-    class="bg-background font-body-md text-body-md text-on-surface antialiased"
-  >
-    <header
+{% endblock %}
+{% block body_class %}bg-background font-body-md text-body-md text-on-surface antialiased{% endblock %}
+{% block header %}<header
       class="fixed top-0 left-0 right-0 z-50 h-20 bg-card/85 backdrop-blur-xl shadow-[0_10px_30px_-8px_rgba(15,23,42,0.08)]"
     >
       <div
@@ -285,8 +282,8 @@
           </div>
         </div>
       </div>
-    </header>
-    <main class="w-full pt-20 bg-background min-h-screen">
+    </header>{% endblock %}
+{% block content %}<main class="w-full pt-20 bg-background min-h-screen">
       {% include 'profile_dashboard.html' %}
       {% if False %}
       <div class="flex flex-col w-full">
@@ -2149,7 +2146,8 @@
       </div>
       {% endif %}
     </main>
-    <footer
+{% endblock %}
+{% block footer %}<footer
       class="w-full bg-surface-container-low mt-space-xl shadow-[0_-1px_12px_rgba(0,0,0,0.02)]"
     >
       <div class="max-w-7xl mx-auto px-margin py-space-xl">
@@ -2359,6 +2357,4 @@
           </div>
         </div>
       </div>
-    </footer>
-  </body>
-</html>
+    </footer>{% endblock %}

@@ -1,10 +1,9 @@
-<!doctype html>
-
-<html dir="rtl" lang="fa">
-  <head>
-    <meta charset="utf-8" />
+{% extends "base.html" %}
+{% block title %}ورود به حساب کاربری | آکادمی مهندس حسین طاهری{% endblock %}
+{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>ورود به حساب کاربری | آکادمی مهندس حسین طاهری</title>
+    
     <style>
       @layer base {
         html,
@@ -64,27 +63,9 @@
         },
       };
     </script>
-  </head>
-  <body
-    class="bg-[#f3f6fb] font-body text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-accent-alt/20 selection:text-primary relative overflow-x-hidden"
-  >
-    <!-- Ambient Minimal Decorative Elements -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      <div
-        class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-accent-alt/10 blur-[120px]"
-      ></div>
-      <div
-        class="absolute top-1/2 -right-40 w-[30rem] h-[30rem] rounded-full bg-primary-container/10 blur-[140px]"
-      ></div>
-      <div
-        class="absolute -bottom-20 left-1/3 w-80 h-80 rounded-full bg-accent-alt/10 blur-[130px]"
-      ></div>
-      <div
-        class="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f015_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f015_1px,transparent_1px)] bg-[size:4rem_4rem]"
-      ></div>
-    </div>
-    <!-- Header / Navigation Bar -->
-    <header
+{% endblock %}
+{% block body_class %}bg-[#f3f6fb] font-body text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-accent-alt/20 selection:text-primary relative overflow-x-hidden{% endblock %}
+{% block header %}<header
       class="w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between relative z-10"
     >
       <!-- Brand Info -->
@@ -115,7 +96,24 @@
         >
         <span>بازگشت به صفحه اصلی</span>
       </a>
-    </header>
+    </header>{% endblock %}
+{% block content %}<!-- Ambient Minimal Decorative Elements -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      <div
+        class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-accent-alt/10 blur-[120px]"
+      ></div>
+      <div
+        class="absolute top-1/2 -right-40 w-[30rem] h-[30rem] rounded-full bg-primary-container/10 blur-[140px]"
+      ></div>
+      <div
+        class="absolute -bottom-20 left-1/3 w-80 h-80 rounded-full bg-accent-alt/10 blur-[130px]"
+      ></div>
+      <div
+        class="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f015_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f015_1px,transparent_1px)] bg-[size:4rem_4rem]"
+      ></div>
+    </div>
+    <!-- Header / Navigation Bar -->
+    
     <!-- Main Content: Centered Wide Split Card -->
     <main
       class="w-full max-w-5xl mx-auto px-4 sm:px-6 py-4 my-auto relative z-10 flex items-center justify-center"
@@ -422,11 +420,7 @@
       </div>
     </main>
     <!-- Footer Minimal Copyright -->
-    <footer
-      class="w-full max-w-6xl mx-auto px-6 py-6 text-center text-xs text-muted-text relative z-10"
-    >
-      <p>تمامی حقوق متعلق به آکادمی مهندسی نرم‌افزار حسین طاهری می‌باشد.</p>
-    </footer>
+    
     <!-- Script for Password Visibility Toggle -->
     <script>
       const togglePasswordBtn = document.getElementById("togglePasswordBtn");
@@ -443,5 +437,9 @@
         });
       }
     </script>
-  </body>
-</html>
+{% endblock %}
+{% block footer %}<footer
+      class="w-full max-w-6xl mx-auto px-6 py-6 text-center text-xs text-muted-text relative z-10"
+    >
+      <p>تمامی حقوق متعلق به آکادمی مهندسی نرم‌افزار حسین طاهری می‌باشد.</p>
+    </footer>{% endblock %}

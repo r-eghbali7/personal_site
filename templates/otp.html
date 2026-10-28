@@ -1,8 +1,7 @@
-<!doctype html>
-
-<html dir="rtl" lang="fa">
-  <head>
-    <meta charset="utf-8" />
+{% extends "base.html" %}
+{% block title %}آکادمی حسین طاهری{% endblock %}
+{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="web_blank" name="shell-type" />
     <style>
@@ -169,11 +168,10 @@
         },
       };
     </script>
-  </head>
-  <body
-    class="bg-background font-body-md text-on-surface-variant antialiased min-h-screen flex flex-col justify-center items-center py-space-xl px-margin-mobile"
-  >
-    <main class="w-full max-w-md mx-auto">
+{% endblock %}
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased min-h-screen flex flex-col justify-center items-center py-space-xl px-margin-mobile{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}<main class="w-full max-w-md mx-auto">
       <div class="flex flex-col w-full">
         <!-- Card Container -->
         <div
@@ -500,5 +498,5 @@
         })();
       </script>
     </main>
-  </body>
-</html>
+{% endblock %}
+{% block footer %}{% endblock %}

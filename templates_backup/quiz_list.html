@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}آزمون‌های دوره‌ها{% endblock %}
+{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <style>
+      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
+      main { max-width: 900px; margin: 40px auto; padding: 24px; }
+      li { background: white; border: 1px solid #dce4e0; border-radius: 8px; margin: 12px 0; padding: 18px; }
+      ul { padding-right: 20px; }
+      a { color: #075d4f; }
+      p { color: #64716d; }
+    </style>
+{% endblock %}
+{% block body_class %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}<main>
+      <h1>آزمون‌های دوره‌ها</h1>
+      {% if quizzes %}
+      <ul>{% for quiz in quizzes %}<li><a href="{% url 'courses:quiz' quiz.id %}"><strong>{{ quiz.title }}</strong></a><p>{{ quiz.chapter.course.title }} · حدنصاب قبولی: {{ quiz.pass_score }}٪</p></li>{% endfor %}</ul>
+      {% else %}<p>در حال حاضر آزمونی منتشر نشده است.</p>{% endif %}
+      <a href="{% url 'courses:list' %}">مشاهده دوره‌ها</a>
+    </main>
+{% endblock %}
+{% block footer %}{% endblock %}

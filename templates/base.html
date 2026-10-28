@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="web_standard" name="shell-type" />
+    <title>{% block title %}آکادمی حسین طاهری{% endblock %}</title>
+
+    {% block meta %}{% endblock %}
+
+    {# ── Base Styles ── #}
+    <style>
+      @layer base {
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          overscroll-behavior: none;
+        }
+        main > :first-child {
+          margin-top: 0 !important;
+        }
+        main > :last-child {
+          margin-bottom: 0 !important;
+        }
+      }
+      ::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+
+    {# ── Google Material Symbols Icons ── #}
+    <link rel="stylesheet" href="{% static 'css/material-symbols-outlined.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/material-symbols-outlined-swap.css' %}" />
+
+    {# ── Google Fonts (Plus Jakarta Sans, Inter, JetBrains Mono, Vazirmatn) ── #}
+    <link rel="stylesheet" href="{% static 'css/google-fonts.css' %}" />
+
+    {# ── Tailwind CSS (CDN Play) ── #}
+    <script src="{% static 'js/tailwindcss.js' %}"></script>
+    <script src="{% static 'js/tailwind-config.js' %}"></script>
+
+    {# ── Site Header CSS ── #}
+    <link rel="stylesheet" href="{% static 'css/site-header.css' %}" />
+
+    {% block extra_css %}{% endblock %}
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}">
+
+    {# ── Header ── #}
+    {% block header %}
+    {% include "includes/header.html" %}
+    {% endblock %}
+
+    {# ── Main Content ── #}
+    {% block content %}{% endblock %}
+
+    {# ── Footer ── #}
+    {% block footer %}
+    {% include "includes/footer.html" %}
+    {% endblock %}
+
+    {# ── Site Header JS ── #}
+    <script src="{% static 'js/site-header.js' %}" defer></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

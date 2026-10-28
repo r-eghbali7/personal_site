@@ -1,9 +1,9 @@
-<!doctype html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="utf-8" />
+{% extends "base.html" %}
+{% block title %}{{ lesson.title }} | {{ course.title }}{% endblock %}
+{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ lesson.title }} | {{ course.title }}</title>
+    
     <style>
       body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
       main { max-width: 960px; margin: 40px auto; padding: 24px; }
@@ -11,9 +11,10 @@
       video { width: 100%; max-height: 65vh; background: #17231f; }
       a { color: #075d4f; }
     </style>
-  </head>
-  <body>
-    <main>
+{% endblock %}
+{% block body_class %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}<main>
       <p><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></p>
       <section>
         <h1>{{ lesson.title }}</h1>
@@ -23,5 +24,5 @@
         {% if lesson.attachment %}<p><a href="{{ lesson.attachment.url }}">دریافت فایل پیوست</a></p>{% endif %}
       </section>
     </main>
-  </body>
-</html>
+{% endblock %}
+{% block footer %}{% endblock %}

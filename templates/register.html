@@ -1,10 +1,9 @@
-<!doctype html>
-
-<html dir="rtl" lang="fa">
-  <head>
-    <meta charset="utf-8" />
+{% extends "base.html" %}
+{% block title %}ثبت‌نام | آکادمی مهندسی نرم‌افزار حسین طاهری{% endblock %}
+{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>ثبت‌نام | آکادمی مهندسی نرم‌افزار حسین طاهری</title>
+    
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Vazirmatn:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap"
       rel="stylesheet"
@@ -62,19 +61,9 @@
           );
       }
     </style>
-  </head>
-  <body
-    class="bg-[#f8fafc] text-on-surface antialiased min-h-screen relative flex flex-col justify-between grid-pattern selection:bg-primary-container selection:text-white"
-  >
-    <!-- Ambient Glow Effects -->
-    <div
-      class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-96 bg-gradient-to-b from-primary-container/10 via-accent-alt/5 to-transparent blur-3xl pointer-events-none -z-10"
-    ></div>
-    <div
-      class="fixed -bottom-20 right-10 w-96 h-96 bg-primary-container/5 rounded-full blur-3xl pointer-events-none -z-10"
-    ></div>
-    <!-- Header / Nav Back -->
-    <header
+{% endblock %}
+{% block body_class %}bg-[#f8fafc] text-on-surface antialiased min-h-screen relative flex flex-col justify-between grid-pattern selection:bg-primary-container selection:text-white{% endblock %}
+{% block header %}<header
       class="w-full max-w-5xl mx-auto px-6 pt-6 sm:pt-8 flex items-center justify-between z-10"
     >
       <a class="inline-flex items-center gap-3 group" href="#">
@@ -101,7 +90,16 @@
         <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         <span>بازگشت به صفحه اصلی</span>
       </a>
-    </header>
+    </header>{% endblock %}
+{% block content %}<!-- Ambient Glow Effects -->
+    <div
+      class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-96 bg-gradient-to-b from-primary-container/10 via-accent-alt/5 to-transparent blur-3xl pointer-events-none -z-10"
+    ></div>
+    <div
+      class="fixed -bottom-20 right-10 w-96 h-96 bg-primary-container/5 rounded-full blur-3xl pointer-events-none -z-10"
+    ></div>
+    <!-- Header / Nav Back -->
+    
     <!-- Main Register Container -->
     <main class="w-full max-w-xl mx-auto px-4 py-6 sm:py-10 z-10">
       <div
@@ -296,14 +294,7 @@
       </div>
     </main>
     <!-- Clean Bottom Bar -->
-    <footer
-      class="w-full max-w-5xl mx-auto px-6 py-4 text-center text-xs text-outline/80"
-    >
-      <span
-        >© ۱۴۰۳ تمامی حقوق متعلق به آکادمی مهندسی نرم‌افزار حسین طاهری
-        می‌باشد.</span
-      >
-    </footer>
+    
     <!-- Toggle Password Visibility Script -->
     <script>
       (function () {
@@ -324,5 +315,12 @@
         }
       })();
     </script>
-  </body>
-</html>
+{% endblock %}
+{% block footer %}<footer
+      class="w-full max-w-5xl mx-auto px-6 py-4 text-center text-xs text-outline/80"
+    >
+      <span
+        >© ۱۴۰۳ تمامی حقوق متعلق به آکادمی مهندسی نرم‌افزار حسین طاهری
+        می‌باشد.</span
+      >
+    </footer>{% endblock %}

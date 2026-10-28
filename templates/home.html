@@ -1,7 +1,7 @@
-<!doctype html>
-<html dir="rtl" lang="fa">
-  <head>
-    <meta charset="utf-8" />
+{% extends "base.html" %}
+{% block title %}آکادمی حسین طاهری{% endblock %}
+{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="web_standard" name="shell-type" />
     <style>
@@ -259,9 +259,9 @@
     </script>
     <link rel="stylesheet" href="/static/css/site-header.css" />
     <script src="/static/js/site-header.js" defer></script>
-  </head>
-  <body class="bg-background font-body-md text-on-surface-variant antialiased">
-    <header class="fixed top-0 left-0 right-0 z-50 flex flex-col">
+{% endblock %}
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block header %}<header class="fixed top-0 left-0 right-0 z-50 flex flex-col">
       <div
         class="h-10 bg-primary-container text-on-primary flex items-center shadow-sm"
       >
@@ -390,8 +390,8 @@
           </div>
         </div>
       </div>
-    </header>
-    <main class="w-full pt-[132px] bg-background min-h-screen">
+    </header>{% endblock %}
+{% block content %}<main class="w-full pt-[132px] bg-background min-h-screen">
       <div class="flex flex-col w-full">
         <!-- 1. HERO SECTION (3-Piece Layout Slider) -->
         <!-- اضافه شدن کلاس‌های محدودکننده عرض و ایجاد فاصله از هدر -->
@@ -1777,220 +1777,7 @@
         </section>
       </div>
     </main>
-    <footer class="w-full bg-background pt-space-xl pb-space-lg">
-      <div class="max-w-7xl mx-auto px-margin">
-        <div
-          class="rounded-[22px] border border-border p-8 bg-card shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] grid grid-cols-1 lg:grid-cols-[1fr_0.72fr_1fr] gap-8"
-        >
-          <div class="flex flex-col gap-4">
-            <div class="flex items-center gap-3">
-              <img
-                alt="HT Developer Logo"
-                class="h-8 w-auto object-contain"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg"
-              />
-              <h3
-                class="font-headline-sm text-headline-sm text-primary-container font-bold"
-              >
-                حسین طاهری | DevAcademy
-              </h3>
-            </div>
-            <p
-              class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
-            >
-              حسین طاهری، مهندس ارشد نرم‌افزار و مدرس حوزه‌های Full-Stack با بیش
-              از یک دهه تجربه طراحی سامانه‌های توزیع‌شده. رسالت ما در این
-              آکادمی، تربیت متخصصان فنی، مسلط بر مهارت‌های کاربردی بازار کار
-              جهانی و استانداردهای روز نرم‌افزار است.
-            </p>
-            <div
-              class="flex flex-col gap-2 pt-2 font-body-sm text-body-sm text-secondary"
-            >
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-outline text-[18px]"
-                  >location_on</span
-                ><span
-                  >تهران، خیابان آزادی، تقاطع یادگار امام، مرکز فناوری‌های
-                  پیشرفته</span
-                >
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-outline text-[18px]"
-                  >mail</span
-                ><span>info@hosseintaheri.dev</span>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-col gap-4">
-            <h4
-              class="font-headline-sm text-headline-sm text-primary-container font-bold border-b border-border pb-2"
-            >
-              دسترسی سریع
-            </h4>
-            <ul
-              class="grid grid-cols-2 gap-2.5 font-body-md text-body-md text-on-surface-variant"
-            >
-              <li>
-                <a
-                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
-                  data-path="courses"
-                  href="#"
-                  ><span
-                    class="material-symbols-outlined text-outline text-[16px]"
-                    >chevron_left</span
-                  >دوره‌های تخصصی</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
-                  data-path="blog"
-                  href="#"
-                  ><span
-                    class="material-symbols-outlined text-outline text-[16px]"
-                    >chevron_left</span
-                  >مقالات نرم‌افزار</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
-                  data-path="podcasts"
-                  href="#"
-                  ><span
-                    class="material-symbols-outlined text-outline text-[16px]"
-                    >chevron_left</span
-                  >پادکست کدرز</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
-                  data-path="online-quiz"
-                  href="#"
-                  ><span
-                    class="material-symbols-outlined text-outline text-[16px]"
-                    >chevron_left</span
-                  >آزمون‌های آنلاین</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
-                  data-path="support-tickets"
-                  href="#"
-                  ><span
-                    class="material-symbols-outlined text-outline text-[16px]"
-                    >chevron_left</span
-                  >ارسال تیکت پشتیبانی</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
-                  data-path="user-profile"
-                  href="#"
-                  ><span
-                    class="material-symbols-outlined text-outline text-[16px]"
-                    >chevron_left</span
-                  >داشبورد دانشجویی</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div class="flex flex-col gap-4">
-            <h4
-              class="font-headline-sm text-headline-sm text-primary-container font-bold border-b border-border pb-2"
-            >
-              نمادها و عضویت خبرنامه
-            </h4>
-            <p class="font-body-sm text-body-sm text-on-surface-variant">
-              جهت دریافت جدیدترین سرفصل‌های تخصصی، کد تخفیف‌ها و رویدادها عضو
-              شوید.
-            </p>
-            <div class="flex items-center gap-2">
-              <input
-                class="flex-1 h-11 px-4 bg-background rounded-xl border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner"
-                placeholder="ایمیل کاری خود را وارد کنید..."
-                type="email"
-              /><button
-                class="h-11 px-5 bg-primary-container text-on-primary rounded-xl font-body-md text-body-md font-semibold hover:bg-tertiary-container hover:text-on-primary transition-colors"
-              >
-                عضویت
-              </button>
-            </div>
-            <div class="flex items-center justify-between pt-2">
-              <div class="flex items-center gap-3">
-                <div
-                  class="h-14 w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1"
-                >
-                  <span
-                    class="material-symbols-outlined text-primary-container text-[22px]"
-                    >verified_user</span
-                  ><span
-                    class="font-label-badge text-[9px] text-secondary font-bold leading-tight"
-                    >اینماد رسمی</span
-                  >
-                </div>
-                <div
-                  class="h-14 w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1"
-                >
-                  <span
-                    class="material-symbols-outlined text-primary-container text-[22px]"
-                    >school</span
-                  ><span
-                    class="font-label-badge text-[9px] text-secondary font-bold leading-tight"
-                    >صلاحیت فنی</span
-                  >
-                </div>
-                <div
-                  class="h-14 w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1"
-                >
-                  <span
-                    class="material-symbols-outlined text-primary-container text-[22px]"
-                    >shield</span
-                  ><span
-                    class="font-label-badge text-[9px] text-secondary font-bold leading-tight"
-                    >ضمانت بازگشت</span
-                  >
-                </div>
-              </div>
-              <div class="flex items-center gap-2 text-on-surface-variant">
-                <a
-                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
-                  href="#"
-                  ><span class="material-symbols-outlined text-[18px]"
-                    >code</span
-                  ></a
-                ><a
-                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
-                  href="#"
-                  ><span class="material-symbols-outlined text-[18px]"
-                    >terminal</span
-                  ></a
-                ><a
-                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
-                  href="#"
-                  ><span class="material-symbols-outlined text-[18px]"
-                    >send</span
-                  ></a
-                ><a
-                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
-                  href="#"
-                  ><span class="material-symbols-outlined text-[18px]"
-                    >podcasts</span
-                  ></a
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="mt-6 text-center font-body-sm text-body-sm text-outline">
-          © تمامی حقوق مادی و معنوی برای آکادمی توسعه نرم‌افزار حسین طاهری محفوظ
-          است.
-        </div>
-      </div>
-    </footer>
+    
     <!-- Audio Player UI (ثابت در پایین صفحه) -->
     <div
       id="podcast-player"
@@ -2241,5 +2028,218 @@
         }, 300);
       });
     </script>
-  </body>
-</html>
+{% endblock %}
+{% block footer %}<footer class="w-full bg-background pt-space-xl pb-space-lg">
+      <div class="max-w-7xl mx-auto px-margin">
+        <div
+          class="rounded-[22px] border border-border p-8 bg-card shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] grid grid-cols-1 lg:grid-cols-[1fr_0.72fr_1fr] gap-8"
+        >
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <img
+                alt="HT Developer Logo"
+                class="h-8 w-auto object-contain"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg"
+              />
+              <h3
+                class="font-headline-sm text-headline-sm text-primary-container font-bold"
+              >
+                حسین طاهری | DevAcademy
+              </h3>
+            </div>
+            <p
+              class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
+            >
+              حسین طاهری، مهندس ارشد نرم‌افزار و مدرس حوزه‌های Full-Stack با بیش
+              از یک دهه تجربه طراحی سامانه‌های توزیع‌شده. رسالت ما در این
+              آکادمی، تربیت متخصصان فنی، مسلط بر مهارت‌های کاربردی بازار کار
+              جهانی و استانداردهای روز نرم‌افزار است.
+            </p>
+            <div
+              class="flex flex-col gap-2 pt-2 font-body-sm text-body-sm text-secondary"
+            >
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-outline text-[18px]"
+                  >location_on</span
+                ><span
+                  >تهران، خیابان آزادی، تقاطع یادگار امام، مرکز فناوری‌های
+                  پیشرفته</span
+                >
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-outline text-[18px]"
+                  >mail</span
+                ><span>info@hosseintaheri.dev</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h4
+              class="font-headline-sm text-headline-sm text-primary-container font-bold border-b border-border pb-2"
+            >
+              دسترسی سریع
+            </h4>
+            <ul
+              class="grid grid-cols-2 gap-2.5 font-body-md text-body-md text-on-surface-variant"
+            >
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="courses"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >دوره‌های تخصصی</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="blog"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >مقالات نرم‌افزار</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="podcasts"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >پادکست کدرز</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="online-quiz"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >آزمون‌های آنلاین</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="support-tickets"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >ارسال تیکت پشتیبانی</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="user-profile"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >داشبورد دانشجویی</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h4
+              class="font-headline-sm text-headline-sm text-primary-container font-bold border-b border-border pb-2"
+            >
+              نمادها و عضویت خبرنامه
+            </h4>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">
+              جهت دریافت جدیدترین سرفصل‌های تخصصی، کد تخفیف‌ها و رویدادها عضو
+              شوید.
+            </p>
+            <div class="flex items-center gap-2">
+              <input
+                class="flex-1 h-11 px-4 bg-background rounded-xl border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner"
+                placeholder="ایمیل کاری خود را وارد کنید..."
+                type="email"
+              /><button
+                class="h-11 px-5 bg-primary-container text-on-primary rounded-xl font-body-md text-body-md font-semibold hover:bg-tertiary-container hover:text-on-primary transition-colors"
+              >
+                عضویت
+              </button>
+            </div>
+            <div class="flex items-center justify-between pt-2">
+              <div class="flex items-center gap-3">
+                <div
+                  class="h-14 w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary-container text-[22px]"
+                    >verified_user</span
+                  ><span
+                    class="font-label-badge text-[9px] text-secondary font-bold leading-tight"
+                    >اینماد رسمی</span
+                  >
+                </div>
+                <div
+                  class="h-14 w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary-container text-[22px]"
+                    >school</span
+                  ><span
+                    class="font-label-badge text-[9px] text-secondary font-bold leading-tight"
+                    >صلاحیت فنی</span
+                  >
+                </div>
+                <div
+                  class="h-14 w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary-container text-[22px]"
+                    >shield</span
+                  ><span
+                    class="font-label-badge text-[9px] text-secondary font-bold leading-tight"
+                    >ضمانت بازگشت</span
+                  >
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-on-surface-variant">
+                <a
+                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[18px]"
+                    >code</span
+                  ></a
+                ><a
+                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[18px]"
+                    >terminal</span
+                  ></a
+                ><a
+                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[18px]"
+                    >send</span
+                  ></a
+                ><a
+                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[18px]"
+                    >podcasts</span
+                  ></a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 text-center font-body-sm text-body-sm text-outline">
+          © تمامی حقوق مادی و معنوی برای آکادمی توسعه نرم‌افزار حسین طاهری محفوظ
+          است.
+        </div>
+      </div>
+    </footer>{% endblock %}

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ ticket.subject }}</title>
+    <style>
+      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
+      main { max-width: 800px; margin: 48px auto; padding: 24px; }
+      article, form { background: white; border: 1px solid #dce4e0; border-radius: 8px; margin: 12px 0; padding: 18px; }
+      textarea { box-sizing: border-box; width: 100%; min-height: 120px; padding: 10px; border: 1px solid #aebbb5; border-radius: 6px; font: inherit; }
+      button { padding: 10px 18px; background: #075d4f; border: 0; border-radius: 6px; color: white; font: inherit; cursor: pointer; }
+      .muted { color: #64716d; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p><a href="{% url 'tickets:list' %}">بازگشت به تیکت‌ها</a></p>
+      <h1>{{ ticket.subject }}</h1>
+      <p class="muted">{{ ticket.get_status_display }}{% if ticket.course %} · {{ ticket.course.title }}{% endif %}</p>
+      {% for message in ticket.messages.all %}
+      <article><strong>{{ message.sender }}</strong><p class="muted">{{ message.sent_at|date:"Y-m-d H:i" }}</p><p>{{ message.body|linebreaksbr }}</p></article>
+      {% endfor %}
+      {% if ticket.status != 'closed' %}
+      <form method="post" action="{% url 'tickets:detail' ticket.pk %}">
+        {% csrf_token %}
+        <label for="id_body">ارسال پاسخ</label>{{ form.body }}{{ form.body.errors }}
+        <button type="submit">ارسال پیام</button>
+      </form>
+      {% endif %}
+    </main>
+  </body>
+</html>

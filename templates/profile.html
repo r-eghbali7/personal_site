@@ -1,0 +1,2361 @@
+<!doctype html>
+
+<html dir="rtl" lang="fa">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="web_standard" name="shell-type" />
+    <title>DevAcademy | آکادمی توسعه دهندگان حسین طاهری</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Vazirmatn:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      @layer base {
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          overscroll-behavior: none;
+        }
+        main > :first-child {
+          margin-top: 0 !important;
+        }
+        main > :last-child {
+          margin-bottom: 0 !important;
+        }
+      }
+      ::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#e3e2e8",
+              background: "#fafafa",
+              "error-container": "#ffdad6",
+              "surface-container-lowest": "#ffffff",
+              "on-primary": "#ffffff",
+              surface: "#faf8ff",
+              destructive: "#ef4444",
+              "secondary-fixed-dim": "#c6c6c7",
+              "secondary-container": "#dcdddd",
+              "on-error": "#ffffff",
+              "muted-text": "#bababd",
+              "tertiary-fixed-dim": "#9dcaff",
+              card: "#f7f7f8",
+              "surface-dim": "#dad9e0",
+              primary: "#00244a",
+              "on-secondary-fixed": "#1a1c1c",
+              "on-tertiary-fixed": "#001d35",
+              "accent-alt": "#26b2e8",
+              error: "#ba1a1a",
+              "primary-fixed": "#d5e3ff",
+              "inverse-surface": "#2f3035",
+              "tertiary-fixed": "#d1e4ff",
+              "surface-variant": "#e3e2e8",
+              "on-surface-variant": "#43474f",
+              "on-error-container": "#93000a",
+              "on-background": "#1a1b20",
+              "on-secondary-fixed-variant": "#454747",
+              outline: "#737780",
+              "surface-container-high": "#e9e7ee",
+              "surface-container": "#eeedf4",
+              "on-secondary-container": "#5f6161",
+              "surface-bright": "#faf8ff",
+              "outline-variant": "#c3c6d0",
+              "on-tertiary-container": "#70a8e3",
+              "surface-tint": "#3c5f91",
+              "on-primary-fixed": "#001c3b",
+              "surface-container-low": "#f4f3f9",
+              "tertiary-container": "#003c66",
+              border: "#ceced1",
+              "secondary-fixed": "#e2e2e2",
+              "on-surface": "#1a1b20",
+              tertiary: "#002643",
+              secondary: "#5d5f5f",
+              "inverse-on-surface": "#f1f0f7",
+              "primary-container": "#103a69",
+              "on-tertiary-fixed-variant": "#00497b",
+              "primary-fixed-dim": "#a6c8ff",
+              "on-secondary": "#ffffff",
+              "on-primary-fixed-variant": "#224777",
+              "amber-warning": "#e8a838",
+              "on-tertiary": "#ffffff",
+              "inverse-primary": "#a6c8ff",
+              "on-primary-container": "#83a5da",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              margin: "2rem",
+              gutter: "1.5rem",
+              "space-lg": "1.5rem",
+              "space-sm": "0.5rem",
+              "space-md": "1rem",
+              "space-xl": "2.5rem",
+              "gutter-mobile": "1rem",
+              "margin-mobile": "1rem",
+              "space-xs": "0.25rem",
+            },
+            fontFamily: {
+              "headline-md": ["Plus Jakarta Sans", "Vazirmatn"],
+              "body-md": ["Inter", "Vazirmatn"],
+              "code-sm": ["JetBrains Mono"],
+              "code-md": ["JetBrains Mono"],
+              "body-lg": ["Inter", "Vazirmatn"],
+              "display-hero-mobile": ["Plus Jakarta Sans", "Vazirmatn"],
+              "body-sm": ["Inter", "Vazirmatn"],
+              "headline-sm": ["Plus Jakarta Sans", "Vazirmatn"],
+              "label-badge": ["Inter", "Vazirmatn"],
+              "headline-lg": ["Plus Jakarta Sans", "Vazirmatn"],
+              "display-hero": ["Plus Jakarta Sans", "Vazirmatn"],
+              "headline-lg-mobile": ["Plus Jakarta Sans", "Vazirmatn"],
+            },
+            fontSize: {
+              "headline-md": [
+                "22px",
+                { lineHeight: "36px", fontWeight: "700" },
+              ],
+              "body-md": ["14px", { lineHeight: "24px", fontWeight: "400" }],
+              "code-sm": ["12px", { lineHeight: "18px", fontWeight: "500" }],
+              "code-md": ["14px", { lineHeight: "22px", fontWeight: "500" }],
+              "body-lg": ["16px", { lineHeight: "28px", fontWeight: "400" }],
+              "display-hero-mobile": [
+                "28px",
+                { lineHeight: "40px", fontWeight: "800" },
+              ],
+              "body-sm": ["12px", { lineHeight: "20px", fontWeight: "400" }],
+              "headline-sm": [
+                "18px",
+                { lineHeight: "28px", fontWeight: "600" },
+              ],
+              "label-badge": [
+                "11px",
+                { lineHeight: "16px", fontWeight: "600" },
+              ],
+              "headline-lg": [
+                "28px",
+                { lineHeight: "44px", fontWeight: "700" },
+              ],
+              "display-hero": [
+                "40px",
+                { lineHeight: "56px", fontWeight: "800" },
+              ],
+              "headline-lg-mobile": [
+                "22px",
+                { lineHeight: "34px", fontWeight: "700" },
+              ],
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body
+    class="bg-background font-body-md text-body-md text-on-surface antialiased"
+  >
+    <header
+      class="fixed top-0 left-0 right-0 z-50 h-20 bg-card/85 backdrop-blur-xl shadow-[0_10px_30px_-8px_rgba(15,23,42,0.08)]"
+    >
+      <div
+        class="max-w-7xl mx-auto h-20 px-margin flex items-center justify-between gap-space-md"
+      >
+        <div class="flex items-center gap-space-lg">
+          <a
+            class="flex items-center gap-space-sm text-primary"
+            data-path="dashboard-home"
+            href="#"
+            ><div
+              class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm shadow-sm"
+            >
+              <span class="material-symbols-outlined text-[24px]"
+                >terminal</span
+              >
+            </div>
+            <div class="flex flex-col">
+              <span
+                class="font-headline-sm text-headline-sm text-primary tracking-tight leading-none"
+                >آکادمی حسین طاهری</span
+              ><span
+                class="font-label-badge text-label-badge text-on-surface-variant font-code-sm"
+                >DevAcademy Studio</span
+              >
+            </div></a
+          >
+          <nav
+            class="hidden xl:flex items-center gap-space-sm"
+            data-active-classes="bg-primary-container text-on-primary font-headline-sm rounded-xl px-space-md py-space-xs transition-all"
+          >
+            <a
+              class="font-body-md text-body-md text-on-surface-variant px-space-md py-space-xs rounded-xl hover:bg-surface-container hover:text-on-surface transition-all"
+              data-path="dashboard-home"
+              href="#"
+              >صفحه اصلی</a
+            ><a
+              class="font-body-md text-body-md text-on-surface-variant px-space-md py-space-xs rounded-xl hover:bg-surface-container hover:text-on-surface transition-all"
+              data-path="my-courses"
+              href="#"
+              >دوره‌های من</a
+            ><a
+              class="font-body-md text-body-md text-on-surface-variant px-space-md py-space-xs rounded-xl hover:bg-surface-container hover:text-on-surface transition-all"
+              data-path="support-tickets"
+              href="#"
+              >تیکت‌های پشتیبانی</a
+            ><a
+              class="font-body-md text-body-md text-on-surface-variant px-space-md py-space-xs rounded-xl hover:bg-surface-container hover:text-on-surface transition-all"
+              data-path="orders-history"
+              href="#"
+              >سفارش‌ها</a
+            >
+          </nav>
+        </div>
+        <div class="flex items-center gap-space-md">
+          <div
+            class="hidden md:flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-background shadow-inner"
+          >
+            <span class="material-symbols-outlined text-outline text-[20px]"
+              >search</span
+            ><input
+              class="bg-transparent border-0 outline-none text-on-surface placeholder:text-muted-text font-body-sm text-body-sm w-44 lg:w-64"
+              placeholder="جستجو در مباحث، دوره‌ها یا کدها..."
+              type="text"
+            /><kbd
+              class="font-code-sm text-code-sm text-on-surface-variant bg-surface-container-high px-space-xs py-0.5 rounded"
+              >Ctrl+K</kbd
+            >
+          </div>
+          <div class="flex items-center gap-space-sm">
+            <a
+              class="w-11 h-11 rounded-xl bg-surface-container-low flex items-center justify-center text-primary hover:bg-surface-container hover:text-on-surface transition-all relative"
+              data-path="orders-history"
+              href="#"
+              ><span class="material-symbols-outlined text-[22px]"
+                >shopping_bag</span
+              ><span
+                class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-on-primary font-label-badge text-label-badge flex items-center justify-center leading-none"
+                >۲</span
+              ></a
+            ><a
+              class="flex items-center gap-space-sm pr-space-xs pl-space-sm py-1 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all"
+              data-path="user-profile"
+              href="#"
+              ><div
+                class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"
+              >
+                <span
+                  class="material-symbols-outlined text-on-primary text-[18px]"
+                  >person</span
+                >
+              </div>
+              <div class="hidden sm:flex flex-col text-right">
+                <span
+                  class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight"
+                  >حسین طاهری</span
+                ><span class="font-label-badge text-label-badge text-outline"
+                  >دانشجوی تخصصی</span
+                >
+              </div>
+              <span
+                class="material-symbols-outlined text-outline text-[18px] hidden sm:block"
+                >expand_more</span
+              ></a
+            >
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="w-full pt-20 bg-background min-h-screen">
+      <div class="flex flex-col w-full">
+        <!-- Content Container with max width bounded at 1440px -->
+        <div
+          class="max-w-7xl mx-auto w-full px-margin py-space-md flex flex-col gap-space-lg"
+        >
+          <!-- 1. Header Profile & KPI Summary Bar -->
+          <section
+            class="bg-card rounded-[28px] p-space-lg shadow-sm transition-all duration-300"
+          >
+            <div
+              class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-space-lg"
+            >
+              <!-- User Metadata Cluster -->
+              <div class="flex items-center gap-space-md">
+                <div class="relative">
+                  <div
+                    class="w-20 h-20 rounded-2xl bg-primary-container text-on-primary flex items-center justify-center font-headline-lg text-headline-lg shadow-md overflow-hidden"
+                  >
+                    <span class="material-symbols-outlined text-[44px]"
+                      >account_circle</span
+                    >
+                  </div>
+                  <div
+                    class="absolute -bottom-1.5 -left-1.5 w-6 h-6 rounded-full bg-accent-alt text-on-primary flex items-center justify-center shadow-sm"
+                    title="حساب تایید شده"
+                  >
+                    <span class="material-symbols-outlined text-[15px]"
+                      >verified</span
+                    >
+                  </div>
+                </div>
+                <div class="flex flex-col gap-space-xs">
+                  <div class="flex items-center gap-space-sm flex-wrap">
+                    <h1
+                      class="font-headline-lg text-headline-lg text-primary tracking-tight"
+                    >
+                      مهندس آرش سرمدی
+                    </h1>
+                    <span
+                      class="bg-primary-fixed text-on-primary-fixed font-label-badge text-label-badge px-space-sm py-0.5 rounded-full flex items-center gap-1"
+                    >
+                      <span class="material-symbols-outlined text-[14px]"
+                        >workspace_premium</span
+                      >
+                      عضو VIP آکادمی
+                    </span>
+                  </div>
+                  <div
+                    class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm flex-wrap"
+                  >
+                    <div class="flex items-center gap-space-xs">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-accent-alt"
+                        >phone_iphone</span
+                      >
+                      <span class="font-code-sm text-code-sm dir-ltr"
+                        >۰۹۱۲ ۳۴۵ ۶۷۸۹</span
+                      >
+                    </div>
+                    <span
+                      class="w-1 h-1 rounded-full bg-outline-variant"
+                    ></span>
+                    <div class="flex items-center gap-space-xs">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-accent-alt"
+                        >event_available</span
+                      >
+                      <span>عضویت از آبان ۱۴۰۲</span>
+                    </div>
+                    <span
+                      class="w-1 h-1 rounded-full bg-outline-variant"
+                    ></span>
+                    <div class="flex items-center gap-space-xs">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-accent-alt"
+                        >terminal</span
+                      >
+                      <span class="font-code-sm text-code-sm"
+                        >Student ID: #DEV-9410</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Quick Top Action Buttons -->
+              <div
+                class="flex items-center gap-space-sm self-stretch sm:self-auto justify-end"
+              >
+                <button
+                  class="h-11 px-space-md rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-primary font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all shadow-sm"
+                  onclick="
+                    switchTab('tab-tickets');
+                    openTicketModal();
+                  "
+                >
+                  <span class="material-symbols-outlined text-[20px]"
+                    >add_comment</span
+                  >
+                  <span>تیکت جدید</span>
+                </button>
+                <button
+                  class="h-11 px-space-md rounded-xl bg-primary hover:bg-primary-container text-on-primary font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all shadow-md"
+                  onclick="switchTab('tab-profile')"
+                >
+                  <span class="material-symbols-outlined text-[20px]"
+                    >manage_accounts</span
+                  >
+                  <span>ویرایش پروفایل</span>
+                </button>
+              </div>
+            </div>
+            <!-- Quick Metrics Counters -->
+            <div
+              class="grid grid-cols-2 md:grid-cols-4 gap-space-md mt-space-lg pt-space-md bg-surface-container-low/70 rounded-2xl p-space-md"
+            >
+              <!-- Metric 1 -->
+              <div class="flex items-center gap-space-md">
+                <div
+                  class="w-12 h-12 rounded-xl bg-surface-container-lowest text-primary flex items-center justify-center shadow-sm"
+                >
+                  <span class="material-symbols-outlined text-[26px]"
+                    >menu_book</span
+                  >
+                </div>
+                <div class="flex flex-col">
+                  <span
+                    class="font-headline-lg text-headline-lg text-primary font-bold leading-none"
+                    >۳</span
+                  >
+                  <span
+                    class="font-body-sm text-body-sm text-on-surface-variant"
+                    >دوره‌های فعال</span
+                  >
+                </div>
+              </div>
+              <!-- Metric 2 -->
+              <div class="flex items-center gap-space-md">
+                <div
+                  class="w-12 h-12 rounded-xl bg-surface-container-lowest text-accent-alt flex items-center justify-center shadow-sm"
+                >
+                  <span class="material-symbols-outlined text-[26px]"
+                    >donut_large</span
+                  >
+                </div>
+                <div class="flex flex-col">
+                  <div class="flex items-baseline gap-1">
+                    <span
+                      class="font-headline-lg text-headline-lg text-primary font-bold leading-none"
+                      >۶۸</span
+                    >
+                    <span
+                      class="font-code-sm text-code-sm text-accent-alt font-bold"
+                      >٪</span
+                    >
+                  </div>
+                  <span
+                    class="font-body-sm text-body-sm text-on-surface-variant"
+                    >میانگین پیشرفت کل</span
+                  >
+                </div>
+              </div>
+              <!-- Metric 3 -->
+              <div class="flex items-center gap-space-md">
+                <div
+                  class="w-12 h-12 rounded-xl bg-surface-container-lowest text-amber-warning flex items-center justify-center shadow-sm"
+                >
+                  <span class="material-symbols-outlined text-[26px]"
+                    >support_agent</span
+                  >
+                </div>
+                <div class="flex flex-col">
+                  <span
+                    class="font-headline-lg text-headline-lg text-primary font-bold leading-none"
+                    >۱</span
+                  >
+                  <span
+                    class="font-body-sm text-body-sm text-on-surface-variant"
+                    >تیکت در انتظار پاسخ</span
+                  >
+                </div>
+              </div>
+              <!-- Metric 4 -->
+              <div class="flex items-center gap-space-md">
+                <div
+                  class="w-12 h-12 rounded-xl bg-surface-container-lowest text-primary-container flex items-center justify-center shadow-sm"
+                >
+                  <span class="material-symbols-outlined text-[26px]"
+                    >receipt_long</span
+                  >
+                </div>
+                <div class="flex flex-col">
+                  <span
+                    class="font-headline-lg text-headline-lg text-primary font-bold leading-none"
+                    >۴</span
+                  >
+                  <span
+                    class="font-body-sm text-body-sm text-on-surface-variant"
+                    >سفارش ثبت‌شده</span
+                  >
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- 2. Dual Column Layout (Interactive Nav Tabs Sidebar + Main Responsive Workspace) -->
+          <div
+            class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start"
+          >
+            <!-- Panel Sidebar Tabs -->
+            <aside
+              class="lg:col-span-3 bg-card rounded-[28px] p-space-md shadow-sm sticky top-24 flex flex-col gap-space-xs"
+            >
+              <span
+                class="font-label-badge text-label-badge text-outline px-space-sm mb-space-xs uppercase tracking-wider font-code-sm"
+                >منوی کاربری دانشجو</span
+              >
+              <button
+                class="tab-button w-full flex items-center justify-between px-space-md py-space-sm rounded-xl font-headline-sm text-headline-sm text-primary transition-all bg-surface-container"
+                id="btn-tab-courses"
+                onclick="switchTab('tab-courses')"
+              >
+                <div class="flex items-center gap-space-sm">
+                  <span class="material-symbols-outlined text-[20px]"
+                    >school</span
+                  >
+                  <span>دوره‌های من</span>
+                </div>
+                <span class="w-2 h-2 rounded-full bg-accent-alt"></span>
+              </button>
+              <button
+                class="tab-button w-full flex items-center justify-between px-space-md py-space-sm rounded-xl font-headline-sm text-headline-sm text-on-surface-variant hover:bg-surface-container transition-all"
+                id="btn-tab-tickets"
+                onclick="switchTab('tab-tickets')"
+              >
+                <div class="flex items-center gap-space-sm">
+                  <span class="material-symbols-outlined text-[20px]"
+                    >mark_email_unread</span
+                  >
+                  <span>تیکت‌های پشتیبانی</span>
+                </div>
+                <span
+                  class="bg-amber-warning/20 text-amber-warning font-code-sm text-code-sm px-1.5 py-0.5 rounded-full leading-none font-bold"
+                  >۱</span
+                >
+              </button>
+              <button
+                class="tab-button w-full flex items-center justify-between px-space-md py-space-sm rounded-xl font-headline-sm text-headline-sm text-on-surface-variant hover:bg-surface-container transition-all"
+                id="btn-tab-orders"
+                onclick="switchTab('tab-orders')"
+              >
+                <div class="flex items-center gap-space-sm">
+                  <span class="material-symbols-outlined text-[20px]"
+                    >shopping_bag</span
+                  >
+                  <span>سفارش‌ها و فاکتورها</span>
+                </div>
+                <span class="font-code-sm text-code-sm text-outline">۴</span>
+              </button>
+              <button
+                class="tab-button w-full flex items-center justify-between px-space-md py-space-sm rounded-xl font-headline-sm text-headline-sm text-on-surface-variant hover:bg-surface-container transition-all"
+                id="btn-tab-security"
+                onclick="switchTab('tab-security')"
+              >
+                <div class="flex items-center gap-space-sm">
+                  <span class="material-symbols-outlined text-[20px]"
+                    >lock_reset</span
+                  >
+                  <span>امنیت و رمز عبور</span>
+                </div>
+              </button>
+              <button
+                class="tab-button w-full flex items-center justify-between px-space-md py-space-sm rounded-xl font-headline-sm text-headline-sm text-on-surface-variant hover:bg-surface-container transition-all"
+                id="btn-tab-profile"
+                onclick="switchTab('tab-profile')"
+              >
+                <div class="flex items-center gap-space-sm">
+                  <span class="material-symbols-outlined text-[20px]"
+                    >person</span
+                  >
+                  <span>مشخصات حساب</span>
+                </div>
+              </button>
+              <!-- Divider Space -->
+              <div class="h-px bg-surface-container-high my-space-sm"></div>
+              <!-- System Exit Button -->
+              <button
+                class="w-full flex items-center justify-between px-space-md py-space-sm rounded-xl font-headline-sm text-headline-sm text-destructive hover:bg-error-container/40 transition-all"
+                onclick="openLogoutModal()"
+              >
+                <div class="flex items-center gap-space-sm">
+                  <span class="material-symbols-outlined text-[20px]"
+                    >logout</span
+                  >
+                  <span>خروج از حساب</span>
+                </div>
+                <span class="material-symbols-outlined text-[16px]"
+                  >chevron_left</span
+                >
+              </button>
+            </aside>
+            <!-- Panel Dynamic Content Slot -->
+            <main class="lg:col-span-9 flex flex-col gap-space-lg w-full">
+              <!-- ================= TAB 1: COURSES SECTION ================= -->
+              <div
+                class="tab-content flex flex-col gap-space-lg"
+                id="tab-courses"
+              >
+                <div
+                  class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm bg-card p-space-md rounded-2xl shadow-sm"
+                >
+                  <div>
+                    <h2 class="font-headline-md text-headline-md text-primary">
+                      دوره‌های در حال یادگیری
+                    </h2>
+                    <p
+                      class="font-body-sm text-body-sm text-on-surface-variant"
+                    >
+                      پیشرفت تحصیلی، جلسات بعدی و دسترسی به لایسنس اسپات‌پلیر
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-space-xs">
+                    <span
+                      class="font-label-badge text-label-badge bg-surface-container-high text-on-surface-variant px-space-sm py-1 rounded-full"
+                      >نمایش ۳ دوره اختصاصی</span
+                    >
+                  </div>
+                </div>
+                <!-- Course Card 1: React 19 Fullstack -->
+                <div
+                  class="bg-card rounded-[28px] p-space-lg shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-space-lg relative overflow-hidden group"
+                >
+                  <div
+                    class="w-full md:w-64 h-44 rounded-2xl overflow-hidden relative flex-shrink-0 shadow-inner"
+                  >
+                    <img
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      data-alt="A clean high-tech software engineering studio background depicting React 19 and Next.js 15 glowing code architecture on a dual-screen monitor with warm rim lighting in deep corporate navy and electric cyan tones."
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9OzPdecAm6r2LgIC4xkPY-ElgUwbd8_M4S8khFe5d4ZzgLLGrFJjR5_uPvOfaSgPRY6fSULJMV2CMwjR8SQPqkfOw9j5RGlwdAOritrAGyNVdwhrXUGJ6aL9MlJowABNvSQGINL5wgvoboCRXWmIAcDBCfyrhU0Vgg6uZCm9_boptExHm9R9-YkmBZZCvSG2Og69H0nguYZInKLzsyr3iEjw9znusSWR7SnouO-1yc_OtpznNQNLvBw"
+                    />
+                    <span
+                      class="absolute top-2 right-2 bg-primary/85 backdrop-blur-md text-on-primary font-label-badge text-label-badge px-2.5 py-0.5 rounded-full"
+                      >نسخه ۲۰۲۵</span
+                    >
+                  </div>
+                  <div
+                    class="flex flex-col justify-between flex-grow gap-space-md min-w-0"
+                  >
+                    <div class="flex flex-col gap-space-xs">
+                      <div
+                        class="flex items-center justify-between gap-space-sm"
+                      >
+                        <span
+                          class="font-code-sm text-code-sm text-accent-alt font-semibold"
+                          >FRONTEND &amp; FULLSTACK</span
+                        >
+                        <span
+                          class="font-label-badge text-label-badge text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md"
+                          >لایسنس SpotPlayer فعال</span
+                        >
+                      </div>
+                      <h3
+                        class="font-headline-md text-headline-md text-primary truncate"
+                      >
+                        مسترکلاس جامع React 19 Fullstack و Next.js 15
+                      </h3>
+                      <p
+                        class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1"
+                      >
+                        مبحث جاری: پیاده‌سازی Server Actions و بهینه‌سازی
+                        Partial Pre-rendering (PPR)
+                      </p>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="flex flex-col gap-space-xs">
+                      <div
+                        class="flex items-center justify-between font-body-sm text-body-sm"
+                      >
+                        <span class="text-on-surface font-semibold"
+                          >میزان پیشرفت مشاهده جلسات:</span
+                        >
+                        <span
+                          class="font-code-sm text-code-sm text-primary font-bold"
+                          >۷۸٪ (۴۲ از ۵۴ جلسه)</span
+                        >
+                      </div>
+                      <div
+                        class="w-full h-2.5 bg-surface-container-high rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="h-full bg-primary rounded-full transition-all duration-700"
+                          style="width: 78%"
+                        ></div>
+                      </div>
+                    </div>
+                    <!-- Action Bar -->
+                    <div
+                      class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-md pt-space-xs"
+                    >
+                      <div
+                        class="flex items-center gap-space-sm text-on-surface-variant font-code-sm text-code-sm"
+                      >
+                        <span
+                          class="material-symbols-outlined text-[18px] text-accent-alt"
+                          >schedule</span
+                        >
+                        <span>زمان باقیمانده: ۱۲ ساعت و ۳۰ دقیقه</span>
+                      </div>
+                      <a
+                        class="h-11 px-space-lg rounded-xl bg-primary text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-space-xs hover:bg-primary-container transition-all shadow-sm"
+                        href="#"
+                      >
+                        <span class="material-symbols-outlined text-[20px]"
+                          >play_arrow</span
+                        >
+                        <span>ادامه یادگیری (قسمت ۴۲)</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Course Card 2: Event-Driven Kafka -->
+                <div
+                  class="bg-card rounded-[28px] p-space-lg shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-space-lg relative overflow-hidden group"
+                >
+                  <div
+                    class="w-full md:w-64 h-44 rounded-2xl overflow-hidden relative flex-shrink-0 shadow-inner"
+                  >
+                    <img
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      data-alt="Futuristic software architecture diagram showing Apache Kafka message queues and RabbitMQ cluster nodes interconnected with luminous blue data streams on modern dark sleek background."
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe4teEKQq245xas47KafP9tIxs-ep8ugbaE_CT9lJFKNt0twONVK-ah2YIMiUANRA-k2gDuFBdFCDk2FiBRfOmFzpSFCnNVqZ5Qp1l7i6MR1IWXlO07PKZfHJiaqefl0zCScqqmr-NTvW5ax6KcR47t7p__jU0KnZLSleG3guVgY_Z7OtGfdA4zkhynkUYGc9CIyqULY2YhzUDBjnTzsff52FJ-k9AxbRzUfWMrcE4s0_XBJPFyDeZJA"
+                    />
+                    <span
+                      class="absolute top-2 right-2 bg-primary/85 backdrop-blur-md text-on-primary font-label-badge text-label-badge px-2.5 py-0.5 rounded-full"
+                      >معماری سازمانی</span
+                    >
+                  </div>
+                  <div
+                    class="flex flex-col justify-between flex-grow gap-space-md min-w-0"
+                  >
+                    <div class="flex flex-col gap-space-xs">
+                      <div
+                        class="flex items-center justify-between gap-space-sm"
+                      >
+                        <span
+                          class="font-code-sm text-code-sm text-accent-alt font-semibold"
+                          >DISTRIBUTED SYSTEMS</span
+                        >
+                        <span
+                          class="font-label-badge text-label-badge text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md"
+                          >لایسنس فعال</span
+                        >
+                      </div>
+                      <h3
+                        class="font-headline-md text-headline-md text-primary truncate"
+                      >
+                        معماری سیستم‌های Event-Driven با Kafka و RabbitMQ
+                      </h3>
+                      <p
+                        class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1"
+                      >
+                        مبحث جاری: مدیریت Consumer Groups، استراتژی Rebalance و
+                        کنترل Dead Letter Queue
+                      </p>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="flex flex-col gap-space-xs">
+                      <div
+                        class="flex items-center justify-between font-body-sm text-body-sm"
+                      >
+                        <span class="text-on-surface font-semibold"
+                          >میزان پیشرفت مشاهده جلسات:</span
+                        >
+                        <span
+                          class="font-code-sm text-code-sm text-primary font-bold"
+                          >۴۵٪ (۱۵ از ۳۳ جلسه)</span
+                        >
+                      </div>
+                      <div
+                        class="w-full h-2.5 bg-surface-container-high rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="h-full bg-accent-alt rounded-full transition-all duration-700"
+                          style="width: 45%"
+                        ></div>
+                      </div>
+                    </div>
+                    <!-- Action Bar -->
+                    <div
+                      class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-md pt-space-xs"
+                    >
+                      <div
+                        class="flex items-center gap-space-sm text-on-surface-variant font-code-sm text-code-sm"
+                      >
+                        <span
+                          class="material-symbols-outlined text-[18px] text-accent-alt"
+                          >schedule</span
+                        >
+                        <span>زمان باقیمانده: ۱۸ ساعت آموزش</span>
+                      </div>
+                      <a
+                        class="h-11 px-space-lg rounded-xl bg-primary text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-space-xs hover:bg-primary-container transition-all shadow-sm"
+                        href="#"
+                      >
+                        <span class="material-symbols-outlined text-[20px]"
+                          >play_arrow</span
+                        >
+                        <span>ادامه یادگیری (قسمت ۱۵)</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Course Card 3: Go & Docker Microservices -->
+                <div
+                  class="bg-card rounded-[28px] p-space-lg shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-space-lg relative overflow-hidden group"
+                >
+                  <div
+                    class="w-full md:w-64 h-44 rounded-2xl overflow-hidden relative flex-shrink-0 shadow-inner"
+                  >
+                    <img
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      data-alt="Golang code structure and Docker container virtualization schematic visualization with deep navy geometric server racks and cyan laser lines."
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt1OH9NSnDDvEf_N0LZ1keAfZ5jC5ovT4YV1g0QHQcsjDUfeyICWoVoTmlQ0x6fXDi2RmOkV6P_o8JuGCK13Kc5smekU7QKkcW7Du-GgRUfVoogSKtBmiFSFM_7g5Dwo3NRm3N5AxWIyhEcbh3TXIxJynEu9tBUW89e6iwaKatJy8vM2AfmFJv0njOXMONy4DdcRhCf2xGa6WVhe8gR-AV1gAD9nkQ-H7W8tfS3ICixfwzeE0VDf3x7A"
+                    />
+                    <span
+                      class="absolute top-2 right-2 bg-primary/85 backdrop-blur-md text-on-primary font-label-badge text-label-badge px-2.5 py-0.5 rounded-full"
+                      >بک‌اند با کارایی بالا</span
+                    >
+                  </div>
+                  <div
+                    class="flex flex-col justify-between flex-grow gap-space-md min-w-0"
+                  >
+                    <div class="flex flex-col gap-space-xs">
+                      <div
+                        class="flex items-center justify-between gap-space-sm"
+                      >
+                        <span
+                          class="font-code-sm text-code-sm text-accent-alt font-semibold"
+                          >BACKEND &amp; DEVOPS</span
+                        >
+                        <span
+                          class="font-label-badge text-label-badge text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md"
+                          >لایسنس فعال</span
+                        >
+                      </div>
+                      <h3
+                        class="font-headline-md text-headline-md text-primary truncate"
+                      >
+                        طراحی سیستم و میکروسرویس‌ها با Go و Docker
+                      </h3>
+                      <p
+                        class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1"
+                      >
+                        مبحث جاری: پیاده‌سازی gRPC، پروتکل بافرها و معماری Clean
+                        Architecture در Go
+                      </p>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="flex flex-col gap-space-xs">
+                      <div
+                        class="flex items-center justify-between font-body-sm text-body-sm"
+                      >
+                        <span class="text-on-surface font-semibold"
+                          >میزان پیشرفت مشاهده جلسات:</span
+                        >
+                        <span
+                          class="font-code-sm text-code-sm text-primary font-bold"
+                          >۲۲٪ (۶ از ۲۸ جلسه)</span
+                        >
+                      </div>
+                      <div
+                        class="w-full h-2.5 bg-surface-container-high rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="h-full bg-secondary rounded-full transition-all duration-700"
+                          style="width: 22%"
+                        ></div>
+                      </div>
+                    </div>
+                    <!-- Action Bar -->
+                    <div
+                      class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-md pt-space-xs"
+                    >
+                      <div
+                        class="flex items-center gap-space-sm text-on-surface-variant font-code-sm text-code-sm"
+                      >
+                        <span
+                          class="material-symbols-outlined text-[18px] text-accent-alt"
+                          >schedule</span
+                        >
+                        <span>زمان باقیمانده: ۲۶ ساعت آموزش</span>
+                      </div>
+                      <a
+                        class="h-11 px-space-lg rounded-xl bg-primary text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-space-xs hover:bg-primary-container transition-all shadow-sm"
+                        href="#"
+                      >
+                        <span class="material-symbols-outlined text-[20px]"
+                          >play_arrow</span
+                        >
+                        <span>ادامه یادگیری (قسمت ۷)</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Bottom Certificate Banner -->
+                <div
+                  class="bg-primary-container text-on-primary rounded-[28px] p-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md shadow-md"
+                >
+                  <div class="flex items-center gap-space-md">
+                    <div
+                      class="w-14 h-14 rounded-2xl bg-surface-container-lowest/15 flex items-center justify-center text-on-primary flex-shrink-0"
+                    >
+                      <span class="material-symbols-outlined text-[32px]"
+                        >verified_user</span
+                      >
+                    </div>
+                    <div class="flex flex-col">
+                      <h4 class="font-headline-sm text-headline-sm font-bold">
+                        درخواست گواهینامه معتبر آکادمی
+                      </h4>
+                      <p
+                        class="font-body-sm text-body-sm text-primary-fixed-dim"
+                      >
+                        پس از اتمام ۱۰۰٪ سرفصل‌ها و ارسال پروژه پایانی، گواهی
+                        دیجیتال با کد استعلام بین‌المللی صادر می‌شود.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    class="h-11 px-space-lg rounded-xl bg-surface-container-lowest text-primary font-headline-sm text-headline-sm flex items-center gap-space-xs hover:bg-surface-container-low transition-all shadow-sm whitespace-nowrap"
+                  >
+                    <span>مشاهده کارنامه و گواهی‌ها</span>
+                    <span class="material-symbols-outlined text-[18px]"
+                      >arrow_back</span
+                    >
+                  </button>
+                </div>
+              </div>
+              <!-- ================= TAB 2: SUPPORT TICKETS SYSTEM ================= -->
+              <div
+                class="tab-content hidden flex flex-col gap-space-lg"
+                id="tab-tickets"
+              >
+                <!-- Tickets Top Bar -->
+                <div
+                  class="bg-card p-space-lg rounded-[28px] shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md"
+                >
+                  <div>
+                    <h2 class="font-headline-md text-headline-md text-primary">
+                      پشتیبانی فنی و تیکت‌ها
+                    </h2>
+                    <p
+                      class="font-body-sm text-body-sm text-on-surface-variant"
+                    >
+                      ارتباط مستقیم با مهندس حسین طاهری و تیم دستیاران آموزشی
+                    </p>
+                  </div>
+                  <button
+                    class="h-11 px-space-lg rounded-xl bg-primary text-on-primary hover:bg-primary-container font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all shadow-md"
+                    onclick="openTicketModal()"
+                  >
+                    <span class="material-symbols-outlined text-[20px]"
+                      >add</span
+                    >
+                    <span>ارسال تیکت جدید</span>
+                  </button>
+                </div>
+                <!-- Active Ticket List -->
+                <div
+                  class="bg-card rounded-[28px] p-space-lg shadow-sm flex flex-col gap-space-md"
+                >
+                  <h3 class="font-headline-sm text-headline-sm text-primary">
+                    لیست تیکت‌های اخیر شما
+                  </h3>
+                  <div class="flex flex-col gap-space-sm">
+                    <!-- Ticket Item 1 -->
+                    <div
+                      class="bg-surface-container-low rounded-2xl p-space-md flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md hover:bg-surface-container transition-all"
+                    >
+                      <div class="flex items-start gap-space-md min-w-0">
+                        <div
+                          class="w-10 h-10 rounded-xl bg-accent-alt/15 text-accent-alt flex items-center justify-center flex-shrink-0 mt-0.5"
+                        >
+                          <span class="material-symbols-outlined text-[22px]"
+                            >code_blocks</span
+                          >
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                          <div class="flex items-center gap-space-sm flex-wrap">
+                            <span
+                              class="font-code-sm text-code-sm font-bold text-primary"
+                              >#TK-8421</span
+                            >
+                            <h4
+                              class="font-headline-sm text-headline-sm text-on-surface truncate"
+                            >
+                              مشکل اجرای کانتینر کافکا در ویندوز
+                            </h4>
+                            <span
+                              class="font-label-badge text-label-badge bg-primary text-on-primary px-2.5 py-0.5 rounded-full"
+                              >پاسخ داده شده (پاسخ مدرس)</span
+                            >
+                          </div>
+                          <div
+                            class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm mt-1 flex-wrap"
+                          >
+                            <span>دوره: مسترکلاس کافکا و میکروسرویس</span>
+                            <span
+                              class="w-1 h-1 rounded-full bg-outline-variant"
+                            ></span>
+                            <span>آخرین بروزرسانی: ۲ ساعت پیش</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="flex items-center gap-space-sm self-end md:self-center"
+                      >
+                        <button
+                          class="h-10 px-space-md rounded-xl bg-surface-container-highest hover:bg-surface-dim text-primary font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all"
+                          onclick="toggleTicketPreview('preview-8421')"
+                        >
+                          <span>مشاهده و پاسخ</span>
+                          <span class="material-symbols-outlined text-[16px]"
+                            >expand_more</span
+                          >
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Ticket Preview Accordion (Ticket 1) -->
+                    <div
+                      class="hidden bg-surface-container-lowest rounded-2xl p-space-lg shadow-inner flex flex-col gap-space-md"
+                      id="preview-8421"
+                    >
+                      <!-- User Question -->
+                      <div
+                        class="flex items-start gap-space-md bg-surface-container-low/60 p-space-md rounded-xl"
+                      >
+                        <div
+                          class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center font-headline-sm text-headline-sm flex-shrink-0"
+                        >
+                          <span>آ</span>
+                        </div>
+                        <div class="flex flex-col gap-1 w-full">
+                          <div class="flex items-center justify-between">
+                            <span
+                              class="font-headline-sm text-headline-sm text-primary"
+                              >مهندس آرش سرمدی (شما)</span
+                            >
+                            <span class="font-code-sm text-code-sm text-outline"
+                              >دیروز - ۱۸:۴۵</span
+                            >
+                          </div>
+                          <p
+                            class="font-body-md text-body-md text-on-surface-variant"
+                          >
+                            سلام استاد طاهری وقت بخیر. موقع اجرای فایل
+                            docker-compose برای Kafka در ویندوز ۱۱ با ارور
+                            `KAFKA_LISTENERS connection refused` مواجه میشم،
+                            پورت ۹۰۹۲ هم باز هست. اسکرین‌شات کانفیگ رو ضمیمه
+                            کردم.
+                          </p>
+                        </div>
+                      </div>
+                      <!-- Instructor Official Reply -->
+                      <div
+                        class="flex items-start gap-space-md bg-primary-container/10 p-space-md rounded-xl"
+                      >
+                        <div
+                          class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center font-headline-sm text-headline-sm flex-shrink-0"
+                        >
+                          <span class="material-symbols-outlined text-[20px]"
+                            >verified</span
+                          >
+                        </div>
+                        <div class="flex flex-col gap-1 w-full">
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-space-xs">
+                              <span
+                                class="font-headline-sm text-headline-sm text-primary font-bold"
+                                >مهندس حسین طاهری</span
+                              >
+                              <span
+                                class="bg-primary text-on-primary font-label-badge text-label-badge px-2 py-0.5 rounded-full"
+                                >مدرس دوره</span
+                              >
+                            </div>
+                            <span class="font-code-sm text-code-sm text-outline"
+                              >۲ ساعت پیش - ۱۱:۳۰</span
+                            >
+                          </div>
+                          <p class="font-body-md text-body-md text-on-surface">
+                            درود آرش عزیز. در محیط ویندوز با WSL2، آدرس
+                            `KAFKA_ADVERTISED_LISTENERS` را به جای `localhost`
+                            باید روی `host.docker.internal` یا IP شبکه داخلی
+                            قرار دهید. قطعه کد زیر را در بخش محیطی کانتینر
+                            جایگزین کن و دوباره تست بگیر:
+                          </p>
+                          <!-- Code Snippet -->
+                          <div
+                            class="bg-inverse-surface text-inverse-on-surface p-space-md rounded-xl font-code-sm text-code-sm mt-space-xs flex justify-between items-start"
+                            dir="ltr"
+                          >
+                            <code
+                              >KAFKA_ADVERTISED_LISTENERS:
+                              PLAINTEXT://host.docker.internal:9092</code
+                            >
+                            <button
+                              class="text-accent-alt hover:text-on-primary transition-colors text-[14px]"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Quick Student Reply Box -->
+                      <div class="flex flex-col gap-space-sm pt-space-xs">
+                        <label
+                          class="font-headline-sm text-headline-sm text-primary"
+                          >ارسال پاسخ جدید در این تیکت:</label
+                        >
+                        <textarea
+                          class="w-full bg-surface-container-low rounded-xl p-space-sm outline-none text-on-surface placeholder:text-muted-text font-body-md text-body-md focus:bg-surface-container transition-all"
+                          placeholder="متن پیام خود را اینجا تایپ کنید..."
+                          rows="3"
+                        ></textarea>
+                        <div class="flex justify-end gap-space-sm">
+                          <button
+                            class="h-10 px-space-md rounded-xl bg-primary text-on-primary hover:bg-primary-container font-headline-sm text-headline-sm transition-all flex items-center gap-space-xs"
+                          >
+                            <span class="material-symbols-outlined text-[18px]"
+                              >send</span
+                            >
+                            <span>ارسال پاسخ</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Ticket Item 2 -->
+                    <div
+                      class="bg-surface-container-low rounded-2xl p-space-md flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md hover:bg-surface-container transition-all"
+                    >
+                      <div class="flex items-start gap-space-md min-w-0">
+                        <div
+                          class="w-10 h-10 rounded-xl bg-amber-warning/15 text-amber-warning flex items-center justify-center flex-shrink-0 mt-0.5"
+                        >
+                          <span class="material-symbols-outlined text-[22px]"
+                            >bug_report</span
+                          >
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                          <div class="flex items-center gap-space-sm flex-wrap">
+                            <span
+                              class="font-code-sm text-code-sm font-bold text-primary"
+                              >#TK-8319</span
+                            >
+                            <h4
+                              class="font-headline-sm text-headline-sm text-on-surface truncate"
+                            >
+                              عدم اتصال به دیتابیس در تست‌های E2E
+                            </h4>
+                            <span
+                              class="font-label-badge text-label-badge bg-amber-warning text-on-secondary px-2.5 py-0.5 rounded-full font-bold"
+                              >در حال بررسی توسط کارشناس</span
+                            >
+                          </div>
+                          <div
+                            class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm mt-1 flex-wrap"
+                          >
+                            <span>دوره: React 19 &amp; Next.js 15</span>
+                            <span
+                              class="w-1 h-1 rounded-full bg-outline-variant"
+                            ></span>
+                            <span>ارسال: دیروز</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="flex items-center gap-space-sm self-end md:self-center"
+                      >
+                        <button
+                          class="h-10 px-space-md rounded-xl bg-surface-container-highest hover:bg-surface-dim text-primary font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all"
+                        >
+                          <span>مشاهده وضعیت</span>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Ticket Item 3 -->
+                    <div
+                      class="bg-surface-container-low rounded-2xl p-space-md flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md hover:bg-surface-container transition-all"
+                    >
+                      <div class="flex items-start gap-space-md min-w-0">
+                        <div
+                          class="w-10 h-10 rounded-xl bg-secondary-container text-secondary flex items-center justify-center flex-shrink-0 mt-0.5"
+                        >
+                          <span class="material-symbols-outlined text-[22px]"
+                            >payments</span
+                          >
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                          <div class="flex items-center gap-space-sm flex-wrap">
+                            <span
+                              class="font-code-sm text-code-sm font-bold text-primary"
+                              >#TK-7954</span
+                            >
+                            <h4
+                              class="font-headline-sm text-headline-sm text-on-surface truncate"
+                            >
+                              درخواست فاکتور رسمی دوره سازمانی
+                            </h4>
+                            <span
+                              class="font-label-badge text-label-badge bg-secondary-container text-on-secondary-container px-2.5 py-0.5 rounded-full"
+                              >بسته شده</span
+                            >
+                          </div>
+                          <div
+                            class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm mt-1 flex-wrap"
+                          >
+                            <span>بخش: امور مالی و حسابداری</span>
+                            <span
+                              class="w-1 h-1 rounded-full bg-outline-variant"
+                            ></span>
+                            <span>تاریخ: ۵ بهمن ۱۴۰۲</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="flex items-center gap-space-sm self-end md:self-center"
+                      >
+                        <button
+                          class="h-10 px-space-md rounded-xl bg-surface-container-highest hover:bg-surface-dim text-primary font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all"
+                        >
+                          <span>مشاهده آرشیو</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Ticket Creation Inline Panel / Modal -->
+                <div
+                  class="bg-card rounded-[28px] p-space-lg shadow-sm flex flex-col gap-space-md"
+                  id="new-ticket-box"
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-space-sm">
+                      <div
+                        class="w-10 h-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center"
+                      >
+                        <span class="material-symbols-outlined text-[22px]"
+                          >rate_review</span
+                        >
+                      </div>
+                      <h3
+                        class="font-headline-md text-headline-md text-primary"
+                      >
+                        فرم ثبت تیکت جدید
+                      </h3>
+                    </div>
+                  </div>
+                  <form
+                    class="grid grid-cols-1 md:grid-cols-2 gap-space-md mt-space-xs"
+                    method="post"
+                    action="{% url 'tickets:create' %}"
+                  >
+                    {% csrf_token %}
+                    <div class="flex flex-col gap-space-xs">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >عنوان موضوع تیکت *</label
+                      >
+                      <input
+                        class="h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-body-md text-body-md"
+                        name="subject"
+                        placeholder="مثال: خطا در مرحله بیلد با داکر"
+                        required=""
+                        type="text"
+                      />
+                    </div>
+                    <div class="flex flex-col gap-space-xs">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >انتخاب دوره مرتبط</label
+                      >
+                      <select
+                        class="h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-body-md text-body-md"
+                        name="course"
+                      >
+                        <option value="">سایر امور یا سوال عمومی</option>
+                        {% for enrollment in enrollments %}
+                        <option value="{{ enrollment.course_id }}">{{ enrollment.course.title }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="flex flex-col gap-space-xs md:col-span-2">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >دپارتمان پاسخگویی</label
+                      >
+                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
+                        <label
+                          class="flex items-center gap-space-sm p-space-sm rounded-xl bg-surface-container-low cursor-pointer hover:bg-surface-container"
+                        >
+                          <input
+                            checked=""
+                            class="accent-primary"
+                            name="dept"
+                            type="radio"
+                          />
+                          <span
+                            class="font-body-md text-body-md text-on-surface"
+                            >پشتیبانی فنی و کد</span
+                          >
+                        </label>
+                        <label
+                          class="flex items-center gap-space-sm p-space-sm rounded-xl bg-surface-container-low cursor-pointer hover:bg-surface-container"
+                        >
+                          <input
+                            class="accent-primary"
+                            name="dept"
+                            type="radio"
+                          />
+                          <span
+                            class="font-body-md text-body-md text-on-surface"
+                            >امور مالی و فاکتور</span
+                          >
+                        </label>
+                        <label
+                          class="flex items-center gap-space-sm p-space-sm rounded-xl bg-surface-container-low cursor-pointer hover:bg-surface-container"
+                        >
+                          <input
+                            class="accent-primary"
+                            name="dept"
+                            type="radio"
+                          />
+                          <span
+                            class="font-body-md text-body-md text-on-surface"
+                            >مشاوره تخصصی مسیر شغلی</span
+                          >
+                        </label>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-space-xs md:col-span-2">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >شرح کامل پرسش یا خطا *</label
+                      >
+                      <textarea
+                        class="p-space-md rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-body-md text-body-md"
+                        name="body"
+                        placeholder="لطفاً شرح کامل مشکل به همراه خطای کنسول و شماره درس را ذکر فرمایید..."
+                        required=""
+                        rows="4"
+                      ></textarea>
+                    </div>
+                    <div class="flex flex-col gap-space-xs md:col-span-2">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >فایل ضمیمه (عکس خطا یا فایل زیپ کد)</label
+                      >
+                      <div
+                        class="flex items-center gap-space-md p-space-md rounded-xl bg-surface-container-low shadow-inner"
+                      >
+                        <span
+                          class="material-symbols-outlined text-[28px] text-outline"
+                          >upload_file</span
+                        >
+                        <div class="flex flex-col">
+                          <span
+                            class="font-body-md text-body-md text-on-surface"
+                            >برای آپلود فایل کلیک کنید یا فایل را بکشید و رها
+                            کنید</span
+                          >
+                          <span
+                            class="font-code-sm text-code-sm text-muted-text"
+                            >حداکثر حجم مجاز: ۱۵ مگابایت (PNG, JPG, ZIP)</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="md:col-span-2 flex justify-end gap-space-sm mt-space-xs"
+                    >
+                      <button
+                        class="h-11 px-space-xl rounded-xl bg-primary text-on-primary hover:bg-primary-container font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all shadow-md"
+                        type="submit"
+                      >
+                        <span class="material-symbols-outlined text-[20px]"
+                          >send</span
+                        >
+                        <span>ثبت و ارسال رسمی تیکت</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <!-- ================= TAB 3: ORDER HISTORY ================= -->
+              <div
+                class="tab-content hidden flex flex-col gap-space-lg"
+                id="tab-orders"
+              >
+                <div
+                  class="bg-card p-space-lg rounded-[28px] shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md"
+                >
+                  <div>
+                    <h2 class="font-headline-md text-headline-md text-primary">
+                      تاریخچه خریدها و صورت‌حساب‌ها
+                    </h2>
+                    <p
+                      class="font-body-sm text-body-sm text-on-surface-variant"
+                    >
+                      تمام تراکنش‌های پرداختی با ضمانت بازگشت وجه و فاکتور
+                      الکترونیکی
+                    </p>
+                  </div>
+                  <div
+                    class="flex items-center gap-space-xs bg-surface-container-low px-space-md py-space-xs rounded-xl"
+                  >
+                    <span
+                      class="material-symbols-outlined text-primary text-[20px]"
+                      >verified</span
+                    >
+                    <span
+                      class="font-body-sm text-body-sm text-primary font-bold"
+                      >تمام پرداخت‌ها در درگاه شاپرک تایید شده‌اند</span
+                    >
+                  </div>
+                </div>
+                <!-- Orders Table Container -->
+                <div
+                  class="bg-card rounded-[28px] p-space-lg shadow-sm overflow-x-auto"
+                >
+                  <table
+                    class="w-full text-right border-collapse min-w-[680px]"
+                  >
+                    <thead>
+                      <tr
+                        class="bg-surface-container-low rounded-xl text-on-surface-variant font-headline-sm text-headline-sm"
+                      >
+                        <th class="p-space-md rounded-r-xl">
+                          عنوان دوره / بسته آموزشی
+                        </th>
+                        <th class="p-space-md">تاریخ خرید</th>
+                        <th class="p-space-md">مبلغ پرداختی</th>
+                        <th class="p-space-md">روش درگاه</th>
+                        <th class="p-space-md">وضعیت</th>
+                        <th class="p-space-md rounded-l-xl text-center">
+                          عملیات
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      class="divide-y divide-surface-container font-body-md text-body-md text-on-surface"
+                    >
+                      <!-- Row 1 -->
+                      <tr
+                        class="hover:bg-surface-container-low/50 transition-colors"
+                      >
+                        <td class="p-space-md">
+                          <div class="flex items-center gap-space-sm">
+                            <div
+                              class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold font-code-sm text-code-sm"
+                            >
+                              R19
+                            </div>
+                            <div class="flex flex-col">
+                              <span class="font-bold text-primary"
+                                >مسترکلاس جامع React 19 Fullstack</span
+                              >
+                              <span
+                                class="font-code-sm text-code-sm text-muted-text"
+                                >کد پیگیری: #ORD-98321</span
+                              >
+                            </div>
+                          </div>
+                        </td>
+                        <td class="p-space-md font-code-sm text-code-sm">
+                          ۱۵ دی ۱۴۰۳
+                        </td>
+                        <td
+                          class="p-space-md font-bold text-primary font-code-md text-code-md"
+                        >
+                          ۴,۸۰۰,۰۰۰
+                          <span
+                            class="text-on-surface-variant font-normal font-body-sm text-body-sm"
+                            >تومان</span
+                          >
+                        </td>
+                        <td class="p-space-md">
+                          <span
+                            class="font-code-sm text-code-sm bg-surface-container px-2 py-1 rounded"
+                            >درگاه زرین‌پال</span
+                          >
+                        </td>
+                        <td class="p-space-md">
+                          <span
+                            class="font-label-badge text-label-badge bg-primary text-on-primary px-2.5 py-1 rounded-full font-bold"
+                            >پرداخت موفق</span
+                          >
+                        </td>
+                        <td class="p-space-md">
+                          <div
+                            class="flex items-center justify-center gap-space-xs"
+                          >
+                            <button
+                              class="h-9 px-space-sm rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary flex items-center gap-1 font-body-sm text-body-sm transition-all"
+                              title="دانلود فاکتور رسمی PDF"
+                            >
+                              <span
+                                class="material-symbols-outlined text-[16px]"
+                                >download</span
+                              >
+                              <span>فاکتور</span>
+                            </button>
+                            <button
+                              class="h-9 w-9 rounded-lg bg-primary hover:bg-primary-container text-on-primary flex items-center justify-center transition-all"
+                              onclick="switchTab('tab-courses')"
+                              title="ورود به کلاس"
+                            >
+                              <span
+                                class="material-symbols-outlined text-[18px]"
+                                >play_circle</span
+                              >
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      <!-- Row 2 -->
+                      <tr
+                        class="hover:bg-surface-container-low/50 transition-colors"
+                      >
+                        <td class="p-space-md">
+                          <div class="flex items-center gap-space-sm">
+                            <div
+                              class="w-8 h-8 rounded-lg bg-accent-alt text-on-primary flex items-center justify-center font-bold font-code-sm text-code-sm"
+                            >
+                              KFK
+                            </div>
+                            <div class="flex flex-col">
+                              <span class="font-bold text-primary"
+                                >معماری سیستم‌های Event-Driven با Kafka</span
+                              >
+                              <span
+                                class="font-code-sm text-code-sm text-muted-text"
+                                >کد پیگیری: #ORD-77412</span
+                              >
+                            </div>
+                          </div>
+                        </td>
+                        <td class="p-space-md font-code-sm text-code-sm">
+                          ۲۸ آبان ۱۴۰۳
+                        </td>
+                        <td
+                          class="p-space-md font-bold text-primary font-code-md text-code-md"
+                        >
+                          ۵,۶۰۰,۰۰۰
+                          <span
+                            class="text-on-surface-variant font-normal font-body-sm text-body-sm"
+                            >تومان</span
+                          >
+                        </td>
+                        <td class="p-space-md">
+                          <span
+                            class="font-code-sm text-code-sm bg-surface-container px-2 py-1 rounded"
+                            >به‌پرداخت ملت</span
+                          >
+                        </td>
+                        <td class="p-space-md">
+                          <span
+                            class="font-label-badge text-label-badge bg-primary text-on-primary px-2.5 py-1 rounded-full font-bold"
+                            >پرداخت موفق</span
+                          >
+                        </td>
+                        <td class="p-space-md">
+                          <div
+                            class="flex items-center justify-center gap-space-xs"
+                          >
+                            <button
+                              class="h-9 px-space-sm rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary flex items-center gap-1 font-body-sm text-body-sm transition-all"
+                              title="دانلود فاکتور رسمی PDF"
+                            >
+                              <span
+                                class="material-symbols-outlined text-[16px]"
+                                >download</span
+                              >
+                              <span>فاکتور</span>
+                            </button>
+                            <button
+                              class="h-9 w-9 rounded-lg bg-primary hover:bg-primary-container text-on-primary flex items-center justify-center transition-all"
+                              onclick="switchTab('tab-courses')"
+                              title="ورود به کلاس"
+                            >
+                              <span
+                                class="material-symbols-outlined text-[18px]"
+                                >play_circle</span
+                              >
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      <!-- Row 3 -->
+                      <tr
+                        class="hover:bg-surface-container-low/50 transition-colors"
+                      >
+                        <td class="p-space-md">
+                          <div class="flex items-center gap-space-sm">
+                            <div
+                              class="w-8 h-8 rounded-lg bg-secondary text-on-secondary flex items-center justify-center font-bold font-code-sm text-code-sm"
+                            >
+                              GOL
+                            </div>
+                            <div class="flex flex-col">
+                              <span class="font-bold text-primary"
+                                >طراحی سیستم و میکروسرویس با Go</span
+                              >
+                              <span
+                                class="font-code-sm text-code-sm text-muted-text"
+                                >کد پیگیری: #ORD-66209</span
+                              >
+                            </div>
+                          </div>
+                        </td>
+                        <td class="p-space-md font-code-sm text-code-sm">
+                          ۱۰ مهر ۱۴۰۳
+                        </td>
+                        <td
+                          class="p-space-md font-bold text-primary font-code-md text-code-md"
+                        >
+                          ۳,۹۰۰,۰۰۰
+                          <span
+                            class="text-on-surface-variant font-normal font-body-sm text-body-sm"
+                            >تومان</span
+                          >
+                        </td>
+                        <td class="p-space-md">
+                          <span
+                            class="font-code-sm text-code-sm bg-surface-container px-2 py-1 rounded"
+                            >درگاه زرین‌پال</span
+                          >
+                        </td>
+                        <td class="p-space-md">
+                          <span
+                            class="font-label-badge text-label-badge bg-primary text-on-primary px-2.5 py-1 rounded-full font-bold"
+                            >پرداخت موفق</span
+                          >
+                        </td>
+                        <td class="p-space-md">
+                          <div
+                            class="flex items-center justify-center gap-space-xs"
+                          >
+                            <button
+                              class="h-9 px-space-sm rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary flex items-center gap-1 font-body-sm text-body-sm transition-all"
+                              title="دانلود فاکتور رسمی PDF"
+                            >
+                              <span
+                                class="material-symbols-outlined text-[16px]"
+                                >download</span
+                              >
+                              <span>فاکتور</span>
+                            </button>
+                            <button
+                              class="h-9 w-9 rounded-lg bg-primary hover:bg-primary-container text-on-primary flex items-center justify-center transition-all"
+                              onclick="switchTab('tab-courses')"
+                              title="ورود به کلاس"
+                            >
+                              <span
+                                class="material-symbols-outlined text-[18px]"
+                                >play_circle</span
+                              >
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- ================= TAB 4: SECURITY & CHANGE PASSWORD ================= -->
+              <div
+                class="tab-content hidden flex flex-col gap-space-lg"
+                id="tab-security"
+              >
+                <div
+                  class="bg-card p-space-lg rounded-[28px] shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md"
+                >
+                  <div>
+                    <h2 class="font-headline-md text-headline-md text-primary">
+                      امنیت و تغییر کلمه عبور
+                    </h2>
+                    <p
+                      class="font-body-sm text-body-sm text-on-surface-variant"
+                    >
+                      محافظت از نشست‌های فعال، مدیریت رمز عبور و تنظیمات تایید
+                      دو مرحله‌ای
+                    </p>
+                  </div>
+                  <div
+                    class="flex items-center gap-space-xs bg-surface-container px-space-md py-space-xs rounded-xl"
+                  >
+                    <span
+                      class="material-symbols-outlined text-primary text-[20px]"
+                      >shield</span
+                    >
+                    <span
+                      class="font-body-sm text-body-sm text-primary font-bold"
+                      >وضعیت حساب: کاملاً امن</span
+                    >
+                  </div>
+                </div>
+                <!-- Password Form Card -->
+                <div
+                  class="bg-card rounded-[28px] p-space-lg shadow-sm flex flex-col gap-space-lg"
+                >
+                  <h3 class="font-headline-sm text-headline-sm text-primary">
+                    تغییر رمز عبور حساب کاربری
+                  </h3>
+                  <form
+                    class="max-w-2xl flex flex-col gap-space-md"
+                    method="post"
+                    action="{% url 'accounts:password_change' %}"
+                  >
+                    {% csrf_token %}
+                    <!-- Current Password -->
+                    <div class="flex flex-col gap-space-xs">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >کلمه عبور فعلی</label
+                      >
+                      <div class="relative flex items-center">
+                        <span
+                          class="material-symbols-outlined absolute right-3 text-outline text-[20px]"
+                          >lock</span
+                        >
+                        <input
+                          class="w-full h-11 pr-11 pl-11 rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-code-sm text-code-sm"
+                          id="curr-pass"
+                          name="old_password"
+                          placeholder="رمز عبور فعلی خود را وارد کنید"
+                          required=""
+                          type="password"
+                        />
+                        <button
+                          class="absolute left-3 text-outline hover:text-primary transition-colors"
+                          onclick="togglePasswordVisibility('curr-pass', this)"
+                          type="button"
+                        >
+                          <span class="material-symbols-outlined text-[20px]"
+                            >visibility</span
+                          >
+                        </button>
+                      </div>
+                    </div>
+                    <!-- New Password -->
+                    <div class="flex flex-col gap-space-xs">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >کلمه عبور جدید</label
+                      >
+                      <div class="relative flex items-center">
+                        <span
+                          class="material-symbols-outlined absolute right-3 text-outline text-[20px]"
+                          >key</span
+                        >
+                        <input
+                          class="w-full h-11 pr-11 pl-11 rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-code-sm text-code-sm"
+                          id="new-pass"
+                          name="new_password1"
+                          placeholder="حداقل ۸ کاراکتر شامل حروف و ارقام"
+                          required=""
+                          type="password"
+                        />
+                        <button
+                          class="absolute left-3 text-outline hover:text-primary transition-colors"
+                          onclick="togglePasswordVisibility('new-pass', this)"
+                          type="button"
+                        >
+                          <span class="material-symbols-outlined text-[20px]"
+                            >visibility</span
+                          >
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Repeat New Password -->
+                    <div class="flex flex-col gap-space-xs">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >تکرار کلمه عبور جدید</label
+                      >
+                      <div class="relative flex items-center">
+                        <span
+                          class="material-symbols-outlined absolute right-3 text-outline text-[20px]"
+                          >check_circle</span
+                        >
+                        <input
+                          class="w-full h-11 pr-11 pl-11 rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-code-sm text-code-sm"
+                          id="repeat-pass"
+                          name="new_password2"
+                          placeholder="تکرار رمز جدید"
+                          required=""
+                          type="password"
+                        />
+                        <button
+                          class="absolute left-3 text-outline hover:text-primary transition-colors"
+                          onclick="
+                            togglePasswordVisibility('repeat-pass', this)
+                          "
+                          type="button"
+                        >
+                          <span class="material-symbols-outlined text-[20px]"
+                            >visibility</span
+                          >
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Requirements Hints -->
+                    <div
+                      class="bg-surface-container-low p-space-md rounded-2xl flex flex-col gap-space-xs"
+                    >
+                      <span
+                        class="font-headline-sm text-headline-sm text-primary"
+                        >معیارهای امنیت رمز عبور:</span
+                      >
+                      <ul
+                        class="flex flex-col gap-1 text-on-surface-variant font-body-sm text-body-sm"
+                      >
+                        <li class="flex items-center gap-space-xs">
+                          <span
+                            class="material-symbols-outlined text-accent-alt text-[16px]"
+                            >check</span
+                          >حداقل ۸ کاراکتر به زبان انگلیسی
+                        </li>
+                        <li class="flex items-center gap-space-xs">
+                          <span
+                            class="material-symbols-outlined text-accent-alt text-[16px]"
+                            >check</span
+                          >استفاده همزمان از حروف بزرگ، کوچک و ارقام
+                        </li>
+                        <li class="flex items-center gap-space-xs">
+                          <span
+                            class="material-symbols-outlined text-accent-alt text-[16px]"
+                            >check</span
+                          >عدم استفاده از شماره موبایل یا اطلاعات هویتی ساده
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="flex justify-end pt-space-xs">
+                      <button
+                        class="h-11 px-space-xl rounded-xl bg-primary text-on-primary hover:bg-primary-container font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all shadow-md"
+                        type="submit"
+                      >
+                        <span class="material-symbols-outlined text-[20px]"
+                          >sync_lock</span
+                        >
+                        <span>بروزرسانی کلمه عبور</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+                <!-- Active Sessions List -->
+                <div
+                  class="bg-card rounded-[28px] p-space-lg shadow-sm flex flex-col gap-space-md"
+                >
+                  <h3 class="font-headline-sm text-headline-sm text-primary">
+                    دستگاه‌ها و نشست‌های فعال شما
+                  </h3>
+                  <div class="flex flex-col gap-space-sm">
+                    <div
+                      class="flex items-center justify-between p-space-md bg-surface-container-low rounded-xl"
+                    >
+                      <div class="flex items-center gap-space-md">
+                        <span
+                          class="material-symbols-outlined text-primary text-[28px]"
+                          >laptop_mac</span
+                        >
+                        <div class="flex flex-col">
+                          <span
+                            class="font-bold text-primary font-body-md text-body-md"
+                            >Chrome در macOS (تهران، ایران)</span
+                          >
+                          <span
+                            class="font-code-sm text-code-sm text-on-surface-variant"
+                            >نشست جاری شما - IP: 5.120.84.19</span
+                          >
+                        </div>
+                      </div>
+                      <span
+                        class="font-label-badge text-label-badge bg-primary text-on-primary px-2.5 py-1 rounded-full font-bold"
+                        >دستگاه فعلی</span
+                      >
+                    </div>
+                    <div
+                      class="flex items-center justify-between p-space-md bg-surface-container-low rounded-xl"
+                    >
+                      <div class="flex items-center gap-space-md">
+                        <span
+                          class="material-symbols-outlined text-on-surface-variant text-[28px]"
+                          >phone_iphone</span
+                        >
+                        <div class="flex flex-col">
+                          <span
+                            class="font-bold text-primary font-body-md text-body-md"
+                            >SpotPlayer App در iOS</span
+                          >
+                          <span
+                            class="font-code-sm text-code-sm text-on-surface-variant"
+                            >آخرین اتصال: ۲ روز پیش</span
+                          >
+                        </div>
+                      </div>
+                      <button
+                        class="font-body-sm text-body-sm text-destructive hover:underline"
+                      >
+                        خاتمه اتصال
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- ================= TAB 5: PROFILE EDIT ================= -->
+              <div
+                class="tab-content hidden flex flex-col gap-space-lg"
+                id="tab-profile"
+              >
+                <div
+                  class="bg-card p-space-lg rounded-[28px] shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md"
+                >
+                  <div>
+                    <h2 class="font-headline-md text-headline-md text-primary">
+                      اطلاعات و ویرایش حساب کاربری
+                    </h2>
+                    <p
+                      class="font-body-sm text-body-sm text-on-surface-variant"
+                    >
+                      نام نمایشی، شماره تماس، رزومه تخصصی و گیت‌هاب دانشجو
+                    </p>
+                  </div>
+                  <span
+                    class="font-label-badge text-label-badge bg-surface-container px-space-md py-space-xs rounded-xl text-primary font-bold"
+                    >پروفایل ۱۰۰٪ تکمیل است</span
+                  >
+                </div>
+                <div
+                  class="bg-card rounded-[28px] p-space-lg shadow-sm flex flex-col gap-space-lg"
+                >
+                  <form
+                    class="grid grid-cols-1 md:grid-cols-2 gap-space-md"
+                    method="post"
+                    action="{% url 'accounts:profile' %}"
+                    enctype="multipart/form-data"
+                  >
+                    {% csrf_token %}
+                    {% for message in messages %}
+                    <p class="md:col-span-2 text-sm text-primary">{{ message }}</p>
+                    {% endfor %}
+                    <div class="flex flex-col gap-space-xs">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >نام و نام‌خانوادگی</label
+                      >
+                      <input
+                        class="h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-body-md text-body-md"
+                        name="full_name"
+                        type="text"
+                        value="{{ form.full_name.value|default:'' }}"
+                      />
+                      {{ form.full_name.errors }}
+                    </div>
+                    <div class="flex flex-col gap-space-xs">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >شماره همراه (شناسه ورود)</label
+                      >
+                      <input
+                        class="h-11 px-space-md rounded-xl bg-surface-container text-outline outline-none font-code-sm text-code-sm dir-ltr cursor-not-allowed"
+                        disabled=""
+                        type="text"
+                        value="{{ request.user.phone_number }}"
+                      />
+                    </div>
+                    <div class="flex flex-col gap-space-xs">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >آدرس ایمیل</label
+                      >
+                      <input
+                        class="h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-code-sm text-code-sm dir-ltr"
+                        name="email"
+                        type="email"
+                        value="{{ form.email.value|default:'' }}"
+                      />
+                      {{ form.email.errors }}
+                    </div>
+                    <div class="flex flex-col gap-space-xs">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >تصویر پروفایل</label
+                      >
+                      <input
+                        class="h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-body-md text-body-md"
+                        name="avatar"
+                        type="file"
+                        accept="image/*"
+                      />
+                      {{ form.avatar.errors }}
+                    </div>
+                    <div class="flex flex-col gap-space-xs md:col-span-2">
+                      <label
+                        class="font-headline-sm text-headline-sm text-on-surface"
+                        >درباره شما و اهداف یادگیری</label
+                      >
+                      <textarea
+                        class="p-space-md rounded-xl bg-surface-container-low text-on-surface outline-none focus:bg-surface-container font-body-md text-body-md"
+                        name="bio"
+                        rows="3"
+                      >{{ form.bio.value|default:'' }}</textarea
+                      >
+                      {{ form.bio.errors }}
+                    </div>
+                    <div class="md:col-span-2 flex justify-end gap-space-sm">
+                      <button
+                        class="h-11 px-space-xl rounded-xl bg-primary text-on-primary hover:bg-primary-container font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all shadow-md"
+                        type="submit"
+                      >
+                        <span class="material-symbols-outlined text-[20px]"
+                          >save</span
+                        >
+                        <span>ذخیره تغییرات پروفایل</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+        <!-- Logout Confirmation Modal (Overlay) -->
+        <div
+          class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden items-center justify-center p-space-md"
+          id="logout-modal"
+        >
+          <div
+            class="bg-surface-container-lowest max-w-md w-full rounded-[28px] p-space-lg shadow-xl flex flex-col gap-space-md"
+          >
+            <form id="logout-form" method="post" action="{% url 'accounts:logout' %}">
+              {% csrf_token %}
+            <div class="flex items-center gap-space-md">
+              <div
+                class="w-12 h-12 rounded-xl bg-error-container text-error flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-[28px]"
+                  >logout</span
+                >
+              </div>
+              <div class="flex flex-col">
+                <h3 class="font-headline-md text-headline-md text-primary">
+                  خروج از حساب کاربری
+                </h3>
+                <span class="font-body-sm text-body-sm text-on-surface-variant"
+                  >آیا از خروج از پنل دانشجویی اطمینان دارید؟</span
+                >
+              </div>
+            </div>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              با خروج از حساب کاربری، برای مشاهده جلسات جدید و استفاده از امکان
+              ارسال تیکت، نیاز به ورود مجدد با رمز عبور خواهید داشت.
+            </p>
+            <div class="flex items-center justify-end gap-space-sm pt-space-xs">
+              <button
+                class="h-11 px-space-md rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-headline-sm text-headline-sm transition-all"
+                onclick="closeLogoutModal()"
+              >
+                انصراف
+              </button>
+              <button
+                class="h-11 px-space-lg rounded-xl bg-destructive hover:bg-error text-on-primary font-headline-sm text-headline-sm flex items-center gap-space-xs transition-all shadow-md"
+                type="submit"
+              >
+                <span class="material-symbols-outlined text-[20px]"
+                  >power_settings_new</span
+                >
+                <span>تایید و خروج</span>
+              </button>
+            </form>
+            </div>
+          </div>
+        </div>
+        <!-- Inline Script for Interactive Tab Transitions and Micro-interactions -->
+        <script>
+          function switchTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll(".tab-content").forEach((content) => {
+              content.classList.add("hidden");
+            });
+
+            // Show selected tab content
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) {
+              targetContent.classList.remove("hidden");
+            }
+
+            // Reset button styles
+            document.querySelectorAll(".tab-button").forEach((btn) => {
+              btn.classList.remove("bg-surface-container", "text-primary");
+              btn.classList.add("text-on-surface-variant");
+            });
+
+            // Set active button style
+            const activeBtn = document.getElementById("btn-" + tabId);
+            if (activeBtn) {
+              activeBtn.classList.add("bg-surface-container", "text-primary");
+              activeBtn.classList.remove("text-on-surface-variant");
+            }
+          }
+
+          function toggleTicketPreview(previewId) {
+            const el = document.getElementById(previewId);
+            if (el) {
+              el.classList.toggle("hidden");
+            }
+          }
+
+          function openTicketModal() {
+            const box = document.getElementById("new-ticket-box");
+            if (box) {
+              box.scrollIntoView({ behavior: "smooth", block: "center" });
+              box.classList.add("ring-2", "ring-primary");
+              setTimeout(() => {
+                box.classList.remove("ring-2", "ring-primary");
+              }, 1500);
+            }
+          }
+
+          function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector(".material-symbols-outlined");
+            if (input.type === "password") {
+              input.type = "text";
+              icon.textContent = "visibility_off";
+            } else {
+              input.type = "password";
+              icon.textContent = "visibility";
+            }
+          }
+
+          function openLogoutModal() {
+            const modal = document.getElementById("logout-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+          }
+
+          function closeLogoutModal() {
+            const modal = document.getElementById("logout-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+          }
+
+          function confirmLogout() {
+            document.getElementById("logout-form").requestSubmit();
+          }
+
+        </script>
+      </div>
+    </main>
+    <footer
+      class="w-full bg-surface-container-low mt-space-xl shadow-[0_-1px_12px_rgba(0,0,0,0.02)]"
+    >
+      <div class="max-w-7xl mx-auto px-margin py-space-xl">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-space-xl"
+        >
+          <div class="flex flex-col gap-space-md">
+            <div class="flex items-center gap-space-sm text-primary">
+              <div
+                class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm"
+              >
+                <span class="material-symbols-outlined text-[20px]">code</span>
+              </div>
+              <span
+                class="font-headline-sm text-headline-sm font-bold text-primary"
+                >آکادمی حسین طاهری</span
+              >
+            </div>
+            <p
+              class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
+            >
+              مرجع تخصصی آموزش مهندسی نرم‌افزار، معماری ابری و توسعه پیشرفته وب
+              در ایران. یادگیری عمیق، پروژه‌محور و مطابق با استانداردهای
+              بین‌المللی روز دنیا.
+            </p>
+            <div class="flex items-center gap-space-sm text-primary">
+              <a
+                class="w-9 h-9 rounded-xl bg-card flex items-center justify-center hover:bg-surface-container-high transition-all"
+                href="#"
+                ><span class="material-symbols-outlined text-[18px]"
+                  >share</span
+                ></a
+              ><a
+                class="w-9 h-9 rounded-xl bg-card flex items-center justify-center hover:bg-surface-container-high transition-all"
+                href="#"
+                ><span class="material-symbols-outlined text-[18px]"
+                  >forum</span
+                ></a
+              ><a
+                class="w-9 h-9 rounded-xl bg-card flex items-center justify-center hover:bg-surface-container-high transition-all"
+                href="#"
+                ><span class="material-symbols-outlined text-[18px]"
+                  >podcasts</span
+                ></a
+              >
+            </div>
+          </div>
+          <div class="flex flex-col gap-space-md">
+            <h3
+              class="font-headline-sm text-headline-sm text-primary font-bold"
+            >
+              دسترسی سریع
+            </h3>
+            <ul
+              class="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant"
+            >
+              <li>
+                <a
+                  class="hover:text-primary transition-colors flex items-center gap-space-xs"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[14px]"
+                    >arrow_left</span
+                  >درباره آکادمی و سرفصل‌ها</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary transition-colors flex items-center gap-space-xs"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[14px]"
+                    >arrow_left</span
+                  >مسیرهای جامع یادگیری Full-Stack</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary transition-colors flex items-center gap-space-xs"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[14px]"
+                    >arrow_left</span
+                  >پادکست‌ها و گفتگوهای فنی مهندسی</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary transition-colors flex items-center gap-space-xs"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[14px]"
+                    >arrow_left</span
+                  >همکاری و موقعیت‌های شغلی</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="flex flex-col gap-space-md">
+            <h3
+              class="font-headline-sm text-headline-sm text-primary font-bold"
+            >
+              پشتیبانی دانشجویی
+            </h3>
+            <ul
+              class="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant"
+            >
+              <li>
+                <a
+                  class="hover:text-primary transition-colors flex items-center gap-space-xs"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[14px]"
+                    >arrow_left</span
+                  >ارسال تیکت رفع اشکال کد</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary transition-colors flex items-center gap-space-xs"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[14px]"
+                    >arrow_left</span
+                  >راهنمای فعال‌سازی لایسنس اسپات‌پلیر</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary transition-colors flex items-center gap-space-xs"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[14px]"
+                    >arrow_left</span
+                  >قوانین و ضمانت بازگشت وجه</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary transition-colors flex items-center gap-space-xs"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[14px]"
+                    >arrow_left</span
+                  >پرسش‌های متداول توسعه‌دهندگان</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="flex flex-col gap-space-md">
+            <h3
+              class="font-headline-sm text-headline-sm text-primary font-bold"
+            >
+              ارتباط با دپارتمان
+            </h3>
+            <div
+              class="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant"
+            >
+              <div class="flex items-center gap-space-xs">
+                <span
+                  class="material-symbols-outlined text-[18px] text-accent-alt"
+                  >location_on</span
+                ><span
+                  >تهران، پارک فناوری پردیس، مرکز نوآوری توسعه نرم‌افزار</span
+                >
+              </div>
+              <div class="flex items-center gap-space-xs">
+                <span
+                  class="material-symbols-outlined text-[18px] text-accent-alt"
+                  >mail</span
+                ><span class="font-code-sm text-code-sm"
+                  >support@hoseintaheri.academy</span
+                >
+              </div>
+              <div class="flex items-center gap-space-xs">
+                <span
+                  class="material-symbols-outlined text-[18px] text-accent-alt"
+                  >call</span
+                ><span class="font-code-sm text-code-sm">۰۲۱-۸۸۹۹۰۰۱۱</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-space-sm mt-space-sm">
+              <div
+                class="p-space-xs rounded-xl bg-surface-container flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-[28px] text-primary"
+                  >verified</span
+                >
+              </div>
+              <div
+                class="p-space-xs rounded-xl bg-surface-container flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-[28px] text-primary"
+                  >shield</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant font-body-sm text-body-sm"
+        >
+          <p>
+            © ۱۴۰۳ تمامی حقوق مادی و معنوی برای آکادمی توسعه دهندگان حسین طاهری
+            محفوظ است.
+          </p>
+          <div class="flex items-center gap-space-md">
+            <a class="hover:text-primary transition-colors" href="#"
+              >حریم خصوصی</a
+            ><a class="hover:text-primary transition-colors" href="#"
+              >شرایط خدمات</a
+            ><a class="hover:text-primary transition-colors" href="#"
+              >امنیت اطلاعات</a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

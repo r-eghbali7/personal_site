@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>تیکت‌های پشتیبانی</title>
+    <style>
+      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
+      main { max-width: 880px; margin: 48px auto; padding: 24px; }
+      header, li { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+      ul { list-style: none; margin: 24px 0; padding: 0; }
+      li { background: white; border: 1px solid #dce4e0; border-radius: 8px; margin: 10px 0; padding: 16px; }
+      a, button { color: #075d4f; }
+      .action { background: #075d4f; border-radius: 6px; color: white; padding: 8px 14px; text-decoration: none; }
+      .muted { color: #64716d; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div><h1>تیکت‌های پشتیبانی</h1><p class="muted">درخواست‌ها و پاسخ‌های پشتیبانی شما</p></div>
+        <a class="action" href="{% url 'tickets:create' %}">ثبت تیکت</a>
+      </header>
+      {% if tickets %}
+      <ul>
+        {% for ticket in tickets %}
+        <li>
+          <div><a href="{% url 'tickets:detail' ticket.pk %}">{{ ticket.subject }}</a><div class="muted">{{ ticket.get_status_display }} · {{ ticket.created_at|date:"Y-m-d H:i" }}</div></div>
+          <span class="muted">{{ ticket.messages.count }} پیام</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>هنوز تیکتی ثبت نکرده‌اید.</p>
+      {% endif %}
+      <a href="{% url 'accounts:profile' %}">بازگشت به پروفایل</a>
+    </main>
+  </body>
+</html>

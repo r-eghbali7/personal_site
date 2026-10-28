@@ -1,0 +1,2221 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="web_standard" name="shell-type" />
+    <style>
+      @layer base {
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          overscroll-behavior: none;
+        }
+        main > :first-child {
+          margin-top: 0 !important;
+        }
+        main > :last-child {
+          margin-bottom: 0 !important;
+        }
+        /* کانتینر اصلی اسلایدر و ایجاد فضا برای نقطه‌ها در پایین */
+        .one-keen-slider-container {
+          position: relative;
+          width: 100%;
+          margin: 0 auto;
+          padding-bottom: 40px;
+        }
+
+        /* گرد کردن حاشیه‌های بنرها و حل مشکل پرش تصویر */
+        .keen-slider__slide {
+          border-radius: 24px;
+          overflow: hidden;
+          background-color: #00244a; /* رنگ پس‌زمینه برای جلوگیری از دیده شدن فضای خالی */
+          /* حذف transform از transition برای جلوگیری از تداخل با جاوااسکریپت اسلایدر */
+          transition: opacity 0.3s ease;
+        }
+
+        /* کمرنگ‌تر کردن اسلایدهای کناری */
+        .keen-slider__slide:not(.one-slide-active) {
+          opacity: 0.6;
+        }
+
+        .one-keen-slide-image {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+          display: block;
+        }
+
+        /* جانمایی دکمه‌های فلش در گوشه پایین سمت راست بنر فعال */
+        .one-slider-arrows-wrapper {
+          position: absolute;
+          bottom: 60px; /* فاصله از پایین بنر */
+          right: 40px; /* فاصله از راست */
+          display: flex;
+          gap: 8px;
+          z-index: 10;
+        }
+
+        /* استایل دکمه‌های فلش با پس‌زمینه شیشه‌ای تیره */
+        .one-arrow {
+          background: rgba(0, 0, 0, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 8px;
+          color: white;
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          backdrop-filter: blur(4px);
+          transition: background 0.2s ease;
+        }
+
+        .one-arrow:hover {
+          background: rgba(0, 0, 0, 0.7);
+        }
+
+        /* جانمایی نقاط راهنما (Dots) در وسط و پایین کانتینر */
+        .one-slider-dots {
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 6px;
+          align-items: center;
+        }
+
+        /* استایل نقاط راهنمای غیرفعال (دایره‌ای) */
+        .one-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #d1d5db;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          padding: 0;
+        }
+
+        /* استایل نقطه فعال (خط تیره و پهن‌تر) */
+        .one-dot.one-dot-active {
+          width: 24px;
+          border-radius: 4px;
+          background-color: #9ca3af;
+        }
+      }
+      ::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+    <link
+      href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-fixed-variant": "#224777",
+              "amber-warning": "#e8a838",
+              "on-surface": "#1a1b20",
+              error: "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#e9e7ee",
+              "primary-fixed-dim": "#a6c8ff",
+              "tertiary-fixed-dim": "#9dcaff",
+              "tertiary-container": "#003c66",
+              "surface-container-low": "#f4f3f9",
+              "surface-dim": "#dad9e0",
+              "on-tertiary-container": "#70a8e3",
+              "surface-tint": "#3c5f91",
+              "inverse-on-surface": "#f1f0f7",
+              secondary: "#5d5f5f",
+              "primary-container": "#103a69",
+              "on-secondary-fixed": "#1a1c1c",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#83a5da",
+              "error-container": "#ffdad6",
+              "inverse-primary": "#a6c8ff",
+              tertiary: "#002643",
+              "on-secondary-container": "#5f6161",
+              "secondary-container": "#dcdddd",
+              card: "#f7f7f8",
+              "on-tertiary-fixed-variant": "#00497b",
+              "accent-alt": "#26b2e8",
+              "on-surface-variant": "#43474f",
+              "surface-bright": "#faf8ff",
+              "on-secondary-fixed-variant": "#454747",
+              surface: "#faf8ff",
+              "on-background": "#1a1b20",
+              "secondary-fixed": "#e2e2e2",
+              "tertiary-fixed": "#d1e4ff",
+              primary: "#00244a",
+              "surface-variant": "#e3e2e8",
+              "surface-container-highest": "#e3e2e8",
+              border: "#ceced1",
+              destructive: "#ef4444",
+              "on-primary-fixed": "#001c3b",
+              background: "#fafafa",
+              "on-error": "#ffffff",
+              "secondary-fixed-dim": "#c6c6c7",
+              "on-tertiary-fixed": "#001d35",
+              "on-tertiary": "#ffffff",
+              "muted-text": "#bababd",
+              "on-error-container": "#93000a",
+              "on-secondary": "#ffffff",
+              "primary-fixed": "#d5e3ff",
+              outline: "#737780",
+              "surface-container": "#eeedf4",
+              "inverse-surface": "#2f3035",
+              "outline-variant": "#c3c6d0",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "space-xs": "0.25rem",
+              gutter: "1.5rem",
+              "space-sm": "0.5rem",
+              "margin-mobile": "1rem",
+              "space-md": "1rem",
+              "space-xl": "2.5rem",
+              "gutter-mobile": "1rem",
+              "space-lg": "1.5rem",
+              margin: "2rem",
+            },
+            fontFamily: {
+              "display-hero": ["Plus Jakarta Sans"],
+              "label-badge": ["Inter"],
+              "body-lg": ["Inter"],
+              "headline-lg-mobile": ["Plus Jakarta Sans"],
+              "display-hero-mobile": ["Plus Jakarta Sans"],
+              "headline-lg": ["Plus Jakarta Sans"],
+              "body-sm": ["Inter"],
+              "code-sm": ["JetBrains Mono"],
+              "body-md": ["Inter"],
+              "headline-md": ["Plus Jakarta Sans"],
+              "code-md": ["JetBrains Mono"],
+              "headline-sm": ["Plus Jakarta Sans"],
+            },
+            fontSize: {
+              "display-hero": [
+                "40px",
+                { lineHeight: "56px", fontWeight: "800" },
+              ],
+              "label-badge": [
+                "11px",
+                { lineHeight: "16px", fontWeight: "600" },
+              ],
+              "body-lg": ["16px", { lineHeight: "28px", fontWeight: "400" }],
+              "headline-lg-mobile": [
+                "22px",
+                { lineHeight: "34px", fontWeight: "700" },
+              ],
+              "display-hero-mobile": [
+                "28px",
+                { lineHeight: "40px", fontWeight: "800" },
+              ],
+              "headline-lg": [
+                "28px",
+                { lineHeight: "44px", fontWeight: "700" },
+              ],
+              "body-sm": ["12px", { lineHeight: "20px", fontWeight: "400" }],
+              "code-sm": ["12px", { lineHeight: "18px", fontWeight: "500" }],
+              "body-md": ["14px", { lineHeight: "24px", fontWeight: "400" }],
+              "headline-md": [
+                "22px",
+                { lineHeight: "36px", fontWeight: "700" },
+              ],
+              "code-md": ["14px", { lineHeight: "22px", fontWeight: "500" }],
+              "headline-sm": [
+                "18px",
+                { lineHeight: "28px", fontWeight: "600" },
+              ],
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-background font-body-md text-on-surface-variant antialiased">
+    <header class="fixed top-0 left-0 right-0 z-50 flex flex-col">
+      <div
+        class="h-10 bg-primary-container text-on-primary flex items-center shadow-sm"
+      >
+        <div
+          class="max-w-7xl w-full mx-auto px-margin flex items-center justify-between font-body-sm text-body-sm"
+        >
+          <div class="flex items-center gap-6">
+            <span class="flex items-center gap-1.5"
+              ><span class="material-symbols-outlined text-[16px]">call</span
+              ><span>پشتیبانی: ۰۲۱-۸۸۹۹۲۲۰</span></span
+            ><span class="hidden sm:flex items-center gap-1.5"
+              ><span class="material-symbols-outlined text-[16px]">mail</span
+              ><span>support@taheri.dev</span></span
+            >
+          </div>
+          <div class="flex items-center gap-4 text-on-primary-container">
+            <span class="flex items-center gap-1"
+              ><span class="material-symbols-outlined text-[16px]"
+                >schedule</span
+              ><span>شنبه تا پنجشنبه ۸ الی ۲۰</span></span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="w-full pt-space-sm">
+        <div class="max-w-7xl mx-auto px-margin">
+          <div
+            class="h-[84px] bg-card/90 backdrop-blur-xl rounded-3xl border border-border px-gutter flex items-center justify-between shadow-[0_10px_30px_-8px_rgba(15,23,42,0.12)]"
+          >
+            <div class="flex items-center gap-4">
+              <img
+                alt="HT Developer Logo"
+                class="h-8 w-auto object-contain"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg"
+              />
+              <div class="flex flex-col">
+                <span
+                  class="font-headline-sm text-headline-sm text-primary-container font-bold leading-tight"
+                  >حسین طاهری</span
+                ><span
+                  class="font-body-sm text-body-sm text-outline leading-tight"
+                  >آکادمی تخصصی توسعه‌دهندگان</span
+                >
+              </div>
+            </div>
+            <nav
+              class="hidden xl:flex items-center gap-1 p-1"
+              data-active-classes="bg-primary-container text-on-primary font-bold rounded-xl"
+            >
+              <a
+                aria-current="page"
+                class="px-3.5 py-2 transition-all bg-primary-container text-on-primary font-bold rounded-xl"
+                data-path="home"
+                href="#"
+                >صفحه اصلی</a
+              ><a
+                class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md"
+                data-path="courses"
+                href="#"
+                >دوره‌ها و آموزش‌ها</a
+              ><a
+                class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md"
+                data-path="blog"
+                href="#"
+                >وبلاگ</a
+              ><a
+                class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md"
+                data-path="podcasts"
+                href="#"
+                >پادکست‌ها</a
+              ><a
+                class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md"
+                data-path="online-quiz"
+                href="#"
+                >آزمون آنلاین</a
+              ><a
+                class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md"
+                data-path="support-tickets"
+                href="#"
+                >تیکت پشتیبانی</a
+              >
+            </nav>
+            <div class="flex items-center gap-3">
+              <div class="hidden md:flex items-center relative w-56 lg:w-64">
+                <span
+                  class="material-symbols-outlined absolute right-3 text-outline text-[20px] pointer-events-none"
+                  >search</span
+                ><input
+                  class="w-full h-11 pr-10 pl-4 bg-background rounded-full border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner transition-colors"
+                  placeholder="جستجوی آموزش، مقاله..."
+                  type="text"
+                />
+              </div>
+              <a
+                class="h-11 w-11 rounded-xl bg-primary-container text-on-primary flex items-center justify-center hover:bg-tertiary-container hover:text-on-primary transition-colors"
+                data-path="cart"
+                href="#"
+                ><span class="material-symbols-outlined text-[22px]"
+                  >shopping_bag</span
+                ></a
+              >
+              <div class="flex items-center gap-2 pr-1">
+                <img
+                  alt="Profile"
+                  class="w-8 h-8 rounded-full object-cover border border-border"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q"
+                /><a
+                  class="hidden sm:inline-block font-body-md text-body-md text-primary-container font-semibold hover:text-tertiary-container transition-colors"
+                  data-path="user-profile"
+                  href="#"
+                  >حساب کاربری</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="w-full pt-[132px] bg-background min-h-screen">
+      <div class="flex flex-col w-full">
+        <!-- 1. HERO SECTION (3-Piece Layout Slider) -->
+        <!-- اضافه شدن کلاس‌های محدودکننده عرض و ایجاد فاصله از هدر -->
+        <section class="w-full max-w-7xl mx-auto px-margin pt-8 pb-space-lg">
+          <div class="elementor-widget-container">
+            <div
+              class="one-keen-slider-container"
+              id="one-slider-f104e3e-container"
+            >
+              <!-- تنظیمات مربوط به origin و slidesPerView -->
+              <div id="one-slider-f104e3e" class="keen-slider">
+                <!-- اسلاید اول -->
+                <div class="keen-slider__slide one-slide-item one-slide-active">
+                  <a href="https://hosseintaheri.ir/pt/ch/">
+                    <picture>
+                      <source
+                        media="(max-width: 767px)"
+                        srcset="
+                          https://hosseintaheri.ir/wp-content/uploads/2026/09/Banner-Web-Decsktop-1000x1000px-Charisma.webp
+                        "
+                      />
+                      <img
+                        class="one-keen-slide-image"
+                        src="https://hosseintaheri.ir/wp-content/uploads/2026/09/Banner-Web-Decsktop-2000x600-2.webp"
+                        alt="کاریزما"
+                        loading="lazy"
+                      />
+                    </picture>
+                  </a>
+                </div>
+
+                <!-- اسلاید دوم -->
+                <div class="keen-slider__slide one-slide-item">
+                  <a href="https://hosseintaheri.ir/product/bmbook/">
+                    <picture>
+                      <source
+                        media="(max-width: 767px)"
+                        srcset="
+                          https://hosseintaheri.ir/wp-content/uploads/2026/05/بنر-کتاب-بیزنس-مستری-سایز-موبایلcopy.webp
+                        "
+                      />
+                      <img
+                        class="one-keen-slide-image"
+                        src="https://hosseintaheri.ir/wp-content/uploads/2026/06/بنر-بیزنس-مستری-صفحه-اصلی-1.webp"
+                        alt="بیزنس مستری"
+                        loading="lazy"
+                      />
+                    </picture>
+                  </a>
+                </div>
+
+                <!-- اسلاید سوم -->
+                <div class="keen-slider__slide one-slide-item">
+                  <a href="https://hosseintaheri.ir/pt/b360/">
+                    <picture>
+                      <source
+                        media="(max-width: 767px)"
+                        srcset="
+                          https://hosseintaheri.ir/wp-content/uploads/2026/05/بنر-اسلایدر-سایز-موبایل-1080در1080-دوره-طبیزنس360.webp
+                        "
+                      />
+                      <img
+                        class="one-keen-slide-image"
+                        src="https://hosseintaheri.ir/wp-content/uploads/2026/06/360-new-02.jpg"
+                        alt="بیزنس 360"
+                        loading="lazy"
+                      />
+                    </picture>
+                  </a>
+                </div>
+              </div>
+
+              <!-- دکمه‌های ناوبری روی بنر -->
+              <div class="one-slider-arrows-wrapper">
+                <button class="one-arrow one-arrow-next">
+                  <span class="material-symbols-outlined text-[18px]"
+                    >chevron_right</span
+                  >
+                </button>
+                <button class="one-arrow one-arrow-prev">
+                  <span class="material-symbols-outlined text-[18px]"
+                    >chevron_left</span
+                  >
+                </button>
+              </div>
+
+              <!-- نقاط راهنما در زیر بنر -->
+              <div class="one-slider-dots">
+                <button
+                  class="one-dot one-dot-active"
+                  aria-label="Slide 1"
+                ></button>
+                <button class="one-dot" aria-label="Slide 2"></button>
+                <button class="one-dot" aria-label="Slide 3"></button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 2. PERSONAL BIO & HIGHLIGHTS BANNER -->
+        <section class="w-full max-w-7xl mx-auto px-margin py-space-md">
+          <div
+            class="bg-card rounded-[28px] border border-border p-6 sm:p-10 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+          >
+            <!-- Instructor Visual Column -->
+            <div class="lg:col-span-4 flex flex-col items-center text-center">
+              <div
+                class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-3xl overflow-hidden border-4 border-surface-container-lowest shadow-md"
+              >
+                <img
+                  alt="حسین طاهری | مدرس و معمار ارشد نرم‌افزار"
+                  class="w-full h-full object-cover"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q"
+                />
+                <div
+                  class="absolute bottom-2 right-2 left-2 py-1.5 px-3 rounded-xl bg-primary-container/90 backdrop-blur-md text-surface-container-lowest flex items-center justify-center gap-1.5 shadow-sm"
+                >
+                  <span
+                    class="material-symbols-outlined text-accent-alt text-[16px]"
+                    >verified</span
+                  >
+                  <span class="font-body-sm text-body-sm font-semibold"
+                    >حسین طاهری | Hossein Taheri</span
+                  >
+                </div>
+              </div>
+              <span
+                class="mt-4 font-headline-sm text-headline-sm text-primary-container font-bold"
+                >معمار ارشد نرم‌افزار و منتور ارشد</span
+              >
+              <span class="font-body-sm text-body-sm text-secondary mt-0.5"
+                >۱۰+ سال سابقه طراحی سامانه‌های Enterprise</span
+              >
+            </div>
+            <!-- Instructor Bio & Philosophy -->
+            <div class="lg:col-span-8 flex flex-col gap-5">
+              <div
+                class="inline-flex items-center gap-2 text-primary-container font-body-sm text-body-sm font-semibold"
+              >
+                <span class="w-2 h-2 rounded-full bg-accent-alt"></span>
+                <span>فلسفه آموزش در DevAcademy</span>
+              </div>
+              <h2
+                class="font-headline-lg text-headline-lg text-primary-container font-bold leading-snug"
+              >
+                تفاوت آموزش اصولی با بازتولید ساده داکیومنت‌ها
+              </h2>
+              <p
+                class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
+              >
+                در DevAcademy باور داریم که یادگیری برنامه‌نویسی با حفظ کردن
+                کدها حاصل نمی‌شود. برنامه‌نویس واقعی کسی است که تفکر الگوریتمی،
+                درک معماری‌های پایدار، شیوه‌های آزمون خودکار و رفع باگ‌های
+                پیچیده را فرا گرفته باشد. تمامی دوره‌ها با تکیه بر تجربیات واقعی
+                در مقیاس‌های ترافیکی بزرگ، چالش‌های زیرساختی و اصول Clean Code
+                تدوین شده‌اند تا دانشجویان پس از اتمام آموزش مستقیماً وارد
+                چرخه‌های تولید محصول شوند.
+              </p>
+              <!-- 3 Pillars Features -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
+                <div
+                  class="p-4 rounded-2xl bg-surface-container-lowest border border-border/70 flex flex-col gap-2"
+                >
+                  <span
+                    class="h-9 w-9 rounded-xl bg-primary-container text-surface-container-lowest flex items-center justify-center"
+                  >
+                    <span class="material-symbols-outlined text-[20px]"
+                      >architecture</span
+                    >
+                  </span>
+                  <span
+                    class="font-headline-sm text-body-md font-bold text-on-surface"
+                    >پروژه‌محور و واقعی</span
+                  >
+                  <span class="font-body-sm text-body-sm text-secondary"
+                    >پیاده‌سازی پلتفرم‌های کاربردی منطبق بر نیاز بازار کار
+                    بین‌المللی.</span
+                  >
+                </div>
+                <div
+                  class="p-4 rounded-2xl bg-surface-container-lowest border border-border/70 flex flex-col gap-2"
+                >
+                  <span
+                    class="h-9 w-9 rounded-xl bg-primary-container text-surface-container-lowest flex items-center justify-center"
+                  >
+                    <span class="material-symbols-outlined text-[20px]"
+                      >support_agent</span
+                    >
+                  </span>
+                  <span
+                    class="font-headline-sm text-body-md font-bold text-on-surface"
+                    >پشتیبانی تیکتینگ سریع</span
+                  >
+                  <span class="font-body-sm text-body-sm text-secondary"
+                    >بررسی مستقیم کدها و حل اشکالات توسط مدرس و دستیاران
+                    آموزشی.</span
+                  >
+                </div>
+                <div
+                  class="p-4 rounded-2xl bg-surface-container-lowest border border-border/70 flex flex-col gap-2"
+                >
+                  <span
+                    class="h-9 w-9 rounded-xl bg-primary-container text-surface-container-lowest flex items-center justify-center"
+                  >
+                    <span class="material-symbols-outlined text-[20px]"
+                      >fact_check</span
+                    >
+                  </span>
+                  <span
+                    class="font-headline-sm text-body-md font-bold text-on-surface"
+                    >سنجش مهارت دوره‌ای</span
+                  >
+                  <span class="font-body-sm text-body-sm text-secondary"
+                    >کوئیزهای تحلیلی و چالش‌های کدنویسی آنلاین پس از هر
+                    سرفصل.</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 3. FEATURED COURSES SECTION -->
+        <section
+          class="w-full max-w-7xl mx-auto px-margin py-space-xl"
+          id="courses"
+        >
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"
+          >
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-2">
+                <span class="h-6 w-1 rounded-full bg-accent-alt"></span>
+                <h2
+                  class="font-headline-lg text-headline-lg text-primary-container font-bold"
+                >
+                  دوره‌های تخصصی و مسیرهای یادگیری
+                </h2>
+              </div>
+              <p class="font-body-md text-body-md text-on-surface-variant">
+                جامع‌ترین دوره‌های نرم‌افزاری بر اساس آخرین نسخه فریم‌ورک‌ها
+              </p>
+            </div>
+            <a
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-high text-primary-container font-body-md text-body-md font-semibold hover:bg-primary-container hover:text-on-primary transition-colors"
+              href="#"
+            >
+              <span>مشاهده همه دوره‌ها (۵۰)</span>
+              <span class="material-symbols-outlined text-[18px]"
+                >chevron_left</span
+              >
+            </a>
+          </div>
+          <!-- Course Cards Grid (Fixed 362px Height, rounded-[28px]) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Course Card 1: Next.js 15 -->
+            <div
+              class="h-[362px] rounded-[28px] bg-card border border-border overflow-hidden flex flex-col p-4 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:shadow-xl transition-all duration-300 group"
+            >
+              <!-- Cover Media -->
+              <div
+                class="relative h-36 w-full rounded-2xl overflow-hidden bg-primary-container"
+              >
+                <div
+                  class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  data-alt="Modern Next.js 15 and React framework visual banner with abstract geometric interface wireframes and Persian educational typography in electric blue and navy tones"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuCgmQ5wZiQhtyJar2i_qZe6f_7XEVVCWJ1fFrw-Pbq7KD551_TPBVI6KQF85PeMWpFYxYPa2KsQ8d92u5OxEm6J1KOzNgtjeVMuazhdtA9CMoKK21TolYs9PA2CPobdEhmJH7aMe0qt4XwrMlQaxaM8KGCszyfeeJ2dEhHn1Gs2dtF42b-r_JUN6fB6qCgFCcQ1j6rdvb4Zz1H9PAoyIt8rYq0vJwROk1xDewDIBhsOHoJBel7mtD0oeQ&quot;);
+                  "
+                ></div>
+                <span
+                  class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-primary/85 backdrop-blur-md text-surface-container-lowest font-label-badge text-label-badge font-semibold"
+                >
+                  فول‌استک مدرن
+                </span>
+                <span
+                  class="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-code-sm text-code-sm font-bold"
+                >
+                  v15.1
+                </span>
+              </div>
+              <!-- Body Details -->
+              <div class="flex flex-col flex-1 pt-3">
+                <h3
+                  class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-2 leading-snug group-hover:text-tertiary-container transition-colors"
+                >
+                  دوره جامع مسترکلس Next.js 15 و React Fullstack
+                </h3>
+                <div
+                  class="flex items-center gap-2 mt-2 text-secondary font-body-sm text-body-sm"
+                >
+                  <span class="material-symbols-outlined text-[16px]"
+                    >person</span
+                  >
+                  <span>مدرس: حسین طاهری</span>
+                </div>
+                <div
+                  class="flex items-center gap-3 mt-1.5 text-secondary font-body-sm text-body-sm"
+                >
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="material-symbols-outlined text-[16px] text-outline"
+                      >schedule</span
+                    >
+                    <span>۴۸ ساعت آموزش</span>
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="material-symbols-outlined text-[16px] text-amber-warning"
+                      >star</span
+                    >
+                    <span>۴.۹ (۱,۲۴۰ نظر)</span>
+                  </span>
+                </div>
+              </div>
+              <!-- Pinned Sticky Footer -->
+              <div
+                class="mt-auto pt-3 border-t border-border flex items-center justify-between"
+              >
+                <div class="flex flex-col">
+                  <span class="font-label-badge text-[10px] text-secondary"
+                    >هزینه دوره</span
+                  >
+                  <div class="flex items-baseline gap-1">
+                    <span
+                      class="font-headline-sm text-headline-sm font-bold text-primary-container"
+                      >۲,۴۵۰,۰۰۰</span
+                    >
+                    <span class="font-body-sm text-[11px] text-secondary"
+                      >تومان</span
+                    >
+                  </div>
+                </div>
+                <button
+                  class="h-10 px-3.5 rounded-xl bg-primary-container text-surface-container-lowest hover:bg-tertiary-container flex items-center gap-1 font-body-sm text-body-sm font-semibold transition-colors"
+                  title="ثبت‌نام در دوره"
+                >
+                  <span>ثبت‌نام</span>
+                  <span class="material-symbols-outlined text-[16px]"
+                    >arrow_left</span
+                  >
+                </button>
+              </div>
+            </div>
+            <!-- Course Card 2: Node.js Microservices -->
+            <div
+              class="h-[362px] rounded-[28px] bg-card border border-border overflow-hidden flex flex-col p-4 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:shadow-xl transition-all duration-300 group"
+            >
+              <div
+                class="relative h-36 w-full rounded-2xl overflow-hidden bg-primary-container"
+              >
+                <div
+                  class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  data-alt="Microservices backend architecture diagram featuring Node.js, RabbitMQ, Kafka, and Redis on sleek dark dashboard in modern Iranian software engineering studio"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuDh56e4HWJT3aHNk_-jfV3W_PI5DVv8uLhbameIdGC5WZ32BRyGr0UDSeC5WgOPB4le8C0ZSwZZfaKSdSikZ_S-irC0iChx-vnU0Htgg0I-kFkWaC6SanrkvuF62tofiJ9emYmcMwMae8v7NwOoDNlJuLbbenmD2HTfcNHzENHhjSt7F-t0BCm8TxGbGTPNgHVfEkMXLjrdVBO4J3HWKFDyDSDcsuHFb_mjSW6q6Rx-TIAAW_Tu9Z2KMg&quot;);
+                  "
+                ></div>
+                <span
+                  class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-primary/85 backdrop-blur-md text-surface-container-lowest font-label-badge text-label-badge font-semibold"
+                >
+                  بک‌اند پیشرفته
+                </span>
+                <span
+                  class="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-code-sm text-code-sm font-bold"
+                >
+                  NestJS
+                </span>
+              </div>
+              <div class="flex flex-col flex-1 pt-3">
+                <h3
+                  class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-2 leading-snug group-hover:text-tertiary-container transition-colors"
+                >
+                  طراحی میکروسرویس‌های مقیاس‌پذیر با Node.js و NestJS
+                </h3>
+                <div
+                  class="flex items-center gap-2 mt-2 text-secondary font-body-sm text-body-sm"
+                >
+                  <span class="material-symbols-outlined text-[16px]"
+                    >person</span
+                  >
+                  <span>مدرس: حسین طاهری</span>
+                </div>
+                <div
+                  class="flex items-center gap-3 mt-1.5 text-secondary font-body-sm text-body-sm"
+                >
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="material-symbols-outlined text-[16px] text-outline"
+                      >schedule</span
+                    >
+                    <span>۵۲ ساعت آموزش</span>
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="material-symbols-outlined text-[16px] text-amber-warning"
+                      >star</span
+                    >
+                    <span>۵.۰ (۸۹۰ نظر)</span>
+                  </span>
+                </div>
+              </div>
+              <div
+                class="mt-auto pt-3 border-t border-border flex items-center justify-between"
+              >
+                <div class="flex flex-col">
+                  <span class="font-label-badge text-[10px] text-secondary"
+                    >هزینه دوره</span
+                  >
+                  <div class="flex items-baseline gap-1">
+                    <span
+                      class="font-headline-sm text-headline-sm font-bold text-primary-container"
+                      >۲,۸۹۰,۰۰۰</span
+                    >
+                    <span class="font-body-sm text-[11px] text-secondary"
+                      >تومان</span
+                    >
+                  </div>
+                </div>
+                <button
+                  class="h-10 px-3.5 rounded-xl bg-primary-container text-surface-container-lowest hover:bg-tertiary-container flex items-center gap-1 font-body-sm text-body-sm font-semibold transition-colors"
+                  title="ثبت‌نام در دوره"
+                >
+                  <span>ثبت‌نام</span>
+                  <span class="material-symbols-outlined text-[16px]"
+                    >arrow_left</span
+                  >
+                </button>
+              </div>
+            </div>
+            <!-- Course Card 3: Python & AI Engineering -->
+            <div
+              class="h-[362px] rounded-[28px] bg-card border border-border overflow-hidden flex flex-col p-4 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:shadow-xl transition-all duration-300 group"
+            >
+              <div
+                class="relative h-36 w-full rounded-2xl overflow-hidden bg-primary-container"
+              >
+                <div
+                  class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  data-alt="Artificial intelligence machine learning neural network coding visualization in Python with clean slate blue gradients and vector tech nodes"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuBX4WTqqXOsI5jHCww7L-o1syYhKE-pFS7taVV8ppZgJLe2czonaSEQVP8AZMRLv0MhM1ZCiH5gHivUIIrL0nprYf_IuOx5hbWZME-4aNjgYRZ1z_gJsJKQ6znEIwhZfS5zjQAKebn1spTDR0UJd6uAmnarK9AHHULiVXD8nkwfPttDjg0spByxDRetvJ3QoDo9zfrqBSAIDmOK-P8b_u2j1MOMcOq1aMRFTpHc9I3VqkTqyb-NFSfCgQ&quot;);
+                  "
+                ></div>
+                <span
+                  class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-primary/85 backdrop-blur-md text-surface-container-lowest font-label-badge text-label-badge font-semibold"
+                >
+                  هوش مصنوعی و داده
+                </span>
+                <span
+                  class="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-code-sm text-code-sm font-bold"
+                >
+                  LLMs
+                </span>
+              </div>
+              <div class="flex flex-col flex-1 pt-3">
+                <h3
+                  class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-2 leading-snug group-hover:text-tertiary-container transition-colors"
+                >
+                  دوره مهندسی هوش مصنوعی کاربردی و توسعه با Python
+                </h3>
+                <div
+                  class="flex items-center gap-2 mt-2 text-secondary font-body-sm text-body-sm"
+                >
+                  <span class="material-symbols-outlined text-[16px]"
+                    >person</span
+                  >
+                  <span>مدرس: حسین طاهری</span>
+                </div>
+                <div
+                  class="flex items-center gap-3 mt-1.5 text-secondary font-body-sm text-body-sm"
+                >
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="material-symbols-outlined text-[16px] text-outline"
+                      >schedule</span
+                    >
+                    <span>۴۰ ساعت آموزش</span>
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="material-symbols-outlined text-[16px] text-amber-warning"
+                      >star</span
+                    >
+                    <span>۴.۸ (۶۲۰ نظر)</span>
+                  </span>
+                </div>
+              </div>
+              <div
+                class="mt-auto pt-3 border-t border-border flex items-center justify-between"
+              >
+                <div class="flex flex-col">
+                  <span class="font-label-badge text-[10px] text-secondary"
+                    >هزینه دوره</span
+                  >
+                  <div class="flex items-baseline gap-1">
+                    <span
+                      class="font-headline-sm text-headline-sm font-bold text-primary-container"
+                      >۲,۱۵۰,۰۰۰</span
+                    >
+                    <span class="font-body-sm text-[11px] text-secondary"
+                      >تومان</span
+                    >
+                  </div>
+                </div>
+                <button
+                  class="h-10 px-3.5 rounded-xl bg-primary-container text-surface-container-lowest hover:bg-tertiary-container flex items-center gap-1 font-body-sm text-body-sm font-semibold transition-colors"
+                  title="ثبت‌نام در دوره"
+                >
+                  <span>ثبت‌نام</span>
+                  <span class="material-symbols-outlined text-[16px]"
+                    >arrow_left</span
+                  >
+                </button>
+              </div>
+            </div>
+            <!-- Course Card 4: Docker & DevOps -->
+            <div
+              class="h-[362px] rounded-[28px] bg-card border border-border overflow-hidden flex flex-col p-4 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:shadow-xl transition-all duration-300 group"
+            >
+              <div
+                class="relative h-36 w-full rounded-2xl overflow-hidden bg-primary-container"
+              >
+                <div
+                  class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  data-alt="DevOps continuous integration CI CD pipeline with Docker containers and Kubernetes cluster monitors in a contemporary tech operations room"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuBUI9WnxTipy2z-JoFrW4ZE3Wa9MJSVoBrgj5Zedaz-I0dbmgNejYr3xsTYsE4s28-_zSSKro7bHabLLzjF-tth-yRJXeauFOI31MsUOoSTPUgeEoS9BK5CafDTPX0QXeDx26C0Ea0EPZAu5LBjTPGoveZh13F8vLm2YHBR-FxafN7NH9B3sQ-ePQ-9_XZctq6mmf1-nLnaY5yKt36VoUYhH6i4-tWNZme9zCd5aHebVRCYgKTnBO2P2g&quot;);
+                  "
+                ></div>
+                <span
+                  class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-primary/85 backdrop-blur-md text-surface-container-lowest font-label-badge text-label-badge font-semibold"
+                >
+                  زیرساخت و DevOps
+                </span>
+                <span
+                  class="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-code-sm text-code-sm font-bold"
+                >
+                  K8s
+                </span>
+              </div>
+              <div class="flex flex-col flex-1 pt-3">
+                <h3
+                  class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-2 leading-snug group-hover:text-tertiary-container transition-colors"
+                >
+                  دوره تخصصی داکر، کوبرنتیز و پایپ‌لاین‌های CI/CD
+                </h3>
+                <div
+                  class="flex items-center gap-2 mt-2 text-secondary font-body-sm text-body-sm"
+                >
+                  <span class="material-symbols-outlined text-[16px]"
+                    >person</span
+                  >
+                  <span>مدرس: حسین طاهری</span>
+                </div>
+                <div
+                  class="flex items-center gap-3 mt-1.5 text-secondary font-body-sm text-body-sm"
+                >
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="material-symbols-outlined text-[16px] text-outline"
+                      >schedule</span
+                    >
+                    <span>۳۶ ساعت آموزش</span>
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="material-symbols-outlined text-[16px] text-amber-warning"
+                      >star</span
+                    >
+                    <span>۴.۹ (۹۴۰ نظر)</span>
+                  </span>
+                </div>
+              </div>
+              <div
+                class="mt-auto pt-3 border-t border-border flex items-center justify-between"
+              >
+                <div class="flex flex-col">
+                  <span class="font-label-badge text-[10px] text-secondary"
+                    >هزینه دوره</span
+                  >
+                  <div class="flex items-baseline gap-1">
+                    <span
+                      class="font-headline-sm text-headline-sm font-bold text-primary-container"
+                      >۱,۹۸۰,۰۰۰</span
+                    >
+                    <span class="font-body-sm text-[11px] text-secondary"
+                      >تومان</span
+                    >
+                  </div>
+                </div>
+                <button
+                  class="h-10 px-3.5 rounded-xl bg-primary-container text-surface-container-lowest hover:bg-tertiary-container flex items-center gap-1 font-body-sm text-body-sm font-semibold transition-colors"
+                  title="ثبت‌نام در دوره"
+                >
+                  <span>ثبت‌نام</span>
+                  <span class="material-symbols-outlined text-[16px]"
+                    >arrow_left</span
+                  >
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 4. BLOG BENTO GRID SECTION -->
+        <section class="w-full max-w-7xl mx-auto px-margin py-space-xl">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"
+          >
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-2">
+                <span class="h-6 w-1 rounded-full bg-accent-alt"></span>
+                <h2
+                  class="font-headline-lg text-headline-lg text-primary-container font-bold"
+                >
+                  جدیدترین مقالات و یادداشت‌های فنی
+                </h2>
+              </div>
+              <p class="font-body-md text-body-md text-on-surface-variant">
+                تحلیل عمیق مفاهیم معماری و ابزارهای روز اکوسیستم توسعه نرم‌افزار
+              </p>
+            </div>
+            <a
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-high text-primary-container font-body-md text-body-md font-semibold hover:bg-primary-container hover:text-on-primary transition-colors"
+              href="#"
+            >
+              <span>مشاهده آرشیو مقالات</span>
+              <span class="material-symbols-outlined text-[18px]"
+                >chevron_left</span
+              >
+            </a>
+          </div>
+          <!-- Bento Grid Composition: 1 Dominant Tall Card + 2x2 Subgrid -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Dominant 1x Tall Storytelling Bento Card (5 cols) -->
+            <a
+              class="lg:col-span-5 h-[480px] rounded-[28px] overflow-hidden relative group border border-border flex flex-col justify-end p-8 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)]"
+              href="#"
+            >
+              <div
+                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                data-alt="High tech software architecture blueprint diagrams on dark interactive glass display with code structures and system design components"
+                style="
+                  background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuCeGmI6ODUIccWkUGo6lgRRkLaEE6DVxnpeAjYcSViIHWCLsii9ImerWIKSWSwkwAoslURLMrLTCkMl1ReIF00KCiavwU_Sh9e9Fe0uP3heCMoqGg-0BvulKME6XnbeY5AAm3NJ9NfEUXPd6xvwBNJQTK-ANyzVRjZND6Wgf7vUSwU7GaMm9Vl3DFtj1wPZs6z2mTUeE33wuofxY6kuxwQt_uE8b-PAdmIPcOm4xbru3TuDkTPUSNa9FQ&quot;);
+                "
+              ></div>
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent"
+              ></div>
+              <!-- Top Right Category Badge -->
+              <span
+                class="absolute top-6 right-6 px-3.5 py-1 rounded-full bg-primary-container text-surface-container-lowest font-label-badge text-label-badge font-bold border border-surface-container-lowest/20 shadow-md"
+              >
+                معماری نرم‌افزار
+              </span>
+              <!-- Card Bottom Content -->
+              <div class="relative z-10 flex flex-col gap-3">
+                <div
+                  class="flex items-center gap-3 text-accent-alt font-body-sm text-body-sm"
+                >
+                  <span class="flex items-center gap-1"
+                    ><span class="material-symbols-outlined text-[15px]"
+                      >calendar_today</span
+                    >۲۴ بهمن ۱۴۰۳</span
+                  >
+                  <span>•</span>
+                  <span class="flex items-center gap-1"
+                    ><span class="material-symbols-outlined text-[15px]"
+                      >schedule</span
+                    >زمان مطالعه: ۱۲ دقیقه</span
+                  >
+                </div>
+                <h3
+                  class="font-headline-md text-headline-md text-surface-container-lowest font-bold leading-snug group-hover:text-accent-alt transition-colors"
+                >
+                  پیاده‌سازی معماری تمیز (Clean Architecture) در پروژه‌های مدرن
+                  وب با TypeScript
+                </h3>
+                <p
+                  class="font-body-md text-body-md text-surface-container-low/80 line-clamp-2"
+                >
+                  بررسی جامع تفکیک لایه‌های دامنه، موارد کاربرد (Use Cases)، و
+                  لایه زیرساخت با ارائه نمونه کدهای عملیاتی و مقایسه با روش‌های
+                  سنتی.
+                </p>
+              </div>
+            </a>
+            <!-- 2x2 Square Cards Subgrid (7 cols) -->
+            <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <!-- Bento Card 1 -->
+              <a
+                class="h-[228px] rounded-[24px] overflow-hidden relative group border border-border flex flex-col justify-end p-5 shadow-sm"
+                href="#"
+              >
+                <div
+                  class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  data-alt="Next.js server actions illustration with network requests and instant API execution visualization in clean software interface"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuAmv_zXTLCF53NDrCwLD-JequOKG4HxbfqCi06f4DXykhDJRG0l2mIfswLpCb2v8mjuQOe6D3nM9ZXK3bkpovU1Dt0UaM3_xWFb3FhG-k_8-9_ajWLk0M5ruXOKG5m2-dawYBBiQdfShHcOB7p7BuKPoUHIhLywgj-c9-NY78n_AWX7c_S4hlgiUmUthwXoTBVk3S7WsUnh1V8haF4iTA3a7VU3fgrtiAAwFk7iSiEITB165AcYI9L-TA&quot;);
+                  "
+                ></div>
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-transparent"
+                ></div>
+                <span
+                  class="absolute top-4 right-4 px-2.5 py-0.5 rounded-full bg-primary-container text-surface-container-lowest font-label-badge text-[11px] font-semibold border border-surface-container-lowest/20"
+                >
+                  Next.js
+                </span>
+                <div class="relative z-10 flex flex-col gap-1.5">
+                  <span class="text-accent-alt font-body-sm text-[11px]"
+                    >زمان مطالعه: ۸ دقیقه</span
+                  >
+                  <h4
+                    class="font-headline-sm text-body-lg font-bold text-surface-container-lowest leading-snug group-hover:text-accent-alt transition-colors line-clamp-2"
+                  >
+                    راهنمای جامع کار با Server Actions در Next.js 15
+                  </h4>
+                </div>
+              </a>
+              <!-- Bento Card 2 -->
+              <a
+                class="h-[228px] rounded-[24px] overflow-hidden relative group border border-border flex flex-col justify-end p-5 shadow-sm"
+                href="#"
+              >
+                <div
+                  class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  data-alt="Database schema comparison between PostgreSQL relational tables and MongoDB NoSQL document nodes with clean glowing connections"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuB3FJBfmOKvJRCZXYgRhRZ2UjMnHRpJrWf7FmaLk0iqLrftG2v_gfyfNKqgJG4aEpan-7IbMSyPJG1dlIKDzYAtW8Z_Qomd5K9KkIkxnYrc6EnR_SgG-uCbiE5iJGrc9CO38Iwj0a8GBbpUkMvJldIDQF2Gj_IbNe04iGQaYB-_8C-gSQa_Ds_sW36-PDaKEtwVTuYlfNvqWBvy85rZnsI4JIuZ6E_PbKjdLkjrPMUzeSLTpHWwXKPMuA&quot;);
+                  "
+                ></div>
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-transparent"
+                ></div>
+                <span
+                  class="absolute top-4 right-4 px-2.5 py-0.5 rounded-full bg-primary-container text-surface-container-lowest font-label-badge text-[11px] font-semibold border border-surface-container-lowest/20"
+                >
+                  دیتابیس
+                </span>
+                <div class="relative z-10 flex flex-col gap-1.5">
+                  <span class="text-accent-alt font-body-sm text-[11px]"
+                    >زمان مطالعه: ۱۰ دقیقه</span
+                  >
+                  <h4
+                    class="font-headline-sm text-body-lg font-bold text-surface-container-lowest leading-snug group-hover:text-accent-alt transition-colors line-clamp-2"
+                  >
+                    مقایسه عملیاتی PostgreSQL و MongoDB در مقیاس بالا
+                  </h4>
+                </div>
+              </a>
+              <!-- Bento Card 3 -->
+              <a
+                class="h-[228px] rounded-[24px] overflow-hidden relative group border border-border flex flex-col justify-end p-5 shadow-sm"
+                href="#"
+              >
+                <div
+                  class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  data-alt="Frontend web performance optimization gauge metrics showing high Core Web Vitals speed scores and responsive layout"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuCwiEFXEWzS_ueJHlSwJe_0gj6qiTVWOoM6qWa5JGLwOJXQL0ndcgZ7X-0H_acpYE6vR8-pOwNDlv3XvEHghM1xSDzOjTCqEOdNxAGeVHKshlT2eSllk19ovv0GaeptZ4JSy8xEXHCR1YbDM8EPYnVl9MTpLhhJsGMKn5717jpAM8j4t25QTdWK94N9izIkY2P-0cmdUOfU7mPgrJCiK4a4c60WhMJlv3TO-mVooMOcOdERyUxsBPC8zA&quot;);
+                  "
+                ></div>
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-transparent"
+                ></div>
+                <span
+                  class="absolute top-4 right-4 px-2.5 py-0.5 rounded-full bg-primary-container text-surface-container-lowest font-label-badge text-[11px] font-semibold border border-surface-container-lowest/20"
+                >
+                  پرفورمنس فرانت‌اند
+                </span>
+                <div class="relative z-10 flex flex-col gap-1.5">
+                  <span class="text-accent-alt font-body-sm text-[11px]"
+                    >زمان مطالعه: ۷ دقیقه</span
+                  >
+                  <h4
+                    class="font-headline-sm text-body-lg font-bold text-surface-container-lowest leading-snug group-hover:text-accent-alt transition-colors line-clamp-2"
+                  >
+                    ترفندهای طلایی بهبود Core Web Vitals و سرعت وب‌سایت
+                  </h4>
+                </div>
+              </a>
+              <!-- Bento Card 4 -->
+              <a
+                class="h-[228px] rounded-[24px] overflow-hidden relative group border border-border flex flex-col justify-end p-5 shadow-sm"
+                href="#"
+              >
+                <div
+                  class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  data-alt="Cybersecurity authentication JWT tokens OAuth2 and security headers represented on dark modern software terminal screen"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuBYF6Zu7kXscp0iYjb7uzMkl8XBVjORBDngEqTa78aVLoy1QJpAqqZ1TArADXahjIdva4sHGqKB4-ayiZqAd9V85gEME9SXZpDM25xDFpHiXdUXPB6vCNeZWlWTgm4ulxaR4b53fCoGT5sA7eLHpmIzntJuS3cupotMF6LxRFCkbS4V3sG9__mKeAwcDD4Q0dPPy6shdHwJtJ1MrtQDoyo2XU1D3CIi8dzDIk3PPrgZUXKIBvMJKT2SVg&quot;);
+                  "
+                ></div>
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-transparent"
+                ></div>
+                <span
+                  class="absolute top-4 right-4 px-2.5 py-0.5 rounded-full bg-primary-container text-surface-container-lowest font-label-badge text-[11px] font-semibold border border-surface-container-lowest/20"
+                >
+                  امنیت نرم‌افزار
+                </span>
+                <div class="relative z-10 flex flex-col gap-1.5">
+                  <span class="text-accent-alt font-body-sm text-[11px]"
+                    >زمان مطالعه: ۹ دقیقه</span
+                  >
+                  <h4
+                    class="font-headline-sm text-body-lg font-bold text-surface-container-lowest leading-snug group-hover:text-accent-alt transition-colors line-clamp-2"
+                  >
+                    الگوهای امنیتی احراز هویت با JWT و کوکی‌های HttpOnly
+                  </h4>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
+        <!-- 5. LATEST PODCASTS & AUDIO EPISODES (Inverted Dark Theme Strip) -->
+        <section class="w-full max-w-7xl mx-auto px-margin py-space-md">
+          <div
+            class="bg-primary-container rounded-[24px] p-6 sm:p-10 text-surface-container-lowest shadow-xl border border-border/40 relative overflow-hidden"
+          >
+            <!-- Background Waveform Accent -->
+            <div
+              class="absolute -right-20 -top-20 w-80 h-80 bg-tertiary-container/40 rounded-full blur-3xl pointer-events-none"
+            ></div>
+            <!-- Podcast Strip Header -->
+            <div
+              class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-8 border-b border-surface-container-lowest/15"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="h-12 w-12 rounded-2xl bg-surface-container-lowest/15 backdrop-blur-md flex items-center justify-center text-accent-alt"
+                >
+                  <span class="material-symbols-outlined text-[28px]"
+                    >podcasts</span
+                  >
+                </div>
+                <div class="flex flex-col">
+                  <h2
+                    class="font-headline-lg text-headline-lg text-surface-container-lowest font-bold"
+                  >
+                    رادیو کدرز (Coders Radio)
+                  </h2>
+                  <span
+                    class="font-body-sm text-body-sm text-on-primary-container"
+                    >گفتگوهای عمیق فنی پیرامون چالش‌های شغلی، معماری و هوش
+                    مصنوعی</span
+                  >
+                </div>
+              </div>
+              <a
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-lowest/15 hover:bg-surface-container-lowest/25 backdrop-blur-md border border-surface-container-lowest/20 font-body-md text-body-md font-semibold text-surface-container-lowest transition-colors"
+                href="#"
+              >
+                <span>همه اپیزودها در کست‌باکس</span>
+                <span class="material-symbols-outlined text-[18px]"
+                  >open_in_new</span
+                >
+              </a>
+            </div>
+            <!-- Podcast Grid: 2 Columns, 3 Rows -->
+            <div
+              class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-5 pt-8"
+            >
+              <!-- Episode 1 -->
+              <div
+                class="flex items-center gap-4 p-3.5 rounded-2xl bg-surface-container-lowest/5 hover:bg-surface-container-lowest/10 border border-surface-container-lowest/10 backdrop-blur-sm transition-all group cursor-pointer"
+              >
+                <div
+                  class="relative h-28 w-28 rounded-2xl overflow-hidden flex-shrink-0 bg-primary"
+                >
+                  <div
+                    class="w-full h-full bg-cover bg-center"
+                    data-alt="Microphone in studio with sound wave spectrum on audio console screen for Persian programming podcast episode"
+                    style="
+                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuB5P5x3OuU60g71x6MYwuQHTG3NaCk3B8rjwvgBjePun6PBhwvFdvsMQSlGtoSISnY3J8CggnPlTj3vANLu9jPVYw4Kpk3qjcBV66DcNbCz2xXnn4gHFXGCTRHn2OWklZfuMD-iaAwaEHiaV0VbhnpwgXQfjZFqUcwXAM88KwW8xxYj6lKIaWk4ZMhMNoqS_AbsArt0PPIb-zLrNoeklbGqD-csiSKtHtOQE2MxQUNe1m_lSoPHYITg0w&quot;);
+                    "
+                  ></div>
+                  <div
+                    class="absolute inset-0 bg-primary/40 group-hover:bg-primary/10 transition-colors"
+                  ></div>
+                  <span
+                    class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-primary-container text-surface-container-lowest font-code-sm text-[10px]"
+                    >#۴۲</span
+                  >
+                </div>
+                <div class="flex flex-col flex-1 min-w-0">
+                  <span
+                    class="font-label-badge text-accent-alt text-[11px] font-semibold"
+                    >اپیزود ۴۲ • مصاحبه تخصصی</span
+                  >
+                  <h3
+                    class="font-headline-sm text-body-md font-bold text-surface-container-lowest truncate mt-1 group-hover:text-accent-alt transition-colors"
+                  >
+                    چگونه معمار نرم‌افزار شویم؟ نقشه راه ۱۰ ساله
+                  </h3>
+                  <p
+                    class="font-body-sm text-body-sm text-surface-container-low/70 truncate mt-0.5"
+                  >
+                    میهمان: مهندس رامین شمس (معمار ارشد اسنپ)
+                  </p>
+                  <div class="flex items-center justify-between mt-3">
+                    <span
+                      class="flex items-center gap-1 font-body-sm text-body-sm text-on-primary-container"
+                    >
+                      <span class="material-symbols-outlined text-[16px]"
+                        >timer</span
+                      >
+                      <span>۵۴ دقیقه</span>
+                    </span>
+                    <button
+                      class="h-9 w-9 rounded-full border border-surface-container-lowest/40 hover:bg-surface-container-lowest hover:text-primary-container flex items-center justify-center transition-all shadow-sm"
+                      title="پخش اپیزود"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >play_arrow</span
+                      >
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Episode 2 -->
+              <div
+                class="flex items-center gap-4 p-3.5 rounded-2xl bg-surface-container-lowest/5 hover:bg-surface-container-lowest/10 border border-surface-container-lowest/10 backdrop-blur-sm transition-all group cursor-pointer"
+              >
+                <div
+                  class="relative h-28 w-28 rounded-2xl overflow-hidden flex-shrink-0 bg-primary"
+                >
+                  <div
+                    class="w-full h-full bg-cover bg-center"
+                    data-alt="Artificial intelligence coding assistant concept with human developer pairing for high performance programming discussion"
+                    style="
+                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuDgTv4KbHM4ElS0deejnFE-qecktsh-pcqe8yERjxJ0GIXO2Omd-KhnIkLBrbnkoRbKJFuVjNGs-5b89FX8prGdTgFlE-X192vLDr2rRJSOC818OWoopVRhYa20WNd8zUOa9EqygHqX-op7LX5aIHb74a1CzpYhggPhhP7MBxMP2um7KNJCa30L25JX4IwSmHfcK2I7RVkGfEoHjknqrINdW_mkiJavtYzEzpVin1GSsSMldOfkYPp2-w&quot;);
+                    "
+                  ></div>
+                  <div
+                    class="absolute inset-0 bg-primary/40 group-hover:bg-primary/10 transition-colors"
+                  ></div>
+                  <span
+                    class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-primary-container text-surface-container-lowest font-code-sm text-[10px]"
+                    >#۴۱</span
+                  >
+                </div>
+                <div class="flex flex-col flex-1 min-w-0">
+                  <span
+                    class="font-label-badge text-accent-alt text-[11px] font-semibold"
+                    >اپیزود ۴۱ • هوش مصنوعی</span
+                  >
+                  <h3
+                    class="font-headline-sm text-body-md font-bold text-surface-container-lowest truncate mt-1 group-hover:text-accent-alt transition-colors"
+                  >
+                    آیا ابزارهای هوش مصنوعی جای برنامه‌نویسان را می‌گیرند؟
+                  </h3>
+                  <p
+                    class="font-body-sm text-body-sm text-surface-container-low/70 truncate mt-0.5"
+                  >
+                    بررسی تأثیر Cursor و Copilot بر آینده بازار کار
+                  </p>
+                  <div class="flex items-center justify-between mt-3">
+                    <span
+                      class="flex items-center gap-1 font-body-sm text-body-sm text-on-primary-container"
+                    >
+                      <span class="material-symbols-outlined text-[16px]"
+                        >timer</span
+                      >
+                      <span>۴۲ دقیقه</span>
+                    </span>
+                    <button
+                      class="h-9 w-9 rounded-full border border-surface-container-lowest/40 hover:bg-surface-container-lowest hover:text-primary-container flex items-center justify-center transition-all shadow-sm"
+                      title="پخش اپیزود"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >play_arrow</span
+                      >
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Episode 3 -->
+              <div
+                class="flex items-center gap-4 p-3.5 rounded-2xl bg-surface-container-lowest/5 hover:bg-surface-container-lowest/10 border border-surface-container-lowest/10 backdrop-blur-sm transition-all group cursor-pointer"
+              >
+                <div
+                  class="relative h-28 w-28 rounded-2xl overflow-hidden flex-shrink-0 bg-primary"
+                >
+                  <div
+                    class="w-full h-full bg-cover bg-center"
+                    data-alt="Remote working developer laptop with coffee cup in minimalist workspace discussing international hiring and salaries"
+                    style="
+                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuCERUqSDbA7ADdINcOu-qHWfdNyXa1wFG5rI2sBl_Q_rhSILg1JXwJBUz0PKC6OuhV6q98pOG-VVxH_KXicBN9rs8x7IS4YQ-909iqo__G8a0TET6dVmEso3QAMsSVp5vN77DG9-rpAQuWncSAbATlusnbwNtQc3LyI9y1PaadktmZ8GQqVI-sUWexGklxm7HmsrepGhCprM9M2yZciKOGiRr8eJkylOzOmNKNItDeHHJjkvKE5TkY_xA&quot;);
+                    "
+                  ></div>
+                  <div
+                    class="absolute inset-0 bg-primary/40 group-hover:bg-primary/10 transition-colors"
+                  ></div>
+                  <span
+                    class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-primary-container text-surface-container-lowest font-code-sm text-[10px]"
+                    >#۴۰</span
+                  >
+                </div>
+                <div class="flex flex-col flex-1 min-w-0">
+                  <span
+                    class="font-label-badge text-accent-alt text-[11px] font-semibold"
+                    >اپیزود ۴۰ • بازار کار بین‌المللی</span
+                  >
+                  <h3
+                    class="font-headline-sm text-body-md font-bold text-surface-container-lowest truncate mt-1 group-hover:text-accent-alt transition-colors"
+                  >
+                    راهکارهای دریافت پروژه‌های ریموت دلاری و جاب‌آفر
+                  </h3>
+                  <p
+                    class="font-body-sm text-body-sm text-surface-container-low/70 truncate mt-0.5"
+                  >
+                    نکات کلیدی تقویت رزومه لینکدین و گیت‌هاب
+                  </p>
+                  <div class="flex items-center justify-between mt-3">
+                    <span
+                      class="flex items-center gap-1 font-body-sm text-body-sm text-on-primary-container"
+                    >
+                      <span class="material-symbols-outlined text-[16px]"
+                        >timer</span
+                      >
+                      <span>۶۳ دقیقه</span>
+                    </span>
+                    <button
+                      class="h-9 w-9 rounded-full border border-surface-container-lowest/40 hover:bg-surface-container-lowest hover:text-primary-container flex items-center justify-center transition-all shadow-sm"
+                      title="پخش اپیزود"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >play_arrow</span
+                      >
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Episode 4 -->
+              <div
+                class="flex items-center gap-4 p-3.5 rounded-2xl bg-surface-container-lowest/5 hover:bg-surface-container-lowest/10 border border-surface-container-lowest/10 backdrop-blur-sm transition-all group cursor-pointer"
+              >
+                <div
+                  class="relative h-28 w-28 rounded-2xl overflow-hidden flex-shrink-0 bg-primary"
+                >
+                  <div
+                    class="w-full h-full bg-cover bg-center"
+                    data-alt="System design whiteboard interview session showing caching layers, load balancers, and database clusters"
+                    style="
+                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuCoCF2_v_ocb5WGus2_Dxa3tY4NYdfZauE76hj9hiHtYLQRpR4OjyzNOsGz1ZrqTqu2vQ7NWg1W-HbaSIB0nlUZsNSg3dgzzypRJ8B_KmiyNXsu6voxj5pKfY7pQhffKgRJ56gfETdRWzcpByI63Twp-woANsGV_Xpal9Z5jEeEkujS5JbYOai35f3gq8-e6h3xT2umDlBoiJsO4uXxSNtXUvMGa9JOyq7UEya2GWoEO-xND72bboavHA&quot;);
+                    "
+                  ></div>
+                  <div
+                    class="absolute inset-0 bg-primary/40 group-hover:bg-primary/10 transition-colors"
+                  ></div>
+                  <span
+                    class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-primary-container text-surface-container-lowest font-code-sm text-[10px]"
+                    >#۳۹</span
+                  >
+                </div>
+                <div class="flex flex-col flex-1 min-w-0">
+                  <span
+                    class="font-label-badge text-accent-alt text-[11px] font-semibold"
+                    >اپیزود ۳۹ • مصاحبه فنی</span
+                  >
+                  <h3
+                    class="font-headline-sm text-body-md font-bold text-surface-container-lowest truncate mt-1 group-hover:text-accent-alt transition-colors"
+                  >
+                    چالش‌های System Design در مصاحبه شرکت‌های بزرگ
+                  </h3>
+                  <p
+                    class="font-body-sm text-body-sm text-surface-container-low/70 truncate mt-0.5"
+                  >
+                    تحلیل طراحی سرویس‌های کوتاه‌کننده لینک و پیام‌رسان
+                  </p>
+                  <div class="flex items-center justify-between mt-3">
+                    <span
+                      class="flex items-center gap-1 font-body-sm text-body-sm text-on-primary-container"
+                    >
+                      <span class="material-symbols-outlined text-[16px]"
+                        >timer</span
+                      >
+                      <span>۴۸ دقیقه</span>
+                    </span>
+                    <button
+                      class="h-9 w-9 rounded-full border border-surface-container-lowest/40 hover:bg-surface-container-lowest hover:text-primary-container flex items-center justify-center transition-all shadow-sm"
+                      title="پخش اپیزود"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >play_arrow</span
+                      >
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Episode 5 -->
+              <div
+                class="flex items-center gap-4 p-3.5 rounded-2xl bg-surface-container-lowest/5 hover:bg-surface-container-lowest/10 border border-surface-container-lowest/10 backdrop-blur-sm transition-all group cursor-pointer"
+              >
+                <div
+                  class="relative h-28 w-28 rounded-2xl overflow-hidden flex-shrink-0 bg-primary"
+                >
+                  <div
+                    class="w-full h-full bg-cover bg-center"
+                    data-alt="JavaScript TypeScript execution engine event loop concept visualization in neon slate colors"
+                    style="
+                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuCresUh-hsxHShKCn0wgqXuOzQ3myIrdyQMELKLXadjKxaN4XiVrhJX-k8HKyA-Fsh0Xw8jyxMclyHL84itpr7ZNgOPzKfzrb8g-6yuB0mQj8awGLeVC0NojEdlI2Rw2gD2xf31EA2Ua1Uimfk-w2lpEHVEOBsFsV5RT9QTswbD4VrqKtNVBFlqmGb7dLZDKBciTCffDFNBAX5dnAm9__yQWmem9x5lpSp_ccz6-N987swy41yN6wnQlA&quot;);
+                    "
+                  ></div>
+                  <div
+                    class="absolute inset-0 bg-primary/40 group-hover:bg-primary/10 transition-colors"
+                  ></div>
+                  <span
+                    class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-primary-container text-surface-container-lowest font-code-sm text-[10px]"
+                    >#۳۸</span
+                  >
+                </div>
+                <div class="flex flex-col flex-1 min-w-0">
+                  <span
+                    class="font-label-badge text-accent-alt text-[11px] font-semibold"
+                    >اپیزود ۳۸ • عمیق‌تر از سینتکس</span
+                  >
+                  <h3
+                    class="font-headline-sm text-body-md font-bold text-surface-container-lowest truncate mt-1 group-hover:text-accent-alt transition-colors"
+                  >
+                    رمزگشایی از Event Loop و حافظه در JavaScript و Node
+                  </h3>
+                  <p
+                    class="font-body-sm text-body-sm text-surface-container-low/70 truncate mt-0.5"
+                  >
+                    درک چرخه حیات درخواست‌ها و جلوگیری از Memory Leak
+                  </p>
+                  <div class="flex items-center justify-between mt-3">
+                    <span
+                      class="flex items-center gap-1 font-body-sm text-body-sm text-on-primary-container"
+                    >
+                      <span class="material-symbols-outlined text-[16px]"
+                        >timer</span
+                      >
+                      <span>۵۱ دقیقه</span>
+                    </span>
+                    <button
+                      class="h-9 w-9 rounded-full border border-surface-container-lowest/40 hover:bg-surface-container-lowest hover:text-primary-container flex items-center justify-center transition-all shadow-sm"
+                      title="پخش اپیزود"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >play_arrow</span
+                      >
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Episode 6 -->
+              <div
+                class="flex items-center gap-4 p-3.5 rounded-2xl bg-surface-container-lowest/5 hover:bg-surface-container-lowest/10 border border-surface-container-lowest/10 backdrop-blur-sm transition-all group cursor-pointer"
+              >
+                <div
+                  class="relative h-28 w-28 rounded-2xl overflow-hidden flex-shrink-0 bg-primary"
+                >
+                  <div
+                    class="w-full h-full bg-cover bg-center"
+                    data-alt="Developer wellness ergonomics productivity workflow and healthy software engineering lifestyle concept"
+                    style="
+                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuBF9GJsbwBs1YIHKwtWPxe8ZxBfZKZgNibeY_oUs2bMxVe1G57nZaGFcTquCXLZ5SYftpXc3_dYmY-EUyINUuVIAVBbuHWJ1Hv5PzQRbUFnHiQ2Qb4GdtRkA8-afAN1XqSOrYKUqRpxMfX-PmRN65h6mPZIytnSM7ZqUXYM7ZVRL8bP1UIEkjpQTUpFQ7ezzHGjT5zhlLbLSxnIASaXryOWeq4fqiLu_X5ogzPu__2SIeNWq2DZXmutng&quot;);
+                    "
+                  ></div>
+                  <div
+                    class="absolute inset-0 bg-primary/40 group-hover:bg-primary/10 transition-colors"
+                  ></div>
+                  <span
+                    class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-primary-container text-surface-container-lowest font-code-sm text-[10px]"
+                    >#۳۷</span
+                  >
+                </div>
+                <div class="flex flex-col flex-1 min-w-0">
+                  <span
+                    class="font-label-badge text-accent-alt text-[11px] font-semibold"
+                    >اپیزود ۳۷ • سبک زندگی مهندسی</span
+                  >
+                  <h3
+                    class="font-headline-sm text-body-md font-bold text-surface-container-lowest truncate mt-1 group-hover:text-accent-alt transition-colors"
+                  >
+                    مدیریت خستگی ذهنی (Burnout) و حفظ انرژی در ماراتن کدنویسی
+                  </h3>
+                  <p
+                    class="font-body-sm text-body-sm text-surface-container-low/70 truncate mt-0.5"
+                  >
+                    راهکارهای علمی تعادل کار و استراحت برای توسعه‌دهندگان
+                  </p>
+                  <div class="flex items-center justify-between mt-3">
+                    <span
+                      class="flex items-center gap-1 font-body-sm text-body-sm text-on-primary-container"
+                    >
+                      <span class="material-symbols-outlined text-[16px]"
+                        >timer</span
+                      >
+                      <span>۳۸ دقیقه</span>
+                    </span>
+                    <button
+                      class="h-9 w-9 rounded-full border border-surface-container-lowest/40 hover:bg-surface-container-lowest hover:text-primary-container flex items-center justify-center transition-all shadow-sm"
+                      title="پخش اپیزود"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >play_arrow</span
+                      >
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 6. INTERACTIVE LEARNING FEATURES SHOWCASE -->
+        <section class="w-full max-w-7xl mx-auto px-margin py-space-xl">
+          <div class="text-center max-w-2xl mx-auto mb-12 flex flex-col gap-2">
+            <span class="font-body-sm text-body-sm font-bold text-accent-alt"
+              >امکانات پلتفرم آموزشی DevAcademy</span
+            >
+            <h2
+              class="font-headline-lg text-headline-lg text-primary-container font-bold"
+            >
+              محیطی تعاملی و مجهز برای تحول در یادگیری شما
+            </h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              ما کلیه زیرساخت‌های نرم‌افزاری را برای تثبیت مفاهیم، سنجش دانش فنی
+              و همراهی مستمر فراهم کرده‌ایم.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Feature Card 1: Online Quiz System -->
+            <div
+              class="p-8 rounded-[28px] bg-card border border-border flex flex-col gap-5 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:border-primary-container/40 transition-all group"
+            >
+              <div
+                class="h-14 w-14 rounded-2xl bg-primary-container text-surface-container-lowest flex items-center justify-center shadow-md group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined text-[28px]">quiz</span>
+              </div>
+              <div class="flex flex-col gap-2">
+                <h3
+                  class="font-headline-md text-headline-sm font-bold text-primary-container"
+                >
+                  سامانه آزمون‌های آنلاین سنجش مهارت
+                </h3>
+                <p
+                  class="font-body-md text-body-md text-on-surface-variant leading-relaxed"
+                >
+                  کوئیزهای زمان‌بندی شده و شبیه‌ساز سوالات مصاحبه شرکت‌های مطرح.
+                  تحلیل کارنامه فنی و شناسایی دقیق نقاط ضعف پس از اتمام هر
+                  آزمون.
+                </p>
+              </div>
+              <div
+                class="mt-auto pt-4 flex items-center gap-2 text-primary font-body-sm text-body-sm font-semibold"
+              >
+                <span>ورود به آزمون‌های آنلاین</span>
+                <span class="material-symbols-outlined text-[16px]"
+                  >arrow_left</span
+                >
+              </div>
+            </div>
+            <!-- Feature Card 2: Ticketing Support System -->
+            <div
+              class="p-8 rounded-[28px] bg-card border border-border flex flex-col gap-5 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:border-primary-container/40 transition-all group"
+            >
+              <div
+                class="h-14 w-14 rounded-2xl bg-primary-container text-surface-container-lowest flex items-center justify-center shadow-md group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined text-[28px]"
+                  >mark_chat_read</span
+                >
+              </div>
+              <div class="flex flex-col gap-2">
+                <h3
+                  class="font-headline-md text-headline-sm font-bold text-primary-container"
+                >
+                  پشتیبانی تیکتینگ و بررسی تخصصی کد
+                </h3>
+                <p
+                  class="font-body-md text-body-md text-on-surface-variant leading-relaxed"
+                >
+                  هیچ باگی بی‌پاسخ نمی‌ماند. کدهای پروژه‌تان را مستقیم ارسال
+                  کنید تا منتورها با کامنت‌های آموزشی و جلسات رفع اشکال همراهتان
+                  باشند.
+                </p>
+              </div>
+              <div
+                class="mt-auto pt-4 flex items-center gap-2 text-primary font-body-sm text-body-sm font-semibold"
+              >
+                <span>ثبت تیکت و ارسال سورس کد</span>
+                <span class="material-symbols-outlined text-[16px]"
+                  >arrow_left</span
+                >
+              </div>
+            </div>
+            <!-- Feature Card 3: Permanent Access & Certificate -->
+            <div
+              class="p-8 rounded-[28px] bg-card border border-border flex flex-col gap-5 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:border-primary-container/40 transition-all group"
+            >
+              <div
+                class="h-14 w-14 rounded-2xl bg-primary-container text-surface-container-lowest flex items-center justify-center shadow-md group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined text-[28px]"
+                  >workspace_premium</span
+                >
+              </div>
+              <div class="flex flex-col gap-2">
+                <h3
+                  class="font-headline-md text-headline-sm font-bold text-primary-container"
+                >
+                  دسترسی مادام‌العمر و گواهینامه معتبر
+                </h3>
+                <p
+                  class="font-body-md text-body-md text-on-surface-variant leading-relaxed"
+                >
+                  به‌روزرسانی‌های رایگان نسخه‌های جدید، دانلود کدهای هر جلسه و
+                  صدور گواهی‌نامه دوزبانه قابل استعلام با کد رهگیری جهت رزومه
+                  بین‌المللی.
+                </p>
+              </div>
+              <div
+                class="mt-auto pt-4 flex items-center gap-2 text-primary font-body-sm text-body-sm font-semibold"
+              >
+                <span>مشاهده نمونه گواهی‌نامه</span>
+                <span class="material-symbols-outlined text-[16px]"
+                  >arrow_left</span
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 7. COMMUNITY & NEWSLETTER CALL TO ACTION -->
+        <section class="w-full max-w-7xl mx-auto px-margin py-space-lg mb-8">
+          <div
+            class="rounded-[28px] bg-gradient-to-r from-primary-container to-primary p-8 sm:p-12 text-surface-container-lowest shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8 border border-border/40"
+          >
+            <div class="flex flex-col gap-3 max-w-xl text-center lg:text-right">
+              <div
+                class="inline-flex items-center justify-center lg:justify-start gap-2 text-accent-alt font-headline-sm text-body-md font-bold"
+              >
+                <span class="material-symbols-outlined text-[20px]">send</span>
+                <span>جامعه برنامه‌نویسان DevAcademy</span>
+              </div>
+              <h2
+                class="font-headline-lg text-headline-lg text-surface-container-lowest font-bold"
+              >
+                به جمع بیش از ۲۰,۰۰۰ توسعه‌دهنده در کانال تلگرام بپیوندید
+              </h2>
+              <p
+                class="font-body-md text-body-md text-surface-container-low/90 leading-relaxed"
+              >
+                نکات سریع فنی، تحلیل معماری پروژه‌های اوپن‌سورس، اعلان وبینارهای
+                آنلاین و تخفیف‌های مناسبتی اختصاصی در کانال قرار می‌گیرد.
+              </p>
+            </div>
+            <div
+              class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto"
+            >
+              <a
+                class="w-full sm:w-auto h-12 px-8 rounded-xl bg-accent-alt hover:bg-sky-400 text-primary-container font-body-md text-body-md font-bold flex items-center justify-center gap-2 transition-colors shadow-lg"
+                href="https://t.me/"
+                target="_blank"
+              >
+                <span class="material-symbols-outlined text-[20px]"
+                  >qr_code_2</span
+                >
+                <span>عضویت در کانال تلگرام</span>
+              </a>
+              <a
+                class="w-full sm:w-auto h-12 px-6 rounded-xl bg-surface-container-lowest/15 hover:bg-surface-container-lowest/25 backdrop-blur-md border border-surface-container-lowest/30 text-surface-container-lowest font-body-md text-body-md font-semibold flex items-center justify-center gap-2 transition-colors"
+                href="#courses"
+              >
+                <span>شروع یادگیری برنامه‌نویسی</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <footer class="w-full bg-background pt-space-xl pb-space-lg">
+      <div class="max-w-7xl mx-auto px-margin">
+        <div
+          class="rounded-[22px] border border-border p-8 bg-card shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] grid grid-cols-1 lg:grid-cols-[1fr_0.72fr_1fr] gap-8"
+        >
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <img
+                alt="HT Developer Logo"
+                class="h-8 w-auto object-contain"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg"
+              />
+              <h3
+                class="font-headline-sm text-headline-sm text-primary-container font-bold"
+              >
+                حسین طاهری | DevAcademy
+              </h3>
+            </div>
+            <p
+              class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
+            >
+              حسین طاهری، مهندس ارشد نرم‌افزار و مدرس حوزه‌های Full-Stack با بیش
+              از یک دهه تجربه طراحی سامانه‌های توزیع‌شده. رسالت ما در این
+              آکادمی، تربیت متخصصان فنی، مسلط بر مهارت‌های کاربردی بازار کار
+              جهانی و استانداردهای روز نرم‌افزار است.
+            </p>
+            <div
+              class="flex flex-col gap-2 pt-2 font-body-sm text-body-sm text-secondary"
+            >
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-outline text-[18px]"
+                  >location_on</span
+                ><span
+                  >تهران، خیابان آزادی، تقاطع یادگار امام، مرکز فناوری‌های
+                  پیشرفته</span
+                >
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-outline text-[18px]"
+                  >mail</span
+                ><span>info@hosseintaheri.dev</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h4
+              class="font-headline-sm text-headline-sm text-primary-container font-bold border-b border-border pb-2"
+            >
+              دسترسی سریع
+            </h4>
+            <ul
+              class="grid grid-cols-2 gap-2.5 font-body-md text-body-md text-on-surface-variant"
+            >
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="courses"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >دوره‌های تخصصی</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="blog"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >مقالات نرم‌افزار</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="podcasts"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >پادکست کدرز</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="online-quiz"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >آزمون‌های آنلاین</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="support-tickets"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >ارسال تیکت پشتیبانی</a
+                >
+              </li>
+              <li>
+                <a
+                  class="hover:text-primary-container transition-colors flex items-center gap-1.5"
+                  data-path="user-profile"
+                  href="#"
+                  ><span
+                    class="material-symbols-outlined text-outline text-[16px]"
+                    >chevron_left</span
+                  >داشبورد دانشجویی</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h4
+              class="font-headline-sm text-headline-sm text-primary-container font-bold border-b border-border pb-2"
+            >
+              نمادها و عضویت خبرنامه
+            </h4>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">
+              جهت دریافت جدیدترین سرفصل‌های تخصصی، کد تخفیف‌ها و رویدادها عضو
+              شوید.
+            </p>
+            <div class="flex items-center gap-2">
+              <input
+                class="flex-1 h-11 px-4 bg-background rounded-xl border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner"
+                placeholder="ایمیل کاری خود را وارد کنید..."
+                type="email"
+              /><button
+                class="h-11 px-5 bg-primary-container text-on-primary rounded-xl font-body-md text-body-md font-semibold hover:bg-tertiary-container hover:text-on-primary transition-colors"
+              >
+                عضویت
+              </button>
+            </div>
+            <div class="flex items-center justify-between pt-2">
+              <div class="flex items-center gap-3">
+                <div
+                  class="h-14 w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary-container text-[22px]"
+                    >verified_user</span
+                  ><span
+                    class="font-label-badge text-[9px] text-secondary font-bold leading-tight"
+                    >اینماد رسمی</span
+                  >
+                </div>
+                <div
+                  class="h-14 w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary-container text-[22px]"
+                    >school</span
+                  ><span
+                    class="font-label-badge text-[9px] text-secondary font-bold leading-tight"
+                    >صلاحیت فنی</span
+                  >
+                </div>
+                <div
+                  class="h-14 w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary-container text-[22px]"
+                    >shield</span
+                  ><span
+                    class="font-label-badge text-[9px] text-secondary font-bold leading-tight"
+                    >ضمانت بازگشت</span
+                  >
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-on-surface-variant">
+                <a
+                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[18px]"
+                    >code</span
+                  ></a
+                ><a
+                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[18px]"
+                    >terminal</span
+                  ></a
+                ><a
+                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[18px]"
+                    >send</span
+                  ></a
+                ><a
+                  class="h-9 w-9 rounded-lg bg-surface-container-high flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-colors"
+                  href="#"
+                  ><span class="material-symbols-outlined text-[18px]"
+                    >podcasts</span
+                  ></a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 text-center font-body-sm text-body-sm text-outline">
+          © تمامی حقوق مادی و معنوی برای آکادمی توسعه نرم‌افزار حسین طاهری محفوظ
+          است.
+        </div>
+      </div>
+    </footer>
+    <!-- Audio Player UI (ثابت در پایین صفحه) -->
+    <div
+      id="podcast-player"
+      class="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border p-4 transform translate-y-full transition-transform duration-300 z-[100] shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.1)] hidden"
+    >
+      <div
+        class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"
+      >
+        <!-- اطلاعات پادکست -->
+        <div class="flex items-center gap-3 w-full sm:w-1/3">
+          <div
+            id="player-thumb"
+            class="w-12 h-12 rounded-lg bg-primary bg-cover bg-center"
+          ></div>
+          <div class="flex flex-col overflow-hidden text-right">
+            <span
+              id="player-title"
+              class="font-headline-sm text-body-md font-bold text-primary-container truncate"
+              >عنوان پادکست</span
+            >
+            <span class="font-body-sm text-[11px] text-secondary"
+              >در حال پخش...</span
+            >
+          </div>
+        </div>
+
+        <!-- کنترلرها و نوار پیشرفت -->
+        <div class="flex flex-col items-center w-full sm:w-1/3 gap-2">
+          <div class="flex items-center gap-4 text-primary-container">
+            <button
+              id="play-pause-btn"
+              class="hover:scale-110 transition-transform"
+            >
+              <span class="material-symbols-outlined text-[36px]"
+                >play_circle</span
+              >
+            </button>
+          </div>
+          <div
+            class="flex items-center gap-3 w-full font-code-sm text-[11px] text-secondary"
+          >
+            <span id="current-time">0:00</span>
+            <input
+              type="range"
+              id="progress-bar"
+              value="0"
+              step="0.1"
+              class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-accent-alt"
+            />
+            <span id="duration-time">0:00</span>
+          </div>
+        </div>
+
+        <!-- تنظیمات سرعت -->
+        <div class="flex items-center justify-end w-full sm:w-1/3 gap-2">
+          <span class="material-symbols-outlined text-[18px] text-secondary"
+            >speed</span
+          >
+          <select
+            id="playback-speed"
+            class="bg-background border border-border rounded-lg px-2 py-1 font-body-sm text-sm text-on-surface-variant focus:outline-none"
+          >
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1.0x (عادی)</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2.0x</option>
+          </select>
+          <button
+            id="close-player"
+            class="mr-4 text-secondary hover:text-error transition-colors"
+          >
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+      </div>
+      <!-- تگ مخفی Audio -->
+      <audio id="main-audio" preload="metadata"></audio>
+    </div>
+    <script>
+      /* =========================================
+      1. تنظیمات کاروسل بنر اصلی (Keen Slider)
+      ========================================= */
+      const sliderElement = document.getElementById("one-slider-f104e3e");
+      const sliderContainer = document.getElementById(
+        "one-slider-f104e3e-container",
+      );
+      const dots = document.querySelectorAll(".one-slider-dots .one-dot");
+      const arrowNext = document.querySelector(".one-arrow-next");
+      const arrowPrev = document.querySelector(".one-arrow-prev");
+
+      if (sliderElement && typeof KeenSlider !== "undefined") {
+        const keenSlider = new KeenSlider(sliderElement, {
+          loop: true,
+          slides: {
+            origin: "center",
+            perView: 1.15,
+            spacing: 24,
+          },
+          breakpoints: {
+            "(max-width: 1024px)": { slides: { perView: 1.3, spacing: 15 } },
+            "(max-width: 768px)": { slides: { perView: 1.1, spacing: 10 } },
+          },
+          created(slider) {
+            // تنظیمات پخش خودکار (هر ۵ ثانیه)
+            let interval;
+            const startAutoplay = () => {
+              interval = setInterval(() => {
+                slider.next();
+              }, 5000);
+            };
+            startAutoplay();
+
+            // توقف پخش خودکار هنگام هاور شدن موس
+            sliderContainer.addEventListener("mouseover", () =>
+              clearInterval(interval),
+            );
+            sliderContainer.addEventListener("mouseout", startAutoplay);
+          },
+          detailsChanged(slider) {
+            const current = slider.track.details.rel;
+
+            // آپدیت ظاهر نقطه‌ها (Dots)
+            dots.forEach((dot, idx) => {
+              if (idx === current) {
+                dot.classList.add("one-dot-active");
+              } else {
+                dot.classList.remove("one-dot-active");
+              }
+            });
+
+            // آپدیت کلاس فعال برای اسلایدها جهت اعمال Opacity
+            slider.slides.forEach((slide, idx) => {
+              if (idx === slider.track.details.rel) {
+                slide.classList.add("one-slide-active");
+              } else {
+                slide.classList.remove("one-slide-active");
+              }
+            });
+          },
+        });
+
+        // رویداد کلیک برای فلش‌های ناوبری
+        if (arrowNext)
+          arrowNext.addEventListener("click", () => keenSlider.next());
+        if (arrowPrev)
+          arrowPrev.addEventListener("click", () => keenSlider.prev());
+
+        // رویداد کلیک برای نقطه‌ها (Dots)
+        dots.forEach((dot, idx) => {
+          dot.addEventListener("click", () => {
+            keenSlider.moveToIdx(idx);
+          });
+        });
+      }
+
+      /* =========================================
+             2. تنظیمات پلیر پادکست
+             ========================================= */
+      const podcastItems = document.querySelectorAll(
+        "section:nth-of-type(5) .group.cursor-pointer",
+      );
+      const playerContainer = document.getElementById("podcast-player");
+      const audio = document.getElementById("main-audio");
+      const playPauseBtn = document.getElementById("play-pause-btn");
+      const playPauseIcon = playPauseBtn.querySelector("span");
+      const progressBar = document.getElementById("progress-bar");
+      const currentTimeEl = document.getElementById("current-time");
+      const durationTimeEl = document.getElementById("duration-time");
+      const speedSelect = document.getElementById("playback-speed");
+      const playerTitle = document.getElementById("player-title");
+      const playerThumb = document.getElementById("player-thumb");
+      const closePlayerBtn = document.getElementById("close-player");
+
+      // فرمت کردن زمان (ثانیه به دقیقه:ثانیه)
+      const formatTime = (timeInSeconds) => {
+        if (isNaN(timeInSeconds)) return "0:00";
+        const m = Math.floor(timeInSeconds / 60);
+        const s = Math.floor(timeInSeconds % 60);
+        return `${m}:${s < 10 ? "0" + s : s}`;
+      };
+
+      // کلیک روی هر پادکست
+      podcastItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          // دریافت عنوان و تصویر از کارت کلیک شده
+          const title = item.querySelector("h3").innerText;
+          const bgImage = item.querySelector(".bg-cover").style.backgroundImage;
+
+          playerTitle.innerText = title;
+          playerThumb.style.backgroundImage = bgImage;
+
+          // قرار دادن یک فایل صوتی نمونه (به جای این لینک، لینک واقعی پادکست‌های خود را قرار دهید)
+          audio.src =
+            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+
+          // نمایش پلیر
+          playerContainer.classList.remove("hidden");
+          setTimeout(() => {
+            playerContainer.classList.remove("translate-y-full");
+          }, 10); // انیمیشن بالا آمدن
+
+          audio.play();
+          playPauseIcon.innerText = "pause_circle";
+        });
+      });
+
+      // دکمه پخش/توقف
+      playPauseBtn.addEventListener("click", () => {
+        if (audio.paused) {
+          audio.play();
+          playPauseIcon.innerText = "pause_circle";
+        } else {
+          audio.pause();
+          playPauseIcon.innerText = "play_circle";
+        }
+      });
+
+      // آپدیت نوار پیشرفت و زمان
+      audio.addEventListener("timeupdate", () => {
+        const progress = (audio.currentTime / audio.duration) * 100;
+        progressBar.value = progress || 0;
+        currentTimeEl.innerText = formatTime(audio.currentTime);
+      });
+
+      // لود شدن اطلاعات فایل صوتی (برای نمایش کل زمان)
+      audio.addEventListener("loadedmetadata", () => {
+        durationTimeEl.innerText = formatTime(audio.duration);
+      });
+
+      // کلیک و کشیدن نوار پیشرفت توسط کاربر
+      progressBar.addEventListener("input", () => {
+        const seekTime = (progressBar.value / 100) * audio.duration;
+        audio.currentTime = seekTime;
+      });
+
+      // تغییر سرعت پخش پادکست
+      speedSelect.addEventListener("change", (e) => {
+        audio.playbackRate = parseFloat(e.target.value);
+      });
+
+      // بستن پلیر
+      closePlayerBtn.addEventListener("click", () => {
+        audio.pause();
+        playerContainer.classList.add("translate-y-full");
+        setTimeout(() => {
+          playerContainer.classList.add("hidden");
+        }, 300);
+      });
+    </script>
+  </body>
+</html>

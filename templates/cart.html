@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>سبد خرید</title>
+    <style>
+      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
+      main { max-width: 880px; margin: 48px auto; padding: 24px; }
+      li { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: white; border: 1px solid #dce4e0; border-radius: 8px; margin: 10px 0; padding: 16px; }
+      ul { list-style: none; padding: 0; }
+      button, .action { background: #075d4f; border: 0; border-radius: 6px; color: white; padding: 8px 14px; font: inherit; text-decoration: none; cursor: pointer; }
+      .remove { background: #a22222; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>سبد خرید</h1>
+      {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+      {% if items %}
+      <ul>
+        {% for item in items %}
+        <li>
+          <div><a href="{% url 'courses:detail' item.course.slug %}">{{ item.course.title }}</a><div>{{ item.course.price|floatformat:0 }} تومان</div></div>
+          <form method="post" action="{% url 'orders:remove_from_cart' item.pk %}">{% csrf_token %}<button class="remove" type="submit">حذف</button></form>
+        </li>
+        {% endfor %}
+      </ul>
+      <p><strong>جمع کل: {{ total|floatformat:0 }} تومان</strong></p>
+      <a class="action" href="{% url 'orders:checkout' %}">ادامه و پرداخت</a>
+      {% else %}
+      <p>سبد خرید شما خالی است.</p>
+      {% endif %}
+      <p><a href="{% url 'courses:list' %}">بازگشت به دوره‌ها</a></p>
+    </main>
+  </body>
+</html>

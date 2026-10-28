@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ project.title }}</title>
+    <style>
+      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
+      main { max-width: 760px; margin: 40px auto; padding: 24px; background: white; border: 1px solid #dce4e0; border-radius: 8px; }
+      textarea, input[type="file"] { box-sizing: border-box; width: 100%; margin: 8px 0 18px; padding: 10px; border: 1px solid #aebbb5; border-radius: 6px; font: inherit; }
+      button { background: #075d4f; border: 0; border-radius: 6px; color: white; padding: 10px 18px; font: inherit; cursor: pointer; }
+      #result { margin-top: 16px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></p>
+      <h1>{{ project.title }}</h1>
+      <div>{{ project.description|linebreaks }}</div>
+      {% if project.sample_file %}<p><a href="{{ project.sample_file.url }}">دریافت فایل نمونه</a></p>{% endif %}
+      <form id="project-form" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <label for="submission-file">فایل پروژه</label>
+        <input id="submission-file" type="file" name="file" required />
+        <label for="submission-description">توضیحات</label>
+        <textarea id="submission-description" name="description" rows="4"></textarea>
+        <button type="submit">ارسال پروژه</button>
+      </form>
+      <p id="result" role="status" aria-live="polite"></p>
+    </main>
+    <script>
+      document.getElementById('project-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const response = await fetch(window.location.href, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value },
+          body: new FormData(form),
+        });
+        const result = document.getElementById('result');
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          result.textContent = data.error || 'ارسال پروژه انجام نشد. دوباره تلاش کنید.';
+          return;
+        }
+        result.textContent = 'پروژه با موفقیت ارسال شد.';
+        form.reset();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ثبت تیکت</title>
+    <style>
+      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
+      main { max-width: 680px; margin: 48px auto; padding: 24px; background: white; border: 1px solid #dce4e0; border-radius: 8px; }
+      label { display: block; margin-top: 16px; font-weight: 600; }
+      input, select, textarea { box-sizing: border-box; width: 100%; padding: 10px; border: 1px solid #aebbb5; border-radius: 6px; font: inherit; }
+      button { margin-top: 20px; padding: 10px 18px; background: #075d4f; border: 0; border-radius: 6px; color: white; font: inherit; cursor: pointer; }
+      .errorlist { color: #a22222; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>ثبت تیکت پشتیبانی</h1>
+      <form method="post" action="{% url 'tickets:create' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <label for="id_subject">موضوع</label>{{ form.subject }}{{ form.subject.errors }}
+        <label for="id_course">دوره مرتبط</label>{{ form.course }}{{ form.course.errors }}
+        <label for="id_body">شرح درخواست</label>{{ form.body }}{{ form.body.errors }}
+        <button type="submit">ارسال تیکت</button>
+      </form>
+      <p><a href="{% url 'tickets:list' %}">بازگشت به تیکت‌ها</a></p>
+    </main>
+  </body>
+</html>

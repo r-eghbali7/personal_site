@@ -1,0 +1,55 @@
+<header class="fixed top-0 left-0 right-0 z-50 flex flex-col">
+  <div class="h-10 bg-primary-container text-on-primary flex items-center shadow-sm">
+    <div class="max-w-7xl w-full mx-auto px-margin flex items-center justify-between font-body-sm text-body-sm">
+      <div class="flex items-center gap-6">
+        <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">call</span><span>پشتیبانی: ۰۲۱-۸۸۹۹۲۲۰</span></span>
+        <span class="hidden sm:flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">mail</span><span>support@taheri.dev</span></span>
+      </div>
+      <div class="flex items-center gap-4 text-on-primary-container">
+        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span><span>شنبه تا پنجشنبه ۸ الی ۲۰</span></span>
+      </div>
+    </div>
+  </div>
+  <div class="w-full pt-space-sm">
+    <div class="max-w-7xl mx-auto px-margin">
+      <div class="relative h-[84px] bg-card/90 backdrop-blur-xl rounded-3xl border border-border px-gutter flex items-center justify-between shadow-[0_10px_30px_-8px_rgba(15,23,42,0.12)]">
+        <div class="flex items-center gap-4">
+          <img alt="HT Developer Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg" />
+          <div class="flex flex-col">
+            <span class="font-headline-sm text-headline-sm text-primary-container font-bold leading-tight">حسین طاهری</span>
+            <span class="font-body-sm text-body-sm text-outline leading-tight">آکادمی تخصصی توسعه‌دهندگان</span>
+          </div>
+        </div>
+        <button class="xl:hidden h-10 w-10 rounded-xl bg-surface-container-high text-primary-container" type="button" aria-label="بازکردن منو" aria-expanded="false" data-mobile-menu>
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <nav class="site-nav hidden xl:flex items-center gap-1 p-1" data-site-nav data-active-classes="bg-primary-container text-on-primary font-bold rounded-xl">
+          <a class="px-3.5 py-2 transition-all bg-primary-container text-on-primary font-bold rounded-xl" data-path="home" href="{% url 'courses:home' %}">صفحه اصلی</a>
+          <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="courses" href="{% url 'courses:list' %}">دوره‌ها و آموزش‌ها</a>
+          <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="blog" href="{% url 'blog:list' %}">وبلاگ</a>
+          <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="podcasts" href="{% url 'courses:home' %}#podcasts">پادکست‌ها</a>
+          <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="online-quiz" href="{% url 'courses:quiz_list' %}">آزمون آنلاین</a>
+          <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="support-tickets" href="{% url 'tickets:list' %}">تیکت پشتیبانی</a>
+        </nav>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center relative w-32 sm:w-44 md:w-56 lg:w-64 shrink-0" data-site-search-container>
+            <span class="material-symbols-outlined absolute right-3 text-outline text-[20px] pointer-events-none">search</span>
+            <input class="w-full h-11 pr-10 pl-4 bg-background rounded-full border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner transition-colors" placeholder="جستجوی آموزش، مقاله..." aria-label="جست‌وجوی دوره و مقاله" aria-autocomplete="list" aria-controls="site-search-results" aria-expanded="false" autocomplete="off" data-site-search data-search-url="{% url 'site_search' %}" type="text" />
+            <ul class="site-search-results" id="site-search-results" role="listbox" data-site-search-results hidden></ul>
+          </div>
+          <a class="h-11 w-11 rounded-xl bg-primary-container text-on-primary flex items-center justify-center hover:bg-tertiary-container hover:text-on-primary transition-colors" data-path="cart" href="{% url 'orders:cart' %}">
+            <span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+          </a>
+          <div class="flex items-center gap-2 pr-1">
+            <img alt="Profile" class="w-8 h-8 rounded-full object-cover border border-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q" />
+            {% if user.is_authenticated %}
+              <a class="hidden sm:inline-block font-body-md text-body-md text-primary-container font-semibold hover:text-tertiary-container transition-colors" data-path="user-profile" href="{% url 'accounts:profile' %}">حساب کاربری</a>
+            {% else %}
+              <a class="hidden sm:inline-block font-body-md text-body-md text-primary-container font-semibold hover:text-tertiary-container transition-colors" href="{% url 'accounts:login' %}">ورود</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

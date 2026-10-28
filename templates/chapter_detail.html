@@ -1,0 +1,52 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ chapter.title }} | {{ course.title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/site-header.css" />
+  </head>
+  <body class="min-h-screen bg-background font-body-md text-on-surface-variant">
+    <header class="border-b border-border bg-card">
+      <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
+        <a class="font-semibold text-primary-container" href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a>
+        <a class="text-primary-container hover:underline" href="{% url 'courses:list' %}">همه دوره‌ها</a>
+      </div>
+    </header>
+    <main class="mx-auto max-w-5xl px-4 py-8">
+      <nav aria-label="مسیر راهنما" class="mb-6 flex flex-wrap items-center gap-2 text-sm text-outline">
+        <a href="{% url 'courses:home' %}">صفحه اصلی</a><span class="material-symbols-outlined text-sm">chevron_left</span>
+        <a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a><span class="material-symbols-outlined text-sm">chevron_left</span>
+        <span class="text-primary-container">{{ chapter.title }}</span>
+      </nav>
+      <section class="mb-6 rounded-2xl bg-card p-6 md:p-8">
+        <p class="text-sm text-outline">فصل {{ chapter.order }} از {{ chapters|length }}</p>
+        <h1 class="mt-2 font-headline-lg text-headline-lg font-bold text-primary-container">{{ chapter.title }}</h1>
+        {% if chapter.description %}<div class="mt-4 leading-8">{{ chapter.description|linebreaksbr }}</div>{% endif %}
+        <p class="mt-4 text-sm text-outline">{{ chapter.lesson_list|length }} ویدئو · مجموع {{ chapter.total_duration_minutes }} دقیقه</p>
+      </section>
+      <section aria-label="ویدئوهای فصل" class="grid gap-5">
+        {% for lesson in chapter.lesson_list %}
+        <article class="rounded-2xl bg-card p-5 md:p-6">
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">{{ lesson.order }}. {{ lesson.title }}</h2>
+            <span class="text-sm text-outline">{{ lesson.duration_minutes }} دقیقه{% if lesson.is_free_preview %} · پیش‌نمایش رایگان{% endif %}</span>
+          </div>
+          {% if lesson.can_play and lesson.player_kind == 'video' %}
+          <video class="w-full max-h-[640px] rounded-xl bg-black" controls preload="metadata" src="{{ lesson.player_url }}">مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.</video>
+          {% elif lesson.can_play and lesson.player_kind == 'embed' %}
+          <div class="aspect-video overflow-hidden rounded-xl bg-black"><iframe class="h-full w-full" src="{{ lesson.player_url }}" title="{{ lesson.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>
+          {% elif lesson.can_play %}<p class="text-outline">ویدئوی این درس هنوز بارگذاری نشده است.</p>
+          {% else %}<p class="text-outline">برای پخش این ویدئو ابتدا در دوره ثبت‌نام کنید.</p>{% endif %}
+          {% if lesson.attachment and lesson.can_play %}<a class="mt-3 inline-flex items-center gap-2 text-primary-container hover:underline" href="{{ lesson.attachment.url }}" download><span class="material-symbols-outlined">download</span>دریافت فایل پیوست</a>{% endif %}
+        </article>
+        {% empty %}<p class="rounded-2xl bg-card p-6 text-outline">برای این فصل هنوز ویدئویی ثبت نشده است.</p>{% endfor %}
+      </section>
+      <nav class="mt-8 flex flex-wrap gap-3" aria-label="جابجایی بین فصل‌ها">
+        {% for item in chapters %}{% if item.id == chapter.id %}<span class="rounded-lg bg-primary-container px-4 py-2 text-on-primary">{{ item.order }}. {{ item.title }}</span>{% else %}<a class="rounded-lg bg-card px-4 py-2 hover:bg-surface-container-low" href="{% url 'courses:chapter_detail' course.slug item.id %}">{{ item.order }}. {{ item.title }}</a>{% endif %}{% endfor %}
+      </nav>
+    </main>
+  </body>
+</html>

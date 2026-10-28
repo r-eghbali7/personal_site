@@ -17,10 +17,10 @@ class TicketListView(LoginRequiredMixin, View):
 
 class TicketCreateView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, 'ticket_create.html', {'form': TicketCreateForm()})
+        return render(request, 'ticket_create.html', {'form': TicketCreateForm(user=request.user)})
 
     def post(self, request):
-        form = TicketCreateForm(request.POST)
+        form = TicketCreateForm(request.POST, user=request.user)
         if not form.is_valid():
             return render(request, 'ticket_create.html', {'form': form}, status=400)
         with transaction.atomic():

@@ -14,6 +14,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import PasswordChangeForm
+from django.db import transaction
+from django.db.models import Avg, Count
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -24,6 +26,8 @@ from django.views.decorators.cache import never_cache
 from .models import CustomUser, OTPCode
 from .forms import RegisterForm, LoginForm, OTPVerifyForm, OTPRequestForm, ProfileForm
 from .services import send_otp_code
+from tickets.forms import TicketCreateForm
+from tickets.models import Ticket, TicketMessage
 
 logger = logging.getLogger(__name__)
 
@@ -284,43 +288,76 @@ class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request):
         form = ProfileForm(instance=request.user)
-        context = self._build_context(request, form)
+        context = self._build_context(request, form, TicketCreateForm(user=request.user))
         return render(request, self.template_name, context)
 
     def post(self, request):
+        if request.POST.get('action') == 'create_ticket':
+            ticket_form = TicketCreateForm(request.POST, user=request.user)
+            if ticket_form.is_valid():
+                with transaction.atomic():
+                    ticket = Ticket.objects.create(
+                        user=request.user,
+                        subject=ticket_form.cleaned_data['subject'],
+                        course=ticket_form.cleaned_data['course'],
+                    )
+                    TicketMessage.objects.create(
+                        ticket=ticket,
+                        sender=request.user,
+                        body=ticket_form.cleaned_data['body'],
+                    )
+                messages.success(request, 'تیکت شما با موفقیت ثبت شد.')
+                return redirect(f"{reverse('accounts:profile')}#tab-tickets")
+
+            context = self._build_context(
+                request,
+                ProfileForm(instance=request.user),
+                ticket_form,
+            )
+            return render(request, self.template_name, context, status=400)
+
         form = ProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'پروفایل با موفقیت بروزرسانی شد.')
             return redirect('accounts:profile')
 
-        context = self._build_context(request, form)
+        context = self._build_context(request, form, TicketCreateForm(user=request.user))
         return render(request, self.template_name, context)
 
-    def _build_context(self, request, form):
+    def _build_context(self, request, form, ticket_form=None):
         """ساخت context صفحه پروفایل."""
         user = request.user
 
-        # دوره‌های ثبت‌نام‌شده
-        enrollments = user.enrollments.filter(is_active=True).select_related('course__category')
-
-        # تیکت‌های اخیر
-        recent_tickets = user.tickets.order_by('-created_at')[:5]
-
-        # سفارش‌های موفق
-        paid_orders = user.orders.filter(status='paid').order_by('-created_at')[:5]
-
-        # آخرین نتایج آزمون
-        recent_quiz_attempts = user.quiz_attempts.select_related(
+        enrollments = user.enrollments.filter(is_active=True).select_related(
+            'course__category',
+            'course__instructor',
+        ).annotate(
+            chapter_count=Count('course__chapters', distinct=True),
+            lesson_count=Count('course__chapters__lessons', distinct=True),
+        )
+        tickets = user.tickets.select_related('course').prefetch_related(
+            'messages__sender',
+        ).order_by('-created_at')
+        orders = user.orders.prefetch_related('items__course').order_by('-created_at')
+        quiz_attempts = user.quiz_attempts.select_related(
             'quiz__chapter__course'
-        ).order_by('-taken_at')[:5]
+        ).order_by('-taken_at')
+        quiz_stats = quiz_attempts.aggregate(average_score=Avg('score'))
 
         return {
             'form': form,
+            'ticket_form': ticket_form or TicketCreateForm(user=user),
             'enrollments': enrollments,
-            'recent_tickets': recent_tickets,
-            'paid_orders': paid_orders,
-            'recent_quiz_attempts': recent_quiz_attempts,
+            'enrollment_count': enrollments.count(),
+            'recent_tickets': tickets[:10],
+            'ticket_count': tickets.count(),
+            'open_ticket_count': tickets.exclude(status='closed').count(),
+            'orders': orders[:10],
+            'order_count': orders.count(),
+            'paid_order_count': orders.filter(status='paid').count(),
+            'recent_quiz_attempts': quiz_attempts[:10],
+            'quiz_average_score': quiz_stats['average_score'],
         }
 
 

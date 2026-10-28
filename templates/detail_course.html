@@ -871,23 +871,41 @@
                 <section class="bg-card rounded-[28px] p-8 shadow-sm flex flex-col gap-4" id="curriculum">
                   <h2 class="font-headline-md text-headline-md text-primary-container font-bold">سرفصل‌های دوره</h2>
                   {% for chapter in chapters %}
-                  <section class="rounded-xl border border-border p-4">
-                    <h3 class="font-headline-sm text-headline-sm font-bold">{{ chapter.order }}. {{ chapter.title }}</h3>
-                    <div class="mt-3 flex flex-col gap-2">
-                      {% for lesson in chapter.lessons.all %}
-                      <div class="flex items-center justify-between gap-3 rounded-lg bg-surface-container-low p-3">
-                        <span>{{ lesson.order }}. {{ lesson.title }}</span>
-                        {% if course.is_free or lesson.is_free_preview or enrolled %}
-                        <a class="text-primary-container" href="{% url 'courses:lesson' course.slug lesson.id %}">مشاهده درس</a>
-                        {% else %}<span class="text-outline">قفل</span>{% endif %}
+                  <details class="group chapter-accordion rounded-xl border border-border bg-surface-container-lowest">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 hover:bg-surface-container-low">
+                      <span class="font-headline-sm text-headline-sm font-bold text-on-surface">{{ chapter.order }}. {{ chapter.title }}</span>
+                      <span class="material-symbols-outlined shrink-0 text-outline transition-transform group-open:rotate-180">expand_more</span>
+                    </summary>
+                    <div class="border-t border-border p-5">
+                      {% if chapter.description %}<p class="mb-4 leading-7">{{ chapter.description|linebreaksbr }}</p>{% endif %}
+                      <p class="mb-4 text-sm text-outline">{{ chapter.lesson_list|length }} درس · مجموع {{ chapter.total_duration_minutes }} دقیقه</p>
+                      <div class="flex flex-col gap-4">
+                        {% for lesson in chapter.lesson_list %}
+                        <article class="rounded-lg bg-surface-container-low p-4">
+                          <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                            <h3 class="font-semibold text-on-surface">{{ lesson.order }}. {{ lesson.title }}</h3>
+                            <span class="text-sm text-outline">{{ lesson.duration_minutes }} دقیقه{% if lesson.is_free_preview %} · پیش‌نمایش رایگان{% endif %}</span>
+                          </div>
+                          {% if lesson.can_play and lesson.player_kind == 'video' %}
+                          <video class="w-full max-h-[560px] rounded-lg bg-black" controls preload="metadata" src="{{ lesson.player_url }}">مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.</video>
+                          {% elif lesson.can_play and lesson.player_kind == 'embed' %}
+                          <div class="aspect-video overflow-hidden rounded-lg bg-black"><iframe class="h-full w-full" src="{{ lesson.player_url }}" title="{{ lesson.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>
+                          {% elif lesson.can_play %}<p class="text-sm text-outline">ویدئوی این درس هنوز بارگذاری نشده است.</p>
+                          {% else %}<p class="text-sm text-outline">برای پخش این ویدئو ابتدا در دوره ثبت‌نام کنید.</p>{% endif %}
+                        </article>
+                        {% empty %}<p class="text-outline">هنوز درسی برای این فصل ثبت نشده است.</p>{% endfor %}
                       </div>
-                      {% empty %}<p class="text-outline">هنوز درسی برای این فصل ثبت نشده است.</p>{% endfor %}
+                      <div class="mt-4 flex flex-wrap gap-4">
+                        <a class="text-primary-container hover:underline" href="{% url 'courses:chapter_detail' course.slug chapter.id %}">صفحه اختصاصی فصل</a>
+                        {% if chapter.quiz %}<a class="text-primary-container hover:underline" href="{% url 'courses:quiz' chapter.quiz.id %}">آزمون فصل</a>{% endif %}
+                      </div>
                     </div>
-                    {% if chapter.quiz %}<p class="mt-3"><a href="{% url 'courses:quiz' chapter.quiz.id %}">آزمون فصل</a></p>{% endif %}
-                  </section>
+                  </details>
                   {% endfor %}
                 </section>
                 {% else %}
+                <p class="rounded-2xl bg-card p-8 text-center text-outline">هنوز سرفصلی برای این دوره ثبت نشده است.</p>
+                {% comment %}
                 <section
                   class="bg-card rounded-[28px] p-8 shadow-sm flex flex-col gap-space-md"
                   id="curriculum"
@@ -1415,6 +1433,7 @@
                     </div>
                   </div>
                 </section>
+                {% endcomment %}
                 {% endif %}
                 <!-- Section: Showcase of Real-World Projects -->
                 <section

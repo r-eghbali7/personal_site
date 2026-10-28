@@ -315,7 +315,7 @@
               <a
                 class="flex items-center gap-1 hover:text-primary-container transition-colors"
                 data-path="home"
-                href="#"
+                href="{% url 'courses:home' %}"
               >
                 <span class="material-symbols-outlined text-[16px]">home</span>
                 <span>صفحه اصلی</span>
@@ -324,7 +324,7 @@
                 >chevron_left</span
               >
               <span class="text-primary-container font-semibold"
-                >دوره‌های تخصصی و مسیرهای یادگیری</span
+                >{% if selected_category %}{% for category in categories %}{% if category.slug == selected_category %}{{ category.name }}{% endif %}{% endfor %}{% else %}دوره‌های تخصصی و مسیرهای یادگیری{% endif %}</span
               >
             </nav>
             <!-- Headline & Subtitle -->
@@ -366,7 +366,7 @@
                   >
                   <span
                     class="font-body-md text-body-md font-bold text-on-surface"
-                    >۱۲ مسیر تخصصی</span
+                    >{{ published_course_count }} دوره تعریف‌شده</span
                   >
                 </div>
                 <div
@@ -374,55 +374,14 @@
                 >
                   <span
                     class="material-symbols-outlined text-amber-warning text-[20px]"
-                    style="font-variation-settings: &quot;FILL&quot; 1"
-                    >star</span
+                    >groups</span
                   >
                   <span
                     class="font-body-md text-body-md font-bold text-on-surface"
-                    >۴.۹ میانگین رضایت</span
+                    >{{ student_count }} دانشجو</span
                   >
                 </div>
               </div>
-            </div>
-            <!-- Quick Filter Pills / Topic Chips -->
-            <div
-              class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none pt-2"
-            >
-              <button
-                class="shrink-0 px-4 py-2 rounded-full bg-primary-container text-on-primary font-body-md text-body-md font-semibold transition-all shadow-sm"
-              >
-                همه دوره‌ها
-              </button>
-              <button
-                class="shrink-0 px-4 py-2 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant font-body-md text-body-md transition-all"
-              >
-                فرانت‌اند و جاوااسکریپت
-              </button>
-              <button
-                class="shrink-0 px-4 py-2 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant font-body-md text-body-md transition-all"
-              >
-                بک‌اند و معماری سازمانی
-              </button>
-              <button
-                class="shrink-0 px-4 py-2 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant font-body-md text-body-md transition-all"
-              >
-                DevOps و رایانش ابری
-              </button>
-              <button
-                class="shrink-0 px-4 py-2 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant font-body-md text-body-md transition-all"
-              >
-                هوش مصنوعی و پایتون
-              </button>
-              <button
-                class="shrink-0 px-4 py-2 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant font-body-md text-body-md transition-all"
-              >
-                مهندسی داده و دیتابیس
-              </button>
-              <button
-                class="shrink-0 px-4 py-2 rounded-full bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant font-body-md text-body-md transition-all"
-              >
-                مسیرهای شغلی جامع (Fullstack)
-              </button>
             </div>
           </div>
         </section>
@@ -433,7 +392,8 @@
             class="w-full p-4 mb-8 bg-card rounded-2xl shadow-sm flex flex-col lg:flex-row items-center justify-between gap-4"
           >
             <!-- Search Input Container -->
-            <div class="relative w-full lg:w-96">
+            <form action="{% url 'courses:list' %}" method="get" class="relative w-full lg:w-96">
+              {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}" />{% endif %}
               <span
                 class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px] pointer-events-none"
                 >search</span
@@ -441,10 +401,12 @@
               <input
                 class="w-full h-11 pr-11 pl-4 rounded-xl bg-background font-body-md text-body-md text-on-surface placeholder:text-muted-text focus:outline-none focus:ring-2 focus:ring-primary-container/20 transition-all shadow-inner"
                 id="courseSearchInput"
+                name="q"
+                value="{{ search_query }}"
                 placeholder="جستجو در دوره‌ها، تکنولوژی، مدرس..."
                 type="text"
               />
-            </div>
+            </form>
             <!-- Middle & Left Tools: Sort, View Toggle, Count -->
             <div
               class="flex items-center justify-between lg:justify-end gap-4 w-full lg:w-auto"
@@ -453,50 +415,10 @@
               <span
                 class="font-body-md text-body-md text-outline hidden sm:inline-block"
               >
-                نمایش <span class="text-primary-container font-bold">۸</span> از
-                <span class="text-primary-container font-bold">۱۲</span> دوره
+                نمایش <span class="text-primary-container font-bold">{{ result_count }}</span> از
+                <span class="text-primary-container font-bold">{{ published_course_count }}</span> دوره
                 تخصصی
               </span>
-              <!-- Sorting Select -->
-              <div
-                class="flex items-center gap-2 bg-background px-3 py-1.5 rounded-xl"
-              >
-                <span class="material-symbols-outlined text-outline text-[18px]"
-                  >sort</span
-                >
-                <span
-                  class="font-body-sm text-body-sm text-outline hidden md:inline"
-                  >مرتب‌سازی:</span
-                >
-                <select
-                  class="bg-transparent font-body-md text-body-md text-on-surface font-medium focus:outline-none cursor-pointer"
-                >
-                  <option>محبوب‌ترین دوره‌ها</option>
-                  <option>جدیدترین‌ها</option>
-                  <option>بالاترین امتیاز دانشجویان</option>
-                  <option>گران‌ترین</option>
-                  <option>ارزان‌ترین</option>
-                </select>
-              </div>
-              <!-- View Grid/List Switches -->
-              <div class="flex items-center gap-1 bg-background p-1 rounded-xl">
-                <button
-                  class="h-9 w-9 rounded-lg bg-surface-container-high text-primary-container flex items-center justify-center transition-all"
-                  title="نمای شبکه‌ای"
-                >
-                  <span class="material-symbols-outlined text-[20px]"
-                    >grid_view</span
-                  >
-                </button>
-                <button
-                  class="h-9 w-9 rounded-lg text-outline hover:text-on-surface flex items-center justify-center transition-all"
-                  title="نمای لیستی"
-                >
-                  <span class="material-symbols-outlined text-[20px]"
-                    >view_list</span
-                  >
-                </button>
-              </div>
             </div>
           </div>
           <!-- 2-Column Responsive Body Layout -->
@@ -519,12 +441,19 @@
                       فیلترهای پیشرفته
                     </h2>
                   </div>
-                  <button
-                    class="text-accent-alt hover:underline font-body-sm text-body-sm font-semibold"
-                  >
-                    پاک‌سازی همه
-                  </button>
                 </div>
+                <div class="flex flex-col gap-3">
+                  <h3 class="font-body-md text-body-md font-bold text-on-surface">دسته‌بندی موضوعی</h3>
+                  <a class="flex items-center justify-between font-body-md text-body-md {% if not selected_category %}text-primary-container font-bold{% else %}text-on-surface{% endif %}" href="{% url 'courses:list' %}{% if search_query %}?q={{ search_query|urlencode }}{% endif %}">
+                    <span>همه دسته‌بندی‌ها</span><span class="text-outline text-body-sm">{{ published_course_count }}</span>
+                  </a>
+                  {% for category in categories %}
+                  <a class="flex items-center justify-between font-body-md text-body-md {% if selected_category == category.slug %}text-primary-container font-bold{% else %}text-on-surface{% endif %}" href="{% url 'courses:list' %}?category={{ category.slug }}{% if search_query %}&amp;q={{ search_query|urlencode }}{% endif %}">
+                    <span>{{ category.name }}</span><span class="text-outline text-body-sm">{{ category.course_count }}</span>
+                  </a>
+                  {% endfor %}
+                </div>
+                {% comment %}
                 <!-- Category Filter Group -->
                 <div class="flex flex-col gap-3">
                   <h3
@@ -627,42 +556,6 @@
                   </div>
                 </div>
                 <div class="h-[1px] bg-surface-container-high w-full"></div>
-                <!-- Level Filter Group -->
-                <div class="flex flex-col gap-3">
-                  <h3
-                    class="font-body-md text-body-md font-bold text-on-surface"
-                  >
-                    سطح مخاطب
-                  </h3>
-                  <div class="flex flex-col gap-2 font-body-md text-body-md">
-                    <label class="flex items-center gap-2.5 cursor-pointer">
-                      <input
-                        class="w-4 h-4 rounded accent-primary-container"
-                        type="checkbox"
-                      />
-                      <span class="text-on-surface">مبتدی تا پایه</span>
-                    </label>
-                    <label class="flex items-center gap-2.5 cursor-pointer">
-                      <input
-                        checked=""
-                        class="w-4 h-4 rounded accent-primary-container"
-                        type="checkbox"
-                      />
-                      <span class="text-on-surface">متوسط تا پیشرفته</span>
-                    </label>
-                    <label class="flex items-center gap-2.5 cursor-pointer">
-                      <input
-                        checked=""
-                        class="w-4 h-4 rounded accent-primary-container"
-                        type="checkbox"
-                      />
-                      <span class="text-on-surface"
-                        >معماری و سطح ارشد (Senior/Lead)</span
-                      >
-                    </label>
-                  </div>
-                </div>
-                <div class="h-[1px] bg-surface-container-high w-full"></div>
                 <!-- Delivery Mode -->
                 <div class="flex flex-col gap-3">
                   <h3
@@ -736,52 +629,6 @@
                   </div>
                 </div>
                 <div class="h-[1px] bg-surface-container-high w-full"></div>
-                <!-- Price Range Slider & Special Toggles -->
-                <div class="flex flex-col gap-4">
-                  <div class="flex items-center justify-between">
-                    <h3
-                      class="font-body-md text-body-md font-bold text-on-surface"
-                    >
-                      محدوده شهریه
-                    </h3>
-                    <span
-                      class="font-body-sm text-body-sm text-primary-container font-semibold"
-                      >تا ۳,۰۰۰,۰۰۰ تومان</span
-                    >
-                  </div>
-                  <input
-                    class="w-full accent-primary-container cursor-pointer bg-surface-container h-1.5 rounded-lg"
-                    max="3500000"
-                    min="500000"
-                    type="range"
-                    value="3000000"
-                  />
-                  <div
-                    class="flex flex-col gap-2.5 pt-2 font-body-md text-body-md"
-                  >
-                    <label
-                      class="flex items-center justify-between cursor-pointer"
-                    >
-                      <span class="text-on-surface"
-                        >فقط دوره‌های دارای تخفیف</span
-                      >
-                      <input
-                        class="w-4 h-4 rounded accent-primary-container"
-                        type="checkbox"
-                      />
-                    </label>
-                    <label
-                      class="flex items-center justify-between cursor-pointer"
-                    >
-                      <span class="text-on-surface">امکان پرداخت اقساطی</span>
-                      <input
-                        checked=""
-                        class="w-4 h-4 rounded accent-primary-container"
-                        type="checkbox"
-                      />
-                    </label>
-                  </div>
-                </div>
                 <!-- Reset Filter Button -->
                 <button
                   class="w-full py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-body-md text-body-md font-semibold transition-colors mt-2 flex items-center justify-center gap-1.5"
@@ -792,6 +639,8 @@
                   <span>تنظیم مجدد فیلترها</span>
                 </button>
               </div>
+              {% endcomment %}
+              {% comment %}
               <!-- Mentorship Guarantee Micro-Banner -->
               <div
                 class="bg-primary text-on-primary rounded-3xl p-5 shadow-md flex flex-col gap-3 relative overflow-hidden"
@@ -815,6 +664,7 @@
                   کدریویو پروژه‌های پایانی است.
                 </p>
               </div>
+              {% endcomment %}
             </aside>
             <!-- Left Column: Courses Grid Area -->
             <main class="lg:col-span-9 flex flex-col gap-8">
@@ -825,13 +675,24 @@
                 <article class="bg-card rounded-[28px] overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col group h-full">
                   {% if course.thumbnail %}<img class="w-full h-52 object-cover" src="{{ course.thumbnail.url }}" alt="{{ course.title }}" />{% else %}<div class="h-52 bg-surface-container flex items-center justify-center text-primary-container"><span class="material-symbols-outlined text-5xl">school</span></div>{% endif %}
                   <div class="p-5 flex flex-1 flex-col justify-between gap-4">
-                    <div><p class="text-sm text-outline">{{ course.category.name|default:'دوره آموزشی' }} · {{ course.get_level_display }}</p><h2 class="font-headline-sm text-headline-sm text-primary font-bold mt-2"><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></h2><p class="text-sm text-on-surface-variant mt-2">{{ course.short_description|default:course.description|truncatechars:150 }}</p></div>
+                    <div>
+                      <p class="text-sm text-outline">{{ course.category.name|default:'دوره آموزشی' }} · {{ course.get_level_display }}</p>
+                      <h2 class="font-headline-sm text-headline-sm text-primary font-bold mt-2"><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></h2>
+                      <p class="text-sm text-on-surface-variant mt-2">{{ course.short_description|default:course.description|truncatechars:150 }}</p>
+                      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-sm text-outline">
+                        <span><span class="material-symbols-outlined align-middle text-base">layers</span> {{ course.chapter_count }} فصل</span>
+                        <span><span class="material-symbols-outlined align-middle text-base">groups</span> {{ course.student_count }} دانشجو</span>
+                        <span>مدرس: {{ course.instructor.full_name|default:course.instructor.phone_number }}</span>
+                      </div>
+                    </div>
                     <div class="flex items-center justify-between gap-3"><span class="font-bold text-primary-container">{% if course.is_free %}رایگان{% else %}{{ course.price|floatformat:0 }} تومان{% endif %}</span><a class="h-10 px-4 rounded-xl bg-primary-container text-on-primary flex items-center" href="{% url 'courses:detail' course.slug %}">مشاهده دوره</a></div>
                   </div>
                 </article>
                 {% endfor %}
               </div>
               {% else %}
+              <p class="rounded-2xl bg-card p-8 text-center text-on-surface-variant">دوره‌ای برای این جستجو یا دسته‌بندی پیدا نشد.</p>
+              {% comment %}
               <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
                 <!-- Course Card 1: Next.js 15 & React 19 Fullstack -->
                 <article
@@ -1856,45 +1717,8 @@
                   </div>
                 </article>
               </div>
+              {% endcomment %}
               {% endif %}
-              <!-- Pagination Bar -->
-              <nav
-                aria-label="صفحه‌بندی دوره‌ها"
-                class="flex items-center justify-center gap-2 pt-6"
-              >
-                <button
-                  aria-label="صفحه قبلی"
-                  class="h-11 w-11 rounded-2xl bg-card text-outline hover:text-on-surface hover:bg-surface-container flex items-center justify-center transition-all shadow-sm"
-                >
-                  <span class="material-symbols-outlined text-[20px]"
-                    >chevron_right</span
-                  >
-                </button>
-                <button
-                  class="h-11 w-11 rounded-2xl bg-primary-container text-on-primary font-body-md text-body-md font-bold shadow-md"
-                >
-                  ۱
-                </button>
-                <button
-                  class="h-11 w-11 rounded-2xl bg-card text-on-surface-variant hover:bg-surface-container font-body-md text-body-md font-medium transition-all shadow-sm"
-                >
-                  ۲
-                </button>
-                <button
-                  class="h-11 w-11 rounded-2xl bg-card text-on-surface-variant hover:bg-surface-container font-body-md text-body-md font-medium transition-all shadow-sm"
-                >
-                  ۳
-                </button>
-                <span class="px-2 text-outline font-bold">...</span>
-                <button
-                  aria-label="صفحه بعدی"
-                  class="h-11 w-11 rounded-2xl bg-card text-outline hover:text-on-surface hover:bg-surface-container flex items-center justify-center transition-all shadow-sm"
-                >
-                  <span class="material-symbols-outlined text-[20px]"
-                    >chevron_left</span
-                  >
-                </button>
-              </nav>
             </main>
           </div>
         </section>

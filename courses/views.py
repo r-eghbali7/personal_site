@@ -1,12 +1,54 @@
 """Views: courses"""
 import json
+from urllib.parse import parse_qs, urlparse
 from django.views import View
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Q
 from django.urls import reverse
 from .models import Category, Course, Chapter, Lesson, Quiz, FinalProject
+
+
+def prepare_chapter_media(chapters, user):
+    for chapter in chapters:
+        lessons = list(chapter.lessons.all())
+        for lesson in lessons:
+            lesson.can_play = lesson.can_access(user)
+            lesson.player_kind = None
+            lesson.player_url = ''
+            if not lesson.can_play:
+                continue
+            if lesson.video_file:
+                lesson.player_kind = 'video'
+                lesson.player_url = lesson.video_file.url
+                continue
+            if not lesson.video_url:
+                continue
+            parsed_url = urlparse(lesson.video_url)
+            host = parsed_url.hostname or ''
+            path_parts = [part for part in parsed_url.path.split('/') if part]
+            if host.endswith('youtu.be'):
+                video_id = path_parts[0] if path_parts else ''
+            elif host.endswith('youtube.com'):
+                video_id = parse_qs(parsed_url.query).get('v', [''])[0]
+                if not video_id and len(path_parts) > 1 and path_parts[0] in {'embed', 'shorts'}:
+                    video_id = path_parts[1]
+            else:
+                video_id = ''
+            if video_id:
+                lesson.player_kind = 'embed'
+                lesson.player_url = f'https://www.youtube-nocookie.com/embed/{video_id}'
+            elif host.endswith('aparat.com'):
+                video_hash = path_parts[-1] if path_parts else ''
+                if path_parts and path_parts[0] == 'video' and len(path_parts) > 1:
+                    video_hash = path_parts[-1]
+                if video_hash:
+                    lesson.player_kind = 'embed'
+                    lesson.player_url = f'https://www.aparat.com/video/video/embed/videohash/{video_hash}/vt/frame'
+        chapter.lesson_list = lessons
+    return chapters
 
 def is_ajax(request):
     return request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('accept','')
@@ -22,11 +64,43 @@ class HomeView(View):
 
 class CourseListView(View):
     def get(self, request):
-        qs = Course.objects.filter(is_published=True).select_related('category','instructor')
+        qs = Course.objects.filter(is_published=True).select_related('category', 'instructor').annotate(
+            chapter_count=Count('chapters', distinct=True),
+            student_count=Count(
+                'enrollments__user',
+                filter=Q(enrollments__is_active=True),
+                distinct=True,
+            ),
+        )
         cat = request.GET.get('category')
         if cat:
             qs = qs.filter(category__slug=cat)
-        context = {'courses': qs, 'categories': Category.objects.all()}
+        search_query = request.GET.get('q', '').strip()
+        if search_query:
+            qs = qs.filter(
+                Q(title__icontains=search_query)
+                | Q(short_description__icontains=search_query)
+                | Q(description__icontains=search_query)
+            )
+        categories = Category.objects.annotate(
+            course_count=Count('courses', filter=Q(courses__is_published=True), distinct=True),
+        )
+        stats = Course.objects.filter(is_published=True).aggregate(
+            published_course_count=Count('id', distinct=True),
+            student_count=Count(
+                'enrollments__user',
+                filter=Q(enrollments__is_active=True),
+                distinct=True,
+            ),
+        )
+        context = {
+            'courses': qs,
+            'categories': categories,
+            'selected_category': cat or '',
+            'search_query': search_query,
+            'result_count': qs.count(),
+            **stats,
+        }
         if is_ajax(request):
             return JsonResponse({'courses':[{'id':c.id,'title':c.title,'slug':c.slug,'price':str(c.price),'level':c.level} for c in qs]})
         return render(request, 'list_course.html', context)
@@ -41,16 +115,50 @@ class QuizListView(View):
 
 class CourseDetailView(View):
     def get(self, request, slug):
-        course = get_object_or_404(Course, slug=slug, is_published=True)
-        chapters = course.chapters.prefetch_related('lessons','quiz')
+        course = get_object_or_404(
+            Course.objects.select_related('category', 'instructor'),
+            slug=slug,
+            is_published=True,
+        )
+        chapters = prepare_chapter_media(
+            course.chapters.prefetch_related('lessons', 'quiz').all(),
+            request.user,
+        )
         context = {
             'course': course,
             'chapters': chapters,
             'enrolled': course.is_enrolled(request.user),
+            'final_project': FinalProject.objects.filter(course=course).first(),
+            'related_courses': Course.objects.filter(
+                is_published=True,
+                category=course.category,
+            ).exclude(pk=course.pk).select_related('category')[:3],
         }
         if is_ajax(request):
             return JsonResponse({'course':{'id':course.id,'title':course.title,'slug':course.slug,'price':str(course.price)},'chapters':[{'id':ch.id,'title':ch.title} for ch in chapters]})
         return render(request, 'detail_course.html', context)
+
+
+class ChapterDetailView(View):
+    def get(self, request, course_slug, chapter_id):
+        course = get_object_or_404(
+            Course.objects.select_related('instructor'),
+            slug=course_slug,
+            is_published=True,
+        )
+        chapter = get_object_or_404(
+            Chapter.objects.prefetch_related('lessons', 'quiz'),
+            pk=chapter_id,
+            course=course,
+        )
+        prepare_chapter_media([chapter], request.user)
+        context = {
+            'course': course,
+            'chapter': chapter,
+            'chapters': course.chapters.all(),
+            'enrolled': course.is_enrolled(request.user),
+        }
+        return render(request, 'chapter_detail.html', context)
 
 class LessonView(View):
     def dispatch(self, request, *args, **kwargs):

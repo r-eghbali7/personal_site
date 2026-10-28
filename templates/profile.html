@@ -287,6 +287,8 @@
       </div>
     </header>
     <main class="w-full pt-20 bg-background min-h-screen">
+      {% include 'profile_dashboard.html' %}
+      {% if False %}
       <div class="flex flex-col w-full">
         <!-- Content Container with max width bounded at 1440px -->
         <div
@@ -2145,6 +2147,7 @@
 
         </script>
       </div>
+      {% endif %}
     </main>
     <footer
       class="w-full bg-surface-container-low mt-space-xl shadow-[0_-1px_12px_rgba(0,0,0,0.02)]"

@@ -1,0 +1,144 @@
+<div class="w-full max-w-7xl mx-auto px-margin py-space-lg">
+  <nav aria-label="مسیر راهنما" class="flex items-center gap-2 font-body-sm text-body-sm text-outline mb-space-md flex-wrap">
+    <a class="hover:text-primary-container" href="{% url 'courses:home' %}">صفحه اصلی</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <a class="hover:text-primary-container" href="{% url 'courses:list' %}">دوره‌ها</a>
+    {% if course.category %}<span class="material-symbols-outlined text-[14px]">chevron_left</span><span>{{ course.category.name }}</span>{% endif %}
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span><span class="text-primary-container font-semibold">{{ course.title }}</span>
+  </nav>
+
+  <header class="flex flex-col gap-4 mb-space-lg">
+    <div class="flex flex-wrap items-center gap-2">
+      {% if course.category %}<span class="rounded-full bg-primary-container/10 px-3 py-1 text-primary-container">{{ course.category.name }}</span>{% endif %}
+      <span class="rounded-full bg-surface-container-high px-3 py-1">{{ course.get_level_display }}</span>
+      {% if course.is_free %}<span class="rounded-full bg-surface-container-high px-3 py-1">رایگان</span>{% endif %}
+    </div>
+    <h1 class="font-display-hero text-display-hero text-primary-container font-extrabold">{{ course.title }}</h1>
+    {% if course.short_description %}<p class="max-w-4xl text-body-lg leading-relaxed">{{ course.short_description }}</p>{% endif %}
+    <div class="flex flex-wrap gap-x-6 gap-y-2 text-body-sm text-outline">
+      <span>{{ chapters|length }} فصل</span>
+      <span>مدرس: {{ course.instructor.full_name|default:course.instructor.phone_number }}</span>
+      <span>آخرین بروزرسانی: {{ course.updated_at|date:'Y/m/d' }}</span>
+    </div>
+  </header>
+
+  <div class="mb-6 flex flex-wrap gap-2 border-b border-border pb-3" role="tablist" aria-label="بخش‌های دوره">
+    <button class="course-tab rounded-lg bg-primary-container px-4 py-2 text-on-primary" id="tab-about" type="button" role="tab" aria-selected="true" aria-controls="panel-about" data-course-tab="panel-about">درباره دوره</button>
+    <button class="course-tab rounded-lg bg-surface-container-high px-4 py-2 text-on-surface" id="tab-outcomes" type="button" role="tab" aria-selected="false" aria-controls="panel-outcomes" data-course-tab="panel-outcomes">مهارت‌های اکتسابی</button>
+    <button class="course-tab rounded-lg bg-surface-container-high px-4 py-2 text-on-surface" id="tab-curriculum" type="button" role="tab" aria-selected="false" aria-controls="panel-curriculum" data-course-tab="panel-curriculum">سرفصل‌ها و ویدئوها</button>
+    <button class="course-tab rounded-lg bg-surface-container-high px-4 py-2 text-on-surface" id="tab-project" type="button" role="tab" aria-selected="false" aria-controls="panel-project" data-course-tab="panel-project">پروژه عملی</button>
+    <button class="course-tab rounded-lg bg-surface-container-high px-4 py-2 text-on-surface" id="tab-instructor" type="button" role="tab" aria-selected="false" aria-controls="panel-instructor" data-course-tab="panel-instructor">مدرس دوره</button>
+    <button class="course-tab rounded-lg bg-surface-container-high px-4 py-2 text-on-surface" id="tab-reviews" type="button" role="tab" aria-selected="false" aria-controls="panel-reviews" data-course-tab="panel-reviews">نظرات دانشجویان</button>
+    {% for section in course.landing_sections %}
+    <button class="course-tab rounded-lg bg-surface-container-high px-4 py-2 text-on-surface" id="tab-custom-{{ forloop.counter }}" type="button" role="tab" aria-selected="false" aria-controls="panel-custom-{{ forloop.counter }}" data-course-tab="panel-custom-{{ forloop.counter }}">{{ section.title }}</button>
+    {% endfor %}
+  </div>
+
+  <section class="course-panel rounded-2xl bg-card p-6 md:p-8" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
+    <h2 class="mb-4 font-headline-md text-headline-md font-bold text-primary-container">درباره {{ course.title }}</h2>
+    <div class="max-w-4xl leading-8">{{ course.description|linebreaksbr }}</div>
+  </section>
+
+  <section class="course-panel hidden rounded-2xl bg-card p-6 md:p-8" id="panel-outcomes" role="tabpanel" aria-labelledby="tab-outcomes" hidden>
+    <h2 class="mb-4 font-headline-md text-headline-md font-bold text-primary-container">مهارت‌های اکتسابی</h2>
+    {% if course.learning_outcomes %}
+    <ul class="grid gap-3 md:grid-cols-2">
+      {% for outcome in course.learning_outcomes %}<li class="rounded-lg bg-surface-container-low p-4">{{ outcome }}</li>{% endfor %}
+    </ul>
+    {% else %}<p class="text-outline">مهارت‌های این دوره هنوز ثبت نشده است.</p>{% endif %}
+  </section>
+
+  <section class="course-panel hidden rounded-2xl bg-card p-6 md:p-8" id="panel-curriculum" role="tabpanel" aria-labelledby="tab-curriculum" hidden>
+    <h2 class="mb-5 font-headline-md text-headline-md font-bold text-primary-container">سرفصل‌ها و ویدئوهای دوره</h2>
+    {% for chapter in chapters %}
+    <article class="mb-5 rounded-xl border border-border p-4 md:p-5">
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">{{ chapter.order }}. {{ chapter.title }}</h3>
+          {% if chapter.description %}<p class="mt-2 leading-7">{{ chapter.description|linebreaksbr }}</p>{% endif %}
+          <p class="mt-2 text-body-sm text-outline">{{ chapter.lesson_list|length }} ویدئو، مجموع {{ chapter.total_duration_minutes }} دقیقه</p>
+        </div>
+        <a class="rounded-lg bg-primary-container px-4 py-2 text-on-primary" href="{% url 'courses:chapter_detail' course.slug chapter.id %}">صفحه اختصاصی فصل</a>
+      </div>
+      <div class="mt-4 grid gap-4">
+        {% for lesson in chapter.lesson_list %}
+        <div class="rounded-lg bg-surface-container-low p-4">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h4 class="font-semibold text-on-surface">{{ lesson.order }}. {{ lesson.title }}</h4>
+            <span class="text-body-sm text-outline">{{ lesson.duration_minutes }} دقیقه{% if lesson.is_free_preview %} · پیش‌نمایش رایگان{% endif %}</span>
+          </div>
+          {% if lesson.can_play and lesson.player_kind == 'video' %}
+          <video class="w-full max-h-[560px] rounded-lg bg-black" controls preload="metadata" src="{{ lesson.player_url }}">مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.</video>
+          {% elif lesson.can_play and lesson.player_kind == 'embed' %}
+          <div class="aspect-video overflow-hidden rounded-lg bg-black"><iframe class="h-full w-full" src="{{ lesson.player_url }}" title="{{ lesson.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>
+          {% elif lesson.can_play %}<p class="text-outline">ویدئوی این درس هنوز بارگذاری نشده است.</p>
+          {% else %}<p class="text-outline">برای پخش این ویدئو ابتدا در دوره ثبت‌نام کنید.</p>{% endif %}
+        </div>
+        {% empty %}<p class="text-outline">برای این فصل هنوز ویدئویی ثبت نشده است.</p>{% endfor %}
+      </div>
+    </article>
+    {% empty %}<p class="text-outline">سرفصلی برای این دوره ثبت نشده است.</p>{% endfor %}
+  </section>
+
+  <section class="course-panel hidden rounded-2xl bg-card p-6 md:p-8" id="panel-project" role="tabpanel" aria-labelledby="tab-project" hidden>
+    <h2 class="mb-4 font-headline-md text-headline-md font-bold text-primary-container">پروژه عملی دوره</h2>
+    {% if final_project %}<h3 class="font-headline-sm text-headline-sm font-bold">{{ final_project.title }}</h3><div class="mt-3 leading-8">{{ final_project.description|linebreaksbr }}</div><p class="mt-4 text-body-sm text-outline">مهلت ارسال: {{ final_project.deadline_days }} روز پس از ثبت‌نام</p>
+    {% else %}<p class="text-outline">پروژه‌ای برای این دوره ثبت نشده است.</p>{% endif %}
+  </section>
+
+  <section class="course-panel hidden rounded-2xl bg-card p-6 md:p-8" id="panel-instructor" role="tabpanel" aria-labelledby="tab-instructor" hidden>
+    <h2 class="mb-4 font-headline-md text-headline-md font-bold text-primary-container">مدرس دوره</h2>
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
+      {% if course.instructor.avatar %}<img class="h-24 w-24 rounded-xl object-cover" src="{{ course.instructor.avatar.url }}" alt="{{ course.instructor.full_name }}" />{% endif %}
+      <div><h3 class="font-headline-sm text-headline-sm font-bold">{{ course.instructor.full_name|default:course.instructor.phone_number }}</h3>{% if course.instructor.bio %}<div class="mt-2 leading-7">{{ course.instructor.bio|linebreaksbr }}</div>{% else %}<p class="mt-2 text-outline">اطلاعات تکمیلی مدرس ثبت نشده است.</p>{% endif %}</div>
+    </div>
+  </section>
+
+  <section class="course-panel hidden rounded-2xl bg-card p-6 md:p-8" id="panel-reviews" role="tabpanel" aria-labelledby="tab-reviews" hidden>
+    <h2 class="mb-4 font-headline-md text-headline-md font-bold text-primary-container">نظرات دانشجویان</h2>
+    <p class="text-outline">هنوز دیدگاهی برای این دوره ثبت نشده است.</p>
+  </section>
+
+  {% for section in course.landing_sections %}
+  <section class="course-panel hidden rounded-2xl bg-card p-6 md:p-8" id="panel-custom-{{ forloop.counter }}" role="tabpanel" aria-labelledby="tab-custom-{{ forloop.counter }}" hidden>
+    <h2 class="mb-4 font-headline-md text-headline-md font-bold text-primary-container">{{ section.title }}</h2>
+    {% if section.body %}<div class="leading-8">{{ section.body|linebreaksbr }}</div>{% endif %}
+    {% if section.items %}<ul class="mt-4 grid gap-3 md:grid-cols-2">{% for item in section.items %}<li class="rounded-lg bg-surface-container-low p-4">{{ item }}</li>{% endfor %}</ul>{% endif %}
+  </section>
+  {% endfor %}
+
+  <aside class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-primary-container p-5 text-on-primary">
+    <div><span class="text-body-sm">شهریه دوره</span><p class="font-headline-md text-headline-md font-bold">{% if course.is_free %}رایگان{% else %}{{ course.price|floatformat:0 }} تومان{% endif %}</p></div>
+    {% if not enrolled %}<form method="post" action="{% url 'orders:add_to_cart' course.id %}">{% csrf_token %}<button class="rounded-lg bg-white px-5 py-3 font-semibold text-primary-container" type="submit">ثبت‌نام در دوره</button></form>{% else %}<span>شما در این دوره ثبت‌نام کرده‌اید.</span>{% endif %}
+  </aside>
+
+  {% if related_courses %}
+  <section class="mt-10">
+    <h2 class="mb-4 font-headline-md text-headline-md font-bold text-primary-container">دوره‌های مرتبط</h2>
+    <div class="grid gap-4 md:grid-cols-3">{% for related in related_courses %}<a class="rounded-xl bg-card p-5 hover:bg-surface-container-low" href="{% url 'courses:detail' related.slug %}"><span class="font-semibold text-primary-container">{{ related.title }}</span><span class="mt-2 block text-body-sm">{% if related.is_free %}رایگان{% else %}{{ related.price|floatformat:0 }} تومان{% endif %}</span></a>{% endfor %}</div>
+  </section>
+  {% endif %}
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll('[data-course-tab]');
+    const panels = document.querySelectorAll('.course-panel');
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((item) => {
+          const selected = item === tab;
+          item.setAttribute('aria-selected', String(selected));
+          item.classList.toggle('bg-primary-container', selected);
+          item.classList.toggle('text-on-primary', selected);
+          item.classList.toggle('bg-surface-container-high', !selected);
+          item.classList.toggle('text-on-surface', !selected);
+        });
+        panels.forEach((panel) => {
+          const selected = panel.id === tab.dataset.courseTab;
+          panel.hidden = !selected;
+          panel.classList.toggle('hidden', !selected);
+        });
+      });
+    });
+  });
+</script>

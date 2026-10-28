@@ -18,7 +18,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ChapterInline(admin.TabularInline):
     model = Chapter
     extra = 1
-    fields = ('title', 'order')
+    fields = ('title', 'description', 'order')
 
 
 class LessonInline(admin.TabularInline):

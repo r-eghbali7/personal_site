@@ -44,6 +44,18 @@ class Course(models.Model):
         verbose_name='توضیح کوتاه',
     )
     description = models.TextField(verbose_name='توضیحات کامل')
+    learning_outcomes = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name='مهارت‌های اکتسابی',
+        help_text='فهرستی از مهارت‌ها به صورت JSON؛ نمونه: ["طراحی API", "تست‌نویسی"].',
+    )
+    landing_sections = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name='بخش‌های اختصاصی صفحه دوره',
+        help_text='فهرستی از بخش‌ها با کلیدهای title و body؛ نمونه: [{"title": "پیش‌نیازها", "body": "آشنایی با Python"}].',
+    )
     thumbnail = models.ImageField(
         upload_to='courses/thumbnails/',
         blank=True,
@@ -118,6 +130,7 @@ class Chapter(models.Model):
         verbose_name='دوره',
     )
     title = models.CharField(max_length=200, verbose_name='عنوان فصل')
+    description = models.TextField(blank=True, verbose_name='توضیحات فصل')
     order = models.PositiveIntegerField(default=0, verbose_name='ترتیب')
 
     class Meta:
@@ -127,6 +140,14 @@ class Chapter(models.Model):
 
     def __str__(self):
         return f'{self.course.title} — {self.title}'
+
+    @property
+    def total_duration_seconds(self):
+        return sum(lesson.duration_seconds for lesson in self.lessons.all())
+
+    @property
+    def total_duration_minutes(self):
+        return (self.total_duration_seconds + 59) // 60
 
 
 class Lesson(models.Model):
@@ -174,6 +195,10 @@ class Lesson(models.Model):
 
     def __str__(self):
         return f'{self.chapter.title} — {self.title}'
+
+    @property
+    def duration_minutes(self):
+        return (self.duration_seconds + 59) // 60
 
     def can_access(self, user):
         """

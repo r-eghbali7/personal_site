@@ -1,0 +1,145 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 md:px-8">
+  <section class="rounded-2xl bg-card p-6 shadow-sm">
+    <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+      <div class="flex min-w-0 items-center gap-4">
+        {% if request.user.avatar %}
+        <img class="h-16 w-16 rounded-xl object-cover" src="{{ request.user.avatar.url }}" alt="{{ request.user.full_name }}" />
+        {% else %}
+        <div class="flex h-16 w-16 items-center justify-center rounded-xl bg-primary-container text-on-primary"><span class="material-symbols-outlined text-3xl">person</span></div>
+        {% endif %}
+        <div class="min-w-0">
+          <h1 class="truncate font-headline-lg text-headline-lg font-bold text-primary">{{ request.user.full_name|default:'کاربر آکادمی' }}</h1>
+          <p class="mt-1 text-sm text-outline" dir="ltr">{{ request.user.phone_number }}</p>
+          <p class="mt-1 text-sm text-outline">عضویت از {{ request.user.date_joined|date:'Y/m/d' }} · شناسه کاربری {{ request.user.pk }}</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button class="inline-flex h-10 items-center gap-2 rounded-lg bg-surface-container-high px-4 text-primary-container" type="button" onclick="switchProfileTab('tab-tickets')"><span class="material-symbols-outlined">add_comment</span>ثبت تیکت</button>
+        <button class="inline-flex h-10 items-center gap-2 rounded-lg bg-primary-container px-4 text-on-primary" type="button" onclick="switchProfileTab('tab-profile')"><span class="material-symbols-outlined">manage_accounts</span>ویرایش پروفایل</button>
+      </div>
+    </div>
+
+    <dl class="mt-6 grid grid-cols-2 gap-3 border-t border-border pt-5 md:grid-cols-4">
+      <div class="rounded-xl bg-surface-container-low p-4"><dt class="text-sm text-outline">دوره‌های فعال</dt><dd class="mt-1 font-headline-md text-headline-md font-bold text-primary">{{ enrollment_count }}</dd></div>
+      <div class="rounded-xl bg-surface-container-low p-4"><dt class="text-sm text-outline">میانگین آزمون‌ها</dt><dd class="mt-1 font-headline-md text-headline-md font-bold text-primary">{% if quiz_average_score != None %}{{ quiz_average_score|floatformat:0 }}٪{% else %}ثبت نشده{% endif %}</dd></div>
+      <div class="rounded-xl bg-surface-container-low p-4"><dt class="text-sm text-outline">تیکت‌های باز</dt><dd class="mt-1 font-headline-md text-headline-md font-bold text-primary">{{ open_ticket_count }}</dd></div>
+      <div class="rounded-xl bg-surface-container-low p-4"><dt class="text-sm text-outline">کل سفارش‌ها</dt><dd class="mt-1 font-headline-md text-headline-md font-bold text-primary">{{ order_count }}</dd></div>
+    </dl>
+  </section>
+
+  {% for message in messages %}<p class="rounded-xl bg-surface-container-low p-4 text-on-surface" role="status">{{ message }}</p>{% endfor %}
+
+  <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+    <nav class="flex gap-2 overflow-x-auto rounded-2xl bg-card p-2 shadow-sm lg:col-span-3 lg:flex-col" aria-label="بخش‌های پروفایل">
+      <button class="profile-tab shrink-0 rounded-lg bg-primary-container px-4 py-3 text-right text-on-primary" id="btn-tab-courses" type="button" onclick="switchProfileTab('tab-courses')">دوره‌های من ({{ enrollment_count }})</button>
+      <button class="profile-tab shrink-0 rounded-lg px-4 py-3 text-right text-on-surface-variant hover:bg-surface-container-low" id="btn-tab-tickets" type="button" onclick="switchProfileTab('tab-tickets')">تیکت‌ها ({{ ticket_count }})</button>
+      <button class="profile-tab shrink-0 rounded-lg px-4 py-3 text-right text-on-surface-variant hover:bg-surface-container-low" id="btn-tab-orders" type="button" onclick="switchProfileTab('tab-orders')">سفارش‌ها ({{ order_count }})</button>
+      <button class="profile-tab shrink-0 rounded-lg px-4 py-3 text-right text-on-surface-variant hover:bg-surface-container-low" id="btn-tab-security" type="button" onclick="switchProfileTab('tab-security')">امنیت حساب</button>
+      <button class="profile-tab shrink-0 rounded-lg px-4 py-3 text-right text-on-surface-variant hover:bg-surface-container-low" id="btn-tab-profile" type="button" onclick="switchProfileTab('tab-profile')">مشخصات حساب</button>
+      <form class="mt-1 lg:mt-3 lg:border-t lg:border-border lg:pt-3" method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="w-full rounded-lg px-4 py-3 text-right text-destructive hover:bg-error-container/40" type="submit">خروج از حساب</button></form>
+    </nav>
+
+    <section class="min-w-0 lg:col-span-9">
+      <section class="profile-panel flex flex-col gap-4" id="tab-courses" aria-labelledby="btn-tab-courses">
+        <header class="rounded-2xl bg-card p-5 shadow-sm"><h2 class="font-headline-md text-headline-md font-bold text-primary">دوره‌های ثبت‌نام‌شده</h2><p class="mt-1 text-sm text-outline">فهرست از ثبت‌نام‌های فعال همین حساب ساخته شده است.</p></header>
+        {% for enrollment in enrollments %}
+        <article class="rounded-2xl bg-card p-5 shadow-sm">
+          <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+            <div class="min-w-0">
+              <p class="text-sm text-outline">{{ enrollment.course.category.name|default:'دوره آموزشی' }} · {{ enrollment.course.get_level_display }}</p>
+              <h3 class="mt-1 font-headline-sm text-headline-sm font-bold text-primary"><a href="{% url 'courses:detail' enrollment.course.slug %}" class="hover:underline">{{ enrollment.course.title }}</a></h3>
+              <p class="mt-2 text-sm text-on-surface-variant">{{ enrollment.course.short_description|default:enrollment.course.description|truncatechars:180 }}</p>
+            </div>
+            <span class="shrink-0 rounded-lg bg-surface-container-low px-3 py-2 text-sm text-outline">ثبت‌نام: {{ enrollment.enrolled_at|date:'Y/m/d' }}</span>
+          </div>
+          <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4 text-sm text-outline">
+            <span>{{ enrollment.chapter_count }} فصل · {{ enrollment.lesson_count }} درس</span>
+            <a class="inline-flex items-center gap-1 font-semibold text-primary-container hover:underline" href="{% url 'courses:detail' enrollment.course.slug %}">رفتن به دوره<span class="material-symbols-outlined text-base">arrow_back</span></a>
+          </div>
+        </article>
+        {% empty %}<p class="rounded-2xl bg-card p-8 text-center text-outline">هنوز در دوره‌ای ثبت‌نام نکرده‌اید.</p>{% endfor %}
+        {% if recent_quiz_attempts %}<section class="rounded-2xl bg-card p-5 shadow-sm"><h3 class="font-headline-sm text-headline-sm font-bold text-primary">آخرین آزمون‌ها</h3><div class="mt-3 divide-y divide-border">{% for attempt in recent_quiz_attempts %}<div class="flex flex-wrap justify-between gap-2 py-3 text-sm"><span>{{ attempt.quiz.title }} · {{ attempt.quiz.chapter.course.title }}</span><span class="font-semibold text-primary">{{ attempt.score }}٪ · {{ attempt.taken_at|date:'Y/m/d' }}</span></div>{% endfor %}</div></section>{% endif %}
+      </section>
+
+      <section class="profile-panel hidden flex-col gap-4" id="tab-tickets" aria-labelledby="btn-tab-tickets" hidden>
+        <header class="rounded-2xl bg-card p-5 shadow-sm"><h2 class="font-headline-md text-headline-md font-bold text-primary">تیکت‌های پشتیبانی</h2><p class="mt-1 text-sm text-outline">فقط تیکت‌های ثبت‌شده با همین حساب نمایش داده می‌شوند.</p></header>
+        <div class="flex flex-col gap-3">
+          {% for ticket in recent_tickets %}
+          <a class="rounded-xl bg-card p-4 shadow-sm hover:bg-surface-container-low" href="{% url 'tickets:detail' ticket.pk %}">
+            <div class="flex flex-wrap items-center justify-between gap-2"><h3 class="font-semibold text-primary">{{ ticket.subject }}</h3><span class="rounded-full bg-surface-container-high px-2.5 py-1 text-xs">{{ ticket.get_status_display }}</span></div>
+            <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-outline"><span>شماره {{ ticket.pk }}</span><span>{% if ticket.course %}{{ ticket.course.title }}{% else %}پرسش عمومی{% endif %}</span><span>{{ ticket.created_at|date:'Y/m/d H:i' }}</span><span>{{ ticket.messages.count }} پیام</span></div>
+          </a>
+          {% empty %}<p class="rounded-xl bg-card p-5 text-outline">تاکنون تیکتی ثبت نکرده‌اید.</p>{% endfor %}
+        </div>
+        <form class="rounded-2xl bg-card p-5 shadow-sm" method="post" action="{% url 'accounts:profile' %}">
+          {% csrf_token %}<input type="hidden" name="action" value="create_ticket" />
+          <h3 class="font-headline-sm text-headline-sm font-bold text-primary">ثبت تیکت جدید</h3>
+          {% if ticket_form.non_field_errors %}<div class="mt-3 text-sm text-error">{{ ticket_form.non_field_errors }}</div>{% endif %}
+          <div class="mt-4 grid gap-4 md:grid-cols-2">
+            <label class="flex flex-col gap-1 text-sm font-semibold">موضوع {{ ticket_form.subject }}{{ ticket_form.subject.errors }}</label>
+            <label class="flex flex-col gap-1 text-sm font-semibold">دوره مرتبط {{ ticket_form.course }}{{ ticket_form.course.errors }}</label>
+            <label class="flex flex-col gap-1 text-sm font-semibold md:col-span-2">شرح درخواست {{ ticket_form.body }}{{ ticket_form.body.errors }}</label>
+          </div>
+          <button class="mt-4 rounded-lg bg-primary-container px-5 py-2.5 font-semibold text-on-primary hover:bg-tertiary-container" type="submit">ثبت تیکت</button>
+        </form>
+      </section>
+
+      <section class="profile-panel hidden flex-col gap-4" id="tab-orders" aria-labelledby="btn-tab-orders" hidden>
+        <header class="rounded-2xl bg-card p-5 shadow-sm"><h2 class="font-headline-md text-headline-md font-bold text-primary">سفارش‌های شما</h2><p class="mt-1 text-sm text-outline">همه سفارش‌های متعلق به حساب {{ request.user.phone_number }}.</p></header>
+        {% for order in orders %}
+        <article class="rounded-2xl bg-card p-5 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3"><div><h3 class="font-semibold text-primary">سفارش شماره {{ order.pk }}</h3><p class="mt-1 text-sm text-outline">{{ order.created_at|date:'Y/m/d H:i' }}</p></div><div class="text-left"><span class="rounded-full bg-surface-container-high px-3 py-1 text-sm">{{ order.get_status_display }}</span><p class="mt-2 font-bold text-primary">{{ order.total_amount|floatformat:0 }} تومان</p></div></div>
+          <ul class="mt-3 divide-y divide-border">{% for item in order.items.all %}<li class="flex justify-between gap-3 py-2 text-sm"><a class="text-primary-container hover:underline" href="{% url 'courses:detail' item.course.slug %}">{{ item.course.title }}</a><span>{{ item.price|floatformat:0 }} تومان</span></li>{% empty %}<li class="py-2 text-sm text-outline">جزئیات موردی برای این سفارش ثبت نشده است.</li>{% endfor %}</ul>
+        </article>
+        {% empty %}<p class="rounded-xl bg-card p-6 text-outline">هنوز سفارشی برای این حساب ثبت نشده است.</p>{% endfor %}
+      </section>
+
+      <section class="profile-panel hidden flex-col gap-4" id="tab-security" aria-labelledby="btn-tab-security" hidden>
+        <header class="rounded-2xl bg-card p-5 shadow-sm"><h2 class="font-headline-md text-headline-md font-bold text-primary">امنیت حساب</h2><p class="mt-1 text-sm text-outline">آخرین ورود ثبت‌شده: {{ request.user.last_login|date:'Y/m/d H:i'|default:'ثبت نشده' }}</p></header>
+        <form class="flex max-w-2xl flex-col gap-4 rounded-2xl bg-card p-5 shadow-sm" method="post" action="{% url 'accounts:password_change' %}">
+          {% csrf_token %}<h3 class="font-headline-sm text-headline-sm font-bold text-primary">تغییر رمز عبور</h3>
+          <label class="flex flex-col gap-1 text-sm font-semibold">رمز فعلی<input class="h-11 rounded-lg bg-surface-container-low px-3 font-normal" name="old_password" type="password" autocomplete="current-password" required /></label>
+          <label class="flex flex-col gap-1 text-sm font-semibold">رمز جدید<input class="h-11 rounded-lg bg-surface-container-low px-3 font-normal" name="new_password1" type="password" autocomplete="new-password" required /></label>
+          <label class="flex flex-col gap-1 text-sm font-semibold">تکرار رمز جدید<input class="h-11 rounded-lg bg-surface-container-low px-3 font-normal" name="new_password2" type="password" autocomplete="new-password" required /></label>
+          <button class="self-start rounded-lg bg-primary-container px-5 py-2.5 font-semibold text-on-primary" type="submit">ذخیره رمز جدید</button>
+        </form>
+      </section>
+
+      <section class="profile-panel hidden flex-col gap-4" id="tab-profile" aria-labelledby="btn-tab-profile" hidden>
+        <header class="rounded-2xl bg-card p-5 shadow-sm"><h2 class="font-headline-md text-headline-md font-bold text-primary">مشخصات حساب</h2><p class="mt-1 text-sm text-outline">اطلاعات ذخیره‌شده برای حساب کاربری شما.</p></header>
+        <form class="grid gap-4 rounded-2xl bg-card p-5 shadow-sm md:grid-cols-2" method="post" action="{% url 'accounts:profile' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label class="flex flex-col gap-1 text-sm font-semibold">نام و نام‌خانوادگی<input class="h-11 rounded-lg bg-surface-container-low px-3 font-normal" name="full_name" maxlength="150" value="{{ form.full_name.value|default:'' }}" /></label>
+          <label class="flex flex-col gap-1 text-sm font-semibold">شماره موبایل<input class="h-11 rounded-lg bg-surface-container-low px-3 font-normal" value="{{ request.user.phone_number }}" dir="ltr" disabled /></label>
+          <label class="flex flex-col gap-1 text-sm font-semibold">ایمیل<input class="h-11 rounded-lg bg-surface-container-low px-3 font-normal" name="email" type="email" value="{{ form.email.value|default:'' }}" /></label>
+          <label class="flex flex-col gap-1 text-sm font-semibold">تصویر پروفایل<input class="rounded-lg bg-surface-container-low p-2 font-normal" name="avatar" type="file" accept="image/*" /></label>
+          <label class="flex flex-col gap-1 text-sm font-semibold md:col-span-2">درباره من<textarea class="rounded-lg bg-surface-container-low p-3 font-normal" name="bio" rows="5">{{ form.bio.value|default:'' }}</textarea></label>
+          {% if form.errors %}<div class="md:col-span-2 text-sm text-error">{{ form.errors }}</div>{% endif %}
+          <div class="md:col-span-2"><button class="rounded-lg bg-primary-container px-5 py-2.5 font-semibold text-on-primary" type="submit">ذخیره تغییرات</button></div>
+        </form>
+      </section>
+    </section>
+  </div>
+</div>
+<script>
+  function switchProfileTab(tabId) {
+    document.querySelectorAll('.profile-panel').forEach((panel) => {
+      const active = panel.id === tabId;
+      panel.hidden = !active;
+      panel.classList.toggle('hidden', !active);
+    });
+    document.querySelectorAll('.profile-tab').forEach((tab) => {
+      const active = tab.id === `btn-${tabId}`;
+      tab.classList.toggle('bg-primary-container', active);
+      tab.classList.toggle('text-on-primary', active);
+      tab.classList.toggle('text-on-surface-variant', !active);
+    });
+    history.replaceState(null, '', `#${tabId}`);
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const requestedTab = window.location.hash.slice(1);
+    if (requestedTab && document.getElementById(requestedTab)) {
+      switchProfileTab(requestedTab);
+    }
+  });
+</script>

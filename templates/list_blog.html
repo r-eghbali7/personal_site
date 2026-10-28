@@ -186,13 +186,11 @@
               ><span class="material-symbols-outlined text-[16px]">mail</span
               ><span>support@taheri.dev</span></span
             >
-          </div>
-          <div class="flex items-center gap-4 text-on-primary-container">
-            <span class="flex items-center gap-1"
+            <div class="mt-10">
               ><span class="material-symbols-outlined text-[16px]"
-                >schedule</span
+              <main class="flex flex-col gap-8">
               ><span>شنبه تا پنجشنبه ۸ الی ۲۰</span></span
-            >
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           </div>
         </div>
       </div>
@@ -358,7 +356,7 @@
                   <div class="flex flex-col">
                     <span
                       class="font-code-md text-code-md text-on-surface font-bold"
-                      >۱۴۲+</span
+                      >{{ article_count }}</span
                     >
                     <span class="font-label-badge text-[10px] text-outline"
                       >مقاله فنی</span
@@ -371,15 +369,15 @@
                 >
                   <span
                     class="material-symbols-outlined text-accent-alt text-[20px]"
-                    >groups</span
+                    >category</span
                   >
                   <div class="flex flex-col">
                     <span
                       class="font-code-md text-code-md text-on-surface font-bold"
-                      >۲۴.۵K</span
+                      >{{ category_count }}</span
                     >
                     <span class="font-label-badge text-[10px] text-outline"
-                      >خواننده ماهانه</span
+                      >تعداد دسته‌بندی‌ها</span
                     >
                   </div>
                 </div>
@@ -390,36 +388,22 @@
               class="mt-8 flex items-center justify-between gap-4 overflow-x-auto pb-2 scrollbar-none"
             >
               <div class="flex items-center gap-2">
-                <button
-                  class="px-5 py-2.5 rounded-xl bg-primary-container text-on-primary font-body-md text-body-md font-semibold whitespace-nowrap shadow-sm hover:bg-tertiary-container transition-all"
+                <a
+                  class="px-5 py-2.5 rounded-xl {% if not selected_category %}bg-primary-container text-on-primary shadow-sm{% else %}bg-card text-on-surface-variant border border-border{% endif %} font-body-md text-body-md font-semibold whitespace-nowrap hover:bg-tertiary-container hover:text-on-primary transition-all"
+                  href="{% url 'blog:list' %}"
+                  {% if not selected_category %}aria-current="page"{% endif %}
                 >
                   همه مقالات
-                </button>
-                <button
-                  class="px-4 py-2.5 rounded-xl bg-card hover:bg-surface-container-high text-on-surface-variant font-body-md text-body-md transition-all whitespace-nowrap border border-border"
+                </a>
+                {% for category in categories %}
+                <a
+                  class="px-4 py-2.5 rounded-xl {% if selected_category == category %}bg-primary-container text-on-primary shadow-sm{% else %}bg-card text-on-surface-variant border border-border{% endif %} font-body-md text-body-md transition-all whitespace-nowrap hover:bg-surface-container-high"
+                  href="{% url 'blog:list' %}?category={{ category|urlencode }}"
+                  {% if selected_category == category %}aria-current="page"{% endif %}
                 >
-                  فرانت‌اند و React/Next.js
-                </button>
-                <button
-                  class="px-4 py-2.5 rounded-xl bg-card hover:bg-surface-container-high text-on-surface-variant font-body-md text-body-md transition-all whitespace-nowrap border border-border"
-                >
-                  بک‌اند و سیستم‌های توزیع‌شده
-                </button>
-                <button
-                  class="px-4 py-2.5 rounded-xl bg-card hover:bg-surface-container-high text-on-surface-variant font-body-md text-body-md transition-all whitespace-nowrap border border-border"
-                >
-                  دیتابیس و بهینه‌سازی کوئری
-                </button>
-                <button
-                  class="px-4 py-2.5 rounded-xl bg-card hover:bg-surface-container-high text-on-surface-variant font-body-md text-body-md transition-all whitespace-nowrap border border-border"
-                >
-                  مهندسی هوش مصنوعی و LLM
-                </button>
-                <button
-                  class="px-4 py-2.5 rounded-xl bg-card hover:bg-surface-container-high text-on-surface-variant font-body-md text-body-md transition-all whitespace-nowrap border border-border"
-                >
-                  DevOps و Clean Architecture
-                </button>
+                  {{ category }}
+                </a>
+                {% endfor %}
               </div>
               <div
                 class="hidden xl:flex items-center gap-2 font-body-sm text-body-sm text-outline pl-1 whitespace-nowrap"
@@ -430,6 +414,8 @@
                 <span>فید RSS فعال</span>
               </div>
             </div>
+            {% comment %}
+            {% if not selected_category %}
             <!-- Bento Showcase: Featured Editorial Articles -->
             <section class="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
               <!-- Main Primary Bento Feature (Right - 7 Columns) -->
@@ -651,6 +637,8 @@
                 </article>
               </div>
             </section>
+            {% endif %}
+            {% endcomment %}
             <!-- Advanced Search, Filtering & Ordering Bar -->
             <section
               class="mt-14 p-4 sm:p-5 bg-card rounded-2xl border border-border shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4"
@@ -666,47 +654,12 @@
                   type="text"
                 />
               </div>
-              <div class="flex items-center gap-3 flex-wrap">
-                <div
-                  class="flex items-center gap-1 bg-surface-container-low p-1 rounded-xl border border-border"
-                >
-                  <span class="px-2 font-body-sm text-body-sm text-outline"
-                    >مرتب‌سازی:</span
-                  >
-                  <button
-                    class="px-3 py-1.5 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm font-semibold text-primary-container shadow-xs"
-                  >
-                    جدیدترین‌ها
-                  </button>
-                  <button
-                    class="px-3 py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface"
-                  >
-                    پربحث‌ترین
-                  </button>
-                  <button
-                    class="px-3 py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface"
-                  >
-                    پربحث‌ترین
-                  </button>
-                </div>
-                <button
-                  class="h-12 px-4 rounded-xl bg-surface-container-low border border-border flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high transition-colors"
-                >
-                  <span class="material-symbols-outlined text-[18px]"
-                    >tune</span
-                  >
-                  <span>فیلتر پیشرفته</span>
-                </button>
-              </div>
             </section>
             <!-- Main Layout: Grid Content + Engineering Sidebar -->
-            <div
-              class="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
-            >
-              <!-- Main Column: Technical Article Cards (8 Columns) -->
-              <main class="lg:col-span-8 flex flex-col gap-8">
+            <div class="mt-10">
+              <main class="flex flex-col gap-8">
                 {% if posts %}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {% for post in posts %}
                   <article
                     class="bg-card rounded-[28px] border border-border overflow-hidden shadow-sm flex flex-col group hover:shadow-lg transition-all duration-300"
@@ -728,10 +681,7 @@
                     {% endif %}
                     <div class="p-6 flex flex-1 flex-col justify-between gap-4">
                       <div>
-                        <p class="text-sm text-outline">
-                          {{ post.category|default:'مقاله' }} · {{
-                          post.read_time_minutes }} دقیقه مطالعه
-                        </p>
+                        <p class="text-sm text-outline">{{ post.category|default:'مقاله' }} · {{ post.read_time_minutes }} دقیقه مطالعه</p>
                         <h2
                           class="font-headline-sm text-headline-sm text-primary-container font-bold mt-2"
                         >
@@ -739,10 +689,7 @@
                             >{{ post.title }}</a
                           >
                         </h2>
-                        <p class="text-on-surface-variant mt-3">
-                          {{ post.summary|default:post.content|truncatechars:180
-                          }}
-                        </p>
+                        <p class="text-on-surface-variant mt-3">{{ post.summary|default:post.content|truncatechars:180 }}</p>
                       </div>
                       <div
                         class="flex justify-between border-t border-border pt-4 text-sm text-outline"
@@ -755,6 +702,8 @@
                   {% endfor %}
                 </div>
                 {% else %}
+                <p class="rounded-2xl bg-card p-8 text-center text-on-surface-variant">{% if selected_category %}در این دسته‌بندی مقاله‌ای منتشر نشده است.{% else %}هنوز مقاله‌ای منتشر نشده است.{% endif %}</p>
+                {% comment %}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <!-- Article Card 1 -->
                   <article
@@ -1165,55 +1114,27 @@
                     </div>
                   </article>
                 </div>
+                {% endcomment %}
                 {% endif %}
-                <!-- Modern Pagination -->
+                {% if page_obj.has_other_pages %}
+                <!-- Pagination -->
                 <nav
                   aria-label="صفحات وبلاگ"
-                  class="mt-4 flex items-center justify-between border-t border-border pt-6"
+                  class="mt-4 flex items-center justify-center gap-2 border-t border-border pt-6"
                 >
-                  <button
-                    class="h-11 px-4 rounded-xl bg-card border border-border text-on-surface font-body-md text-body-md flex items-center gap-2 hover:bg-surface-container-high transition-colors"
-                  >
-                    <span class="material-symbols-outlined text-[18px]"
-                      >arrow_forward</span
-                    >
-                    <span>صفحه قبلی</span>
-                  </button>
-                  <div
-                    class="flex items-center gap-1.5 font-code-md text-code-md"
-                  >
-                    <a
-                      class="h-10 w-10 rounded-xl bg-primary-container text-on-primary font-bold flex items-center justify-center shadow-xs"
-                      href="#"
-                      >۱</a
-                    >
-                    <a
-                      class="h-10 w-10 rounded-xl bg-card hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors"
-                      href="#"
-                      >۲</a
-                    >
-                    <a
-                      class="h-10 w-10 rounded-xl bg-card hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors"
-                      href="#"
-                      >۳</a
-                    >
-                    <span class="px-2 text-outline">...</span>
-                    <a
-                      class="h-10 w-10 rounded-xl bg-card hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors"
-                      href="#"
-                      >۱۲</a
-                    >
-                  </div>
-                  <button
-                    class="h-11 px-4 rounded-xl bg-primary-container text-on-primary font-body-md text-body-md flex items-center gap-2 hover:bg-tertiary-container transition-colors shadow-sm"
-                  >
-                    <span>صفحه بعدی</span>
-                    <span class="material-symbols-outlined text-[18px]"
-                      >arrow_back</span
-                    >
-                  </button>
+                  {% if page_obj.has_previous %}
+                  <a class="h-10 px-4 rounded-lg bg-card text-on-surface hover:bg-surface-container-high" href="{% if selected_category %}?category={{ selected_category|urlencode }}&amp;page={{ page_obj.previous_page_number }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}" aria-label="صفحه قبلی">قبلی</a>
+                  {% endif %}
+                  {% for page_number in page_obj.paginator.page_range %}
+                  <a class="h-10 min-w-10 px-3 rounded-lg flex items-center justify-center {% if page_number == page_obj.number %}bg-primary-container text-on-primary font-bold{% else %}bg-card text-on-surface hover:bg-surface-container-high{% endif %}" href="{% if selected_category %}?category={{ selected_category|urlencode }}&amp;page={{ page_number }}{% else %}?page={{ page_number }}{% endif %}" {% if page_number == page_obj.number %}aria-current="page"{% endif %}>{{ page_number }}</a>
+                  {% endfor %}
+                  {% if page_obj.has_next %}
+                  <a class="h-10 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-tertiary-container" href="{% if selected_category %}?category={{ selected_category|urlencode }}&amp;page={{ page_obj.next_page_number }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}" aria-label="صفحه بعدی">بعدی</a>
+                  {% endif %}
                 </nav>
+                {% endif %}
               </main>
+              {% comment %}
               <!-- Sidebar: Widgets, Popular Posts & Newsletter (4 Columns) -->
               <aside class="lg:col-span-4 flex flex-col gap-6">
                 <!-- Newsletter Subscription Widget -->
@@ -1499,6 +1420,7 @@
                   </a>
                 </div>
               </aside>
+              {% endcomment %}
             </div>
             <!-- Bottom Interactive Community & Guest Author Strip -->
             <section

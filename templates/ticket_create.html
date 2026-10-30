@@ -1,31 +1,74 @@
 {% extends "base.html" %}
-{% block title %}ثبت تیکت{% endblock %}
-{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <style>
-      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
-      main { max-width: 680px; margin: 48px auto; padding: 24px; background: white; border: 1px solid #dce4e0; border-radius: 8px; }
-      label { display: block; margin-top: 16px; font-weight: 600; }
-      input, select, textarea { box-sizing: border-box; width: 100%; padding: 10px; border: 1px solid #aebbb5; border-radius: 6px; font: inherit; }
-      button { margin-top: 20px; padding: 10px 18px; background: #075d4f; border: 0; border-radius: 6px; color: white; font: inherit; cursor: pointer; }
-      .errorlist { color: #a22222; }
-    </style>
-{% endblock %}
-{% block body_class %}{% endblock %}
-{% block header %}{% endblock %}
-{% block content %}<main>
-      <h1>ثبت تیکت پشتیبانی</h1>
-      <form method="post" action="{% url 'tickets:create' %}">
+{% load static %}
+{% block title %}ثبت تیکت جدید | آکادمی حسین طاهری{% endblock %}
+{% block body_class %}bg-background font-body-md text-on-surface antialiased{% endblock %}
+{% block content %}
+<main class="w-full pt-16 min-h-screen bg-background">
+  <div class="max-w-2xl mx-auto px-margin py-space-lg">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <a class="inline-flex items-center gap-1.5 text-primary-container font-semibold hover:text-tertiary-container transition-colors mb-4" href="{% url 'tickets:list' %}">
+        <span class="material-symbols-outlined text-[18px]">arrow_right</span>
+        <span>بازگشت به تیکت‌ها</span>
+      </a>
+      <h1 class="font-headline-lg text-headline-lg text-primary-container font-bold">ثبت تیکت پشتیبانی</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant mt-1">سوال یا مشکل خود را با ما در میان بگذارید</p>
+    </div>
+
+    <!-- Ticket Form -->
+    <div class="bg-card border border-border rounded-2xl p-6 sm:p-8">
+      <form method="post" action="{% url 'tickets:create' %}" class="space-y-5">
         {% csrf_token %}
-        {{ form.non_field_errors }}
-        <label for="id_subject">موضوع</label>{{ form.subject }}{{ form.subject.errors }}
-        <label for="id_course">دوره مرتبط</label>{{ form.course }}{{ form.course.errors }}
-        <label for="id_body">شرح درخواست</label>{{ form.body }}{{ form.body.errors }}
-        <button type="submit">ارسال تیکت</button>
+
+        {% if form.non_field_errors %}
+        <div class="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+          {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Subject Field -->
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2" for="id_subject">موضوع تیکت</label>
+          <input class="w-full h-12 px-4 bg-surface-container-low border border-border rounded-xl text-on-surface text-sm placeholder:text-muted-text focus:outline-none focus:border-primary-container focus:ring-4 focus:ring-primary-container/10 transition-all" id="id_subject" name="subject" placeholder="موضوع درخواست یا مشکل را بنویسید" required type="text" />
+          {% if form.subject.errors %}
+          <p class="mt-1 text-sm text-red-600">{{ form.subject.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Course Field (if applicable) -->
+        {% if form.course %}
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2" for="id_course">دوره مرتبط (اختیاری)</label>
+          <select class="w-full h-12 px-4 bg-surface-container-low border border-border rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary-container focus:ring-4 focus:ring-primary-container/10 transition-all" id="id_course" name="course">
+            <option value="">انتخاب کنید...</option>
+            {% for value, label in form.course.field.choices %}
+            <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+          {% if form.course.errors %}
+          <p class="mt-1 text-sm text-red-600">{{ form.course.errors.0 }}</p>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Body Field -->
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2" for="id_body">شرح درخواست</label>
+          <textarea class="w-full min-h-[160px] p-4 bg-surface-container-low border border-border rounded-xl text-on-surface text-sm placeholder:text-muted-text focus:outline-none focus:border-primary-container focus:ring-4 focus:ring-primary-container/10 transition-all resize-y" id="id_body" name="body" placeholder="جزئیات درخواست یا مشکل را توضیح دهید..." required></textarea>
+          {% if form.body.errors %}
+          <p class="mt-1 text-sm text-red-600">{{ form.body.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <button class="w-full h-12 rounded-xl bg-primary-container text-white font-semibold hover:bg-tertiary-container transition-all shadow-md shadow-primary-container/25 hover:shadow-lg flex items-center justify-center gap-2 group" type="submit">
+          <span>ارسال تیکت</span>
+          <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform">send</span>
+        </button>
       </form>
-      <p><a href="{% url 'tickets:list' %}">بازگشت به تیکت‌ها</a></p>
-    </main>
+    </div>
+  </div>
+</main>
 {% endblock %}
-{% block footer %}{% endblock %}

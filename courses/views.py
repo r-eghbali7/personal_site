@@ -9,6 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.urls import reverse
 from .models import Category, Course, Chapter, Lesson, Quiz, FinalProject
+from blog.models import BlogPost
 
 
 def prepare_chapter_media(chapters, user):
@@ -57,7 +58,26 @@ class HomeView(View):
     def get(self, request):
         courses = Course.objects.filter(is_published=True).select_related('category','instructor')
         categories = Category.objects.all()
-        context = {'courses': courses, 'categories': categories}
+        latest_posts = (
+            BlogPost.objects.filter(is_published=True)
+            .select_related('author')
+            .order_by('-published_at', '-created_at')[:6]
+        )
+        latest_podcasts = (
+            BlogPost.objects.filter(is_published=True)
+            .exclude(podcast_audio_url='')
+            .exclude(podcast_audio_url__isnull=True)
+            .select_related('author')
+            .order_by('-published_at', '-created_at')[:6]
+        )
+        social_media = [
+            {'name': 'تلگرام', 'url': 'https://t.me/hosseintaheri', 'icon': 'send'},
+            {'name': 'اینستاگرام', 'url': 'https://instagram.com/hosseintaheri', 'icon': 'camera_alt'},
+            {'name': 'یوتیوب', 'url': 'https://youtube.com/@hosseintaheri', 'icon': 'play_circle'},
+            {'name': 'گیت‌هاب', 'url': 'https://github.com/hosseintaheri', 'icon': 'code'},
+            {'name': 'لینکدین', 'url': 'https://linkedin.com/in/hosseintaheri', 'icon': 'business'},
+        ]
+        context = {'courses': courses, 'categories': categories, 'latest_posts': latest_posts, 'latest_podcasts': latest_podcasts, 'social_media': social_media}
         if is_ajax(request):
             return JsonResponse({'courses': [{'id':c.id,'title':c.title,'slug':c.slug,'price':str(c.price)} for c in courses], 'categories':[{'id':c.id,'name':c.name,'slug':c.slug} for c in categories]})
         return render(request, 'home.html', context)

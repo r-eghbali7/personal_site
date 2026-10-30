@@ -1,28 +1,19 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ lesson.title }} | {{ course.title }}{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <style>
-      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
-      main { max-width: 960px; margin: 40px auto; padding: 24px; }
-      section { background: white; border: 1px solid #dce4e0; border-radius: 8px; padding: 24px; }
-      video { width: 100%; max-height: 65vh; background: #17231f; }
-      a { color: #075d4f; }
-    </style>
-{% endblock %}
-{% block body_class %}{% endblock %}
-{% block header %}{% endblock %}
-{% block content %}<main>
-      <p><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></p>
-      <section>
-        <h1>{{ lesson.title }}</h1>
-        {% if lesson.video_file %}<video controls preload="metadata" src="{{ lesson.video_file.url }}"></video>
-        {% elif lesson.video_url %}<p><a href="{{ lesson.video_url }}" target="_blank" rel="noopener noreferrer">مشاهده ویدئوی درس</a></p>
-        {% else %}<p>برای این درس هنوز ویدئویی بارگذاری نشده است.</p>{% endif %}
-        {% if lesson.attachment %}<p><a href="{{ lesson.attachment.url }}">دریافت فایل پیوست</a></p>{% endif %}
-      </section>
+{% block head %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block content %}<main class="w-full pt-16 min-h-screen bg-background">
+      <div class="max-w-2xl mx-auto px-margin py-space-lg">
+        <p><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></p>
+        <section class="bg-card p-4 rounded-xl border border-border my-4">
+          <h1 class="font-headline-lg text-headline-lg text-primary-container font-bold">{{ lesson.title }}</h1>
+          {% if lesson.video_file %}<video controls preload="metadata" src="{{ lesson.video_file.url }}" class="w-full rounded-xl"></video>
+          {% elif lesson.video_url %}<p><a href="{{ lesson.video_url }}" target="_blank" rel="noopener noreferrer" class="text-primary-container hover:underline">مشاهده ویدئوی درس</a></p>
+          {% else %}<p class="text-on-surface-variant">برای این درس هنوز ویدئویی بارگذاری نشده است.</p>{% endif %}
+          {% if lesson.attachment %}<p><a href="{{ lesson.attachment.url }}" class="text-primary-container hover:underline">دریافت فایل پیوست</a></p>{% endif %}
+        </section>
+      </div>
     </main>
 {% endblock %}
-{% block footer %}{% endblock %}

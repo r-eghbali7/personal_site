@@ -1,21 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ quiz.title }}{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <style>
-      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
-      main { max-width: 800px; margin: 40px auto; padding: 24px; }
-      fieldset { background: white; border: 1px solid #dce4e0; border-radius: 8px; margin: 14px 0; padding: 18px; }
-      label { display: block; padding: 6px 0; }
-      button { background: #075d4f; border: 0; border-radius: 6px; color: white; padding: 10px 18px; font: inherit; cursor: pointer; }
-      #result { margin-top: 16px; }
-    </style>
-{% endblock %}
-{% block body_class %}{% endblock %}
-{% block header %}{% endblock %}
-{% block content %}<main>
+{% block head %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block content %}<main class="w-full pt-16 min-h-screen bg-background">
       <p><a href="{% url 'courses:detail' quiz.chapter.course.slug %}">{{ quiz.chapter.course.title }}</a></p>
       <h1>{{ quiz.title }}</h1>
       <form id="quiz-form">{% csrf_token %}
@@ -56,4 +45,3 @@
       });
     </script>
 {% endblock %}
-{% block footer %}{% endblock %}

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}آکادمی حسین طاهری{% endblock %}
 
-
-{% block content %}<main class="w-full pt-[132px] bg-background min-h-screen">
+{% block content %}<main class="w-full pt-16 bg-background min-h-screen">
       <div class="flex flex-col w-full">
         <!-- Top Ambient Glow -->
         <div class="relative w-full overflow-hidden">
@@ -12,7 +12,7 @@
           <div
             class="absolute -top-20 left-10 w-80 h-80 bg-accent-alt/10 rounded-full blur-2xl pointer-events-none -z-10"
           ></div>
-          <div class="max-w-7xl mx-auto px-margin pt-6 pb-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-margin pt-6 pb-12">
             <!-- Breadcrumb & Header Meta -->
             <nav
               class="flex items-center gap-2 font-body-sm text-body-sm text-outline mb-6"
@@ -358,16 +358,38 @@
             <section
               class="mt-14 p-4 sm:p-5 bg-card rounded-2xl border border-border shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4"
             >
-              <div class="flex-1 relative">
-                <span
-                  class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline text-[22px] pointer-events-none"
-                  >search</span
+              <div class="flex-1 relative" data-live-search-container>
+                <form
+                  action="{% url 'blog:list' %}"
+                  method="get"
+                  class="flex w-full"
                 >
-                <input
-                  class="w-full h-12 pr-12 pl-4 rounded-xl bg-background border border-border font-body-md text-body-md text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner transition-colors"
-                  placeholder="جستجو در بین مقالات فنی، کلمات کلیدی، نام پکیج‌ها یا مفاهیم معماری..."
-                  type="text"
-                />
+                  {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category|urlencode }}" />{% endif %}
+                  <span
+                    class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline text-[22px] pointer-events-none"
+                    >search</span
+                  >
+                  <input
+                    class="w-full h-12 pr-12 pl-4 rounded-xl bg-background border border-border font-body-md text-body-md text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner transition-colors"
+                    placeholder="جستجو در بین مقالات فنی، کلمات کلیدی، نام پکیج‌ها یا مفاهیم معماری..."
+                    name="q"
+                    value="{{ search_query }}"
+                    data-live-search
+                    data-search-url="{% url 'blog:list' %}"
+                    aria-label="جستجو در مقالات"
+                    aria-autocomplete="list"
+                    aria-controls="blog-search-results"
+                    aria-expanded="false"
+                    autocomplete="off"
+                    type="text"
+                  />
+                </form>
+                <ul
+                  class="site-search-results absolute z-30 mt-1 w-full max-w-md bg-card border border-border rounded-xl shadow-lg"
+                  id="blog-search-results"
+                  data-live-search-results
+                  hidden
+                ></ul>
               </div>
             </section>
             <!-- Main Layout: Grid Content + Engineering Sidebar -->
@@ -1195,10 +1217,11 @@
       </div>
     </main>
 {% endblock %}
+{% block scripts %}<script src="{% static 'js/live-search.js' %}" defer></script>{% endblock %}
 {% block footer %}<footer class="w-full bg-background pt-space-xl pb-space-lg">
-      <div class="max-w-7xl mx-auto px-margin">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-margin">
         <div
-          class="rounded-[22px] border border-border p-8 bg-card shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] grid grid-cols-1 lg:grid-cols-[1fr_0.72fr_1fr] gap-8"
+          class="rounded-[22px] border border-border p-6 sm:p-8 bg-card shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] grid grid-cols-1 lg:grid-cols-[1fr_0.72fr_1fr] gap-8"
         >
           <div class="flex flex-col gap-4">
             <div class="flex items-center gap-3">
@@ -1246,7 +1269,7 @@
               دسترسی سریع
             </h4>
             <ul
-              class="grid grid-cols-2 gap-2.5 font-body-md text-body-md text-on-surface-variant"
+              class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-body-sm text-body-sm text-on-surface-variant"
             >
               <li>
                 <a

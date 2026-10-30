@@ -1,25 +1,71 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}تکمیل سفارش{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <style>
-      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
-      main { max-width: 700px; margin: 48px auto; padding: 24px; background: white; border: 1px solid #dce4e0; border-radius: 8px; }
-      li { margin: 10px 0; }
-      button { margin-top: 20px; background: #075d4f; border: 0; border-radius: 6px; color: white; padding: 10px 18px; font: inherit; cursor: pointer; }
-    </style>
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block content %}<main class="w-full pt-16 min-h-screen bg-background">
+  <div class="max-w-4xl mx-auto px-margin py-space-lg">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <span class="h-6 w-1 rounded-full bg-accent-alt"></span>
+          <h1 class="font-headline-lg text-headline-lg text-primary-container font-bold">تکمیل سفارش</h1>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant">بررسی دوره‌ها و پرداخت نهایی</p>
+      </div>
+      <a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-high text-primary-container font-body-md text-body-md font-semibold hover:bg-primary-container hover:text-on-primary transition-colors" href="{% url 'orders:cart' %}">
+        <span>بازگشت به سبد خرید</span>
+        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+      </a>
+    </div>
+
+    {% for message in messages %}
+    <div class="rounded-lg p-4 mb-6 bg-surface-container-low border border-border text-on-surface font-body-sm text-body-sm">{{ message }}</div>
+    {% endfor %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8">
+      <!-- Order items -->
+      <div class="bg-card border border-border rounded-2xl p-6 shadow-sm">
+        <h3 class="font-headline-sm text-headline-sm text-primary-container font-bold mb-4 border-b border-border pb-2">دوره‌های انتخاب‌شده</h3>
+        <div class="space-y-4">
+          {% if items %}
+          {% for item in items %}
+          <div class="flex items-center gap-4 pb-4 border-b border-border/50 last:border-0 last:pb-0">
+            <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[24px] text-outline/40">school</span>
+            </div>
+            <div class="min-w-0">
+              <h4 class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-1">{{ item.course.title }}</h4>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">{{ item.course.price|floatformat:0 }} تومان</span>
+            </div>
+          </div>
+          {% endfor %}
+          <div class="mt-4 pt-4 border-t border-border flex justify-between font-headline-sm text-headline-sm font-bold text-primary-container">
+            <span>مبلغ کل</span>
+            <span>{{ total|floatformat:0 }} تومان</span>
+          </div>
+          {% else %}
+          <p class="text-center py-8 text-on-surface-variant">سبد خرید خالی است.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="bg-card border border-border rounded-2xl p-6 shadow-sm">
+        <h3 class="font-headline-sm text-headline-sm text-primary-container font-bold mb-4 border-b border-border pb-2">پرداخت</h3>
+        <form method="post" action="{% url 'orders:payment_request' %}" class="space-y-4">
+          {% csrf_token %}
+          <div class="bg-surface-container-low rounded-xl p-4 border border-border">
+            <p class="font-body-sm text-body-sm text-on-surface-variant mb-2">پس از کلیک دکمه زیر، به درگاه پرداخت منتقل می‌شوید.</p>
+            <p class="font-body-sm text-body-sm text-on-surface"><strong>مبلغ قابل پرداخت:</strong> <span class="text-primary-container font-bold">{{ total|floatformat:0 }} تومان</span></p>
+          </div>
+          <button type="submit" class="w-full h-11 rounded-xl bg-primary-container text-white font-semibold flex items-center justify-center gap-2 hover:bg-tertiary-container transition-colors shadow-md shadow-primary-container/25">
+            <span>انتقال به درگاه پرداخت</span>
+            <span class="material-symbols-outlined text-[20px]">lock_open</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
 {% endblock %}
-{% block body_class %}{% endblock %}
-{% block header %}{% endblock %}
-{% block content %}<main>
-      <h1>تکمیل سفارش</h1>
-      {% for message in messages %}<p>{{ message }}</p>{% endfor %}
-      <ul>{% for item in items %}<li>{{ item.course.title }} · {{ item.course.price|floatformat:0 }} تومان</li>{% endfor %}</ul>
-      <p><strong>مبلغ کل: {{ total|floatformat:0 }} تومان</strong></p>
-      <form method="post" action="{% url 'orders:payment_request' %}">{% csrf_token %}<button type="submit">انتقال به درگاه پرداخت</button></form>
-      <p><a href="{% url 'orders:cart' %}">بازگشت به سبد خرید</a></p>
-    </main>
-{% endblock %}
-{% block footer %}{% endblock %}

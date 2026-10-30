@@ -1,20 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ chapter.title }} | {{ course.title }}{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+{% block head %}    <meta name="viewport" content="width=device-width, initial-scale=1" />
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/static/css/site-header.css" />
-{% endblock %}
-{% block body_class %}min-h-screen bg-background font-body-md text-on-surface-variant{% endblock %}
-{% block header %}<header class="border-b border-border bg-card">
-      <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
-        <a class="font-semibold text-primary-container" href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a>
-        <a class="text-primary-container hover:underline" href="{% url 'courses:list' %}">همه دوره‌ها</a>
-      </div>
-    </header>{% endblock %}
+            {% endblock %}
+{% block body_class %}min-h-screen bg-background font-body-md text-on-surface-variant pt-16{% endblock %}
 {% block content %}<main class="mx-auto max-w-5xl px-4 py-8">
       <nav aria-label="مسیر راهنما" class="mb-6 flex flex-wrap items-center gap-2 text-sm text-outline">
         <a href="{% url 'courses:home' %}">صفحه اصلی</a><span class="material-symbols-outlined text-sm">chevron_left</span>
@@ -49,4 +40,3 @@
       </nav>
     </main>
 {% endblock %}
-{% block footer %}{% endblock %}

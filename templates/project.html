@@ -1,8 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ project.title }}{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+{% block head %}    <meta name="viewport" content="width=device-width, initial-scale=1" />
     
     <style>
       body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
@@ -12,21 +12,22 @@
       #result { margin-top: 16px; }
     </style>
 {% endblock %}
-{% block body_class %}{% endblock %}
-{% block header %}{% endblock %}
-{% block content %}<main>
-      <p><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></p>
-      <h1>{{ project.title }}</h1>
-      <div>{{ project.description|linebreaks }}</div>
-      {% if project.sample_file %}<p><a href="{{ project.sample_file.url }}">دریافت فایل نمونه</a></p>{% endif %}
-      <form id="project-form" method="post" enctype="multipart/form-data">{% csrf_token %}
-        <label for="submission-file">فایل پروژه</label>
-        <input id="submission-file" type="file" name="file" required />
-        <label for="submission-description">توضیحات</label>
-        <textarea id="submission-description" name="description" rows="4"></textarea>
-        <button type="submit">ارسال پروژه</button>
-      </form>
-      <p id="result" role="status" aria-live="polite"></p>
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block content %}<main class="w-full pt-16 min-h-screen bg-background">
+      <div class="max-w-760 mx-auto px-margin py-space-lg">
+        <p><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></p>
+        <h1>{{ project.title }}</h1>
+        <div>{{ project.description|linebreaks }}</div>
+        {% if project.sample_file %}<p><a href="{{ project.sample_file.url }}">دریافت فایل نمونه</a></p>{% endif %}
+        <form id="project-form" method="post" enctype="multipart/form-data">{% csrf_token %}
+          <label for="submission-file">فایل پروژه</label>
+          <input id="submission-file" type="file" name="file" required />
+          <label for="submission-description">توضیحات</label>
+          <textarea id="submission-description" name="description" rows="4"></textarea>
+          <button type="submit">ارسال پروژه</button>
+        </form>
+        <p id="result" role="status" aria-live="polite"></p>
+      </div>
     </main>
     <script>
       document.getElementById('project-form').addEventListener('submit', async (event) => {
@@ -48,4 +49,3 @@
       });
     </script>
 {% endblock %}
-{% block footer %}{% endblock %}

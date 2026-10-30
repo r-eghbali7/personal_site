@@ -1,10 +1,18 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}پرداخت موفق{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+{% block head %}<meta name="viewport" content="width=device-width, initial-scale=1" />
 {% endblock %}
-{% block body_class %}{% endblock %}
-{% block header %}{% endblock %}
-{% block content %}<main><h1>پرداخت با موفقیت تأیید شد</h1><p>دوره‌های خریداری‌شده به حساب شما اضافه شدند.</p><a href="{% url 'accounts:profile' %}">مشاهده پروفایل</a></main>
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block content %}<main class="w-full pt-16 min-h-screen bg-background">
+      <div class="max-w-md mx-auto px-margin py-space-lg text-center">
+        <h1 class="font-headline-lg text-headline-lg text-primary-container font-bold">پرداخت با موفقیت تأیید شد</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">دوره‌های خریداری‌شده به حساب شما اضافه شدند.</p>
+        <a class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary-container text-white font-semibold hover:bg-tertiary-container transition-colors mt-4" href="{% url 'accounts:profile' %}">
+          <span>مشاهده پروفایل</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_right</span>
+        </a>
+      </div>
+    </main>
 {% endblock %}
-{% block footer %}{% endblock %}

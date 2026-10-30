@@ -1,16 +1,20 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-    
+
     <title>{% block title %}آکادمی حسین طاهری{% endblock %}</title>
 
     <!-- فونت‌ها و آیکون‌های مشترک -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Vazirmatn:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    
+
     <!-- تنظیمات مشترک Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script id="tailwind-config">
@@ -76,26 +80,61 @@
             borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
             spacing: { "space-xs": "0.25rem", gutter: "1.5rem", "space-sm": "0.5rem", "margin-mobile": "1rem", "space-md": "1rem", "space-xl": "2.5rem", "gutter-mobile": "1rem", "space-lg": "1.5rem", margin: "2rem" },
             fontFamily: {
-              "display-hero": ["Plus Jakarta Sans"], "label-badge": ["Inter"], "body-lg": ["Inter"], "headline-lg-mobile": ["Plus Jakarta Sans"], "display-hero-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-sm": ["Inter"], "code-sm": ["JetBrains Mono"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "code-md": ["JetBrains Mono"], "headline-sm": ["Plus Jakarta Sans"]
+              "display-hero": ["Plus Jakarta Sans", "Vazirmatn"],
+              "label-badge": ["Inter", "Vazirmatn"],
+              "body-lg": ["Inter", "Vazirmatn"],
+              "headline-lg-mobile": ["Plus Jakarta Sans", "Vazirmatn"],
+              "display-hero-mobile": ["Plus Jakarta Sans", "Vazirmatn"],
+              "headline-lg": ["Plus Jakarta Sans", "Vazirmatn"],
+              "body-sm": ["Inter", "Vazirmatn"],
+              "code-sm": ["JetBrains Mono"],
+              "body-md": ["Inter", "Vazirmatn"],
+              "headline-md": ["Plus Jakarta Sans", "Vazirmatn"],
+              "code-md": ["JetBrains Mono"],
+              "headline-sm": ["Plus Jakarta Sans", "Vazirmatn"],
+              sans: ["Vazirmatn", "Plus Jakarta Sans", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
             },
             fontSize: {
-              "display-hero": ["40px", { lineHeight: "56px", fontWeight: "800" }], "label-badge": ["11px", { lineHeight: "16px", fontWeight: "600" }], "body-lg": ["16px", { lineHeight: "28px", fontWeight: "400" }], "headline-lg-mobile": ["22px", { lineHeight: "34px", fontWeight: "700" }], "display-hero-mobile": ["28px", { lineHeight: "40px", fontWeight: "800" }], "headline-lg": ["28px", { lineHeight: "44px", fontWeight: "700" }], "body-sm": ["12px", { lineHeight: "20px", fontWeight: "400" }], "code-sm": ["12px", { lineHeight: "18px", fontWeight: "500" }], "body-md": ["14px", { lineHeight: "24px", fontWeight: "400" }], "headline-md": ["22px", { lineHeight: "36px", fontWeight: "700" }], "code-md": ["14px", { lineHeight: "22px", fontWeight: "500" }], "headline-sm": ["18px", { lineHeight: "28px", fontWeight: "600" }]
+              "display-hero": ["40px", { lineHeight: "56px", fontWeight: "800" }],
+              "label-badge": ["11px", { lineHeight: "16px", fontWeight: "600" }],
+              "body-lg": ["16px", { lineHeight: "28px", fontWeight: "400" }],
+              "headline-lg-mobile": ["22px", { lineHeight: "34px", fontWeight: "700" }],
+              "display-hero-mobile": ["28px", { lineHeight: "40px", fontWeight: "800" }],
+              "headline-lg": ["28px", { lineHeight: "44px", fontWeight: "700" }],
+              "body-sm": ["12px", { lineHeight: "20px", fontWeight: "400" }],
+              "code-sm": ["12px", { lineHeight: "18px", fontWeight: "500" }],
+              "body-md": ["14px", { lineHeight: "24px", fontWeight: "400" }],
+              "headline-md": ["22px", { lineHeight: "36px", fontWeight: "700" }],
+              "code-md": ["14px", { lineHeight: "22px", fontWeight: "500" }],
+              "headline-sm": ["18px", { lineHeight: "28px", fontWeight: "600" }]
             },
           },
         },
       };
     </script>
-    <link rel="stylesheet" href="/static/css/site-header.css" />
-    <script src="/static/js/site-header.js" defer></script>
-    
+    <link rel="stylesheet" href="{% static 'css/site-header.css' %}" />
+    <script src="{% static 'js/site-header.js' %}" defer></script>
+
     <style>
       @layer base {
         html, body { margin: 0; padding: 0; }
-        body { overscroll-behavior: none; }
+        body { overscroll-behavior: none; font-family: "Vazirmatn", sans-serif; }
         main > :first-child { margin-top: 0 !important; }
         main > :last-child { margin-bottom: 0 !important; }
       }
       ::-webkit-scrollbar { display: none; }
+
+      /* Scroll reveal effect */
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+      }
+      .reveal.revealed {
+        opacity: 1;
+        transform: translateY(0);
+      }
     </style>
 
     <!-- برای اضافه کردن CSS اختصاصی در فایل‌های دیگر -->
@@ -105,7 +144,7 @@
 <body class="{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}">
 
     {% block header %}
-        {% include "header.html" %}
+        {% include "includes/header.html" %}
     {% endblock %}
 
     {% block content %}
@@ -113,9 +152,30 @@
     {% endblock %}
 
     {% block footer %}
-        {% include "footer.html" %}
+        {% include "includes/footer.html" %}
     {% endblock %}
-    
+
+    <!-- Scroll reveal script (all pages) -->
+    <script>
+      (function () {
+        const targets = document.querySelectorAll(
+          'main section, main article, main .bg-card, main > div > div[class*="grid"] > div'
+        );
+        targets.forEach((el) => el.classList.add('reveal'));
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -80px 0px' });
+
+        document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+      })();
+    </script>
+
     <!-- برای اضافه کردن JS اختصاصی در فایل‌های دیگر -->
     {% block scripts %}{% endblock %}
 </body>

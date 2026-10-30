@@ -10,7 +10,7 @@ from django.views import View
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import IntegrityError, transaction
-from django.db.models import F
+from django.db.models import F, Q
 from django.utils import timezone
 from accounts.models import CustomUser, OTPCode
 from accounts.services import send_otp_code
@@ -26,6 +26,13 @@ class BlogListView(View):
         selected_category = request.GET.get('category', '').strip()
         if selected_category:
             posts = posts.filter(category=selected_category)
+        search_query = request.GET.get('q', '').strip()
+        if search_query:
+            posts = posts.filter(
+                Q(title__icontains=search_query)
+                | Q(summary__icontains=search_query)
+                | Q(content__icontains=search_query)
+            )
         categories_query = (
             BlogPost.objects.filter(is_published=True)
             .exclude(category='')
@@ -42,6 +49,7 @@ class BlogListView(View):
             'category_count': len(categories),
             'categories': categories,
             'selected_category': selected_category,
+            'search_query': search_query,
         }
         if is_ajax(request):
             return JsonResponse({

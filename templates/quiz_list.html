@@ -1,8 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}آزمون‌های دوره‌ها{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+{% block head %}    <meta name="viewport" content="width=device-width, initial-scale=1" />
     
     <style>
       body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
@@ -13,14 +13,17 @@
       p { color: #64716d; }
     </style>
 {% endblock %}
-{% block body_class %}{% endblock %}
-{% block header %}{% endblock %}
-{% block content %}<main>
-      <h1>آزمون‌های دوره‌ها</h1>
-      {% if quizzes %}
-      <ul>{% for quiz in quizzes %}<li><a href="{% url 'courses:quiz' quiz.id %}"><strong>{{ quiz.title }}</strong></a><p>{{ quiz.chapter.course.title }} · حدنصاب قبولی: {{ quiz.pass_score }}٪</p></li>{% endfor %}</ul>
-      {% else %}<p>در حال حاضر آزمونی منتشر نشده است.</p>{% endif %}
-      <a href="{% url 'courses:list' %}">مشاهده دوره‌ها</a>
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block content %}<main class="w-full pt-16 min-h-screen bg-background">
+      <div class="max-w-2xl mx-auto px-margin py-space-lg">
+        <h1 class="font-headline-lg text-headline-lg text-primary-container font-bold">آزمون‌های دوره‌ها</h1>
+        {% if quizzes %}
+        <ul class="space-y-4 font-body-md text-body-md text-on-surface-variant">{% for quiz in quizzes %}<li class="bg-card p-4 rounded-xl border border-border"><a href="{% url 'courses:quiz' quiz.id %}"><strong class="text-primary-container">{{ quiz.title }}</strong></a><p class="mt-1">{{ quiz.chapter.course.title }} · حدنصاب قبولی: {{ quiz.pass_score }}٪</p></li>{% endfor %}</ul>
+        {% else %}<p class="rounded-2xl bg-card p-8 text-center text-on-surface-variant">در حال حاضر آزمونی منتشر نشده است.</p>{% endif %}
+        <a class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary-container text-white font-semibold hover:bg-tertiary-container transition-colors mt-4" href="{% url 'courses:list' %}">
+          <span>مشاهده دوره‌ها</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_right</span>
+        </a>
+      </div>
     </main>
 {% endblock %}
-{% block footer %}{% endblock %}

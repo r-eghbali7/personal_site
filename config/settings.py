@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'orders',
     'tickets',
     'blog',
+    'persian',
+    'search',
 ]
 
 MIDDLEWARE = [

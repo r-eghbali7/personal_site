@@ -1,40 +1,70 @@
 {% extends "base.html" %}
-{% block title %}تیکت‌های پشتیبانی{% endblock %}
-{% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <style>
-      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
-      main { max-width: 880px; margin: 48px auto; padding: 24px; }
-      header, li { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-      ul { list-style: none; margin: 24px 0; padding: 0; }
-      li { background: white; border: 1px solid #dce4e0; border-radius: 8px; margin: 10px 0; padding: 16px; }
-      a, button { color: #075d4f; }
-      .action { background: #075d4f; border-radius: 6px; color: white; padding: 8px 14px; text-decoration: none; }
-      .muted { color: #64716d; font-size: 14px; }
-    </style>
+{% load static %}
+{% block title %}تیکت‌های پشتیبانی | آکادمی حسین طاهری{% endblock %}
+{% block body_class %}bg-background font-body-md text-on-surface antialiased{% endblock %}
+{% block content %}
+<main class="w-full pt-16 min-h-screen bg-background">
+  <div class="max-w-4xl mx-auto px-margin py-space-lg">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="font-headline-lg text-headline-lg text-primary-container font-bold">تیکت‌های پشتیبانی</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">درخواست‌ها و پاسخ‌های پشتیبانی شما</p>
+      </div>
+      <a class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-container text-white font-semibold hover:bg-tertiary-container transition-colors" href="{% url 'tickets:create' %}">
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        <span>ثبت تیکت جدید</span>
+      </a>
+    </div>
+
+    <!-- Tickets List -->
+    {% if tickets %}
+    <div class="space-y-4">
+      {% for ticket in tickets %}
+      <a href="{% url 'tickets:detail' ticket.pk %}" class="block bg-card border border-border rounded-2xl p-5 hover:shadow-lg hover:border-primary-container/30 transition-all group">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <h3 class="font-headline-sm text-body-lg font-bold text-primary-container group-hover:text-tertiary-container transition-colors truncate">{{ ticket.subject }}</h3>
+            <div class="flex items-center gap-3 mt-2 text-secondary font-body-sm text-body-sm">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+                <span>{{ ticket.created_at|date:"Y-m-d H:i" }}</span>
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-xs font-medium
+                {% if ticket.status == 'open' %}bg-green-100 text-green-700
+                {% elif ticket.status == 'closed' %}bg-gray-100 text-gray-600
+                {% else %}bg-blue-100 text-blue-700{% endif %}">
+                {{ ticket.get_status_display }}
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 text-secondary font-body-sm text-body-sm">
+            <span class="material-symbols-outlined text-[18px]">chat</span>
+            <span>{{ ticket.messages.count }} پیام</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-16 bg-card rounded-2xl border border-border">
+      <span class="material-symbols-outlined text-[64px] text-outline/50 mb-4">inbox</span>
+      <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-2">هنوز تیکتی ثبت نکرده‌اید</h3>
+      <p class="font-body-md text-body-md text-on-surface-variant mb-6">می‌توانید برای هرگونه سوال یا مشکل تیکت جدید ثبت کنید</p>
+      <a class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-container text-white font-semibold hover:bg-tertiary-container transition-colors" href="{% url 'tickets:create' %}">
+        <span>ثبت اولین تیکت</span>
+        <span class="material-symbols-outlined text-[20px]">arrow_left</span>
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- Back Link -->
+    <div class="mt-8 text-center">
+      <a class="inline-flex items-center gap-1.5 text-primary-container font-semibold hover:text-tertiary-container transition-colors" href="{% url 'accounts:profile' %}">
+        <span class="material-symbols-outlined text-[18px]">arrow_right</span>
+        <span>بازگشت به پروفایل</span>
+      </a>
+    </div>
+  </div>
+</main>
 {% endblock %}
-{% block body_class %}{% endblock %}
-{% block header %}<header>
-        <div><h1>تیکت‌های پشتیبانی</h1><p class="muted">درخواست‌ها و پاسخ‌های پشتیبانی شما</p></div>
-        <a class="action" href="{% url 'tickets:create' %}">ثبت تیکت</a>
-      </header>{% endblock %}
-{% block content %}<main>
-      
-      {% if tickets %}
-      <ul>
-        {% for ticket in tickets %}
-        <li>
-          <div><a href="{% url 'tickets:detail' ticket.pk %}">{{ ticket.subject }}</a><div class="muted">{{ ticket.get_status_display }} · {{ ticket.created_at|date:"Y-m-d H:i" }}</div></div>
-          <span class="muted">{{ ticket.messages.count }} پیام</span>
-        </li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <p>هنوز تیکتی ثبت نکرده‌اید.</p>
-      {% endif %}
-      <a href="{% url 'accounts:profile' %}">بازگشت به پروفایل</a>
-    </main>
-{% endblock %}
-{% block footer %}{% endblock %}

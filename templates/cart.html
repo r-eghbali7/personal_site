@@ -1,38 +1,92 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}سبد خرید{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <style>
-      body { margin: 0; background: #f4f6f5; color: #202b29; font: 16px/1.8 sans-serif; }
-      main { max-width: 880px; margin: 48px auto; padding: 24px; }
-      li { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: white; border: 1px solid #dce4e0; border-radius: 8px; margin: 10px 0; padding: 16px; }
-      ul { list-style: none; padding: 0; }
-      button, .action { background: #075d4f; border: 0; border-radius: 6px; color: white; padding: 8px 14px; font: inherit; text-decoration: none; cursor: pointer; }
-      .remove { background: #a22222; }
-    </style>
-{% endblock %}
-{% block body_class %}{% endblock %}
-{% block header %}{% endblock %}
-{% block content %}<main>
-      <h1>سبد خرید</h1>
-      {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block content %}<main class="w-full pt-16 min-h-screen bg-background">
+  <div class="max-w-5xl mx-auto px-margin py-space-lg">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <span class="h-6 w-1 rounded-full bg-accent-alt"></span>
+          <h1 class="font-headline-lg text-headline-lg text-primary-container font-bold">سبد خرید</h1>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant">دوره‌های انتخاب‌شده برای ثبت‌نام</p>
+      </div>
       {% if items %}
-      <ul>
-        {% for item in items %}
-        <li>
-          <div><a href="{% url 'courses:detail' item.course.slug %}">{{ item.course.title }}</a><div>{{ item.course.price|floatformat:0 }} تومان</div></div>
-          <form method="post" action="{% url 'orders:remove_from_cart' item.pk %}">{% csrf_token %}<button class="remove" type="submit">حذف</button></form>
-        </li>
-        {% endfor %}
-      </ul>
-      <p><strong>جمع کل: {{ total|floatformat:0 }} تومان</strong></p>
-      <a class="action" href="{% url 'orders:checkout' %}">ادامه و پرداخت</a>
-      {% else %}
-      <p>سبد خرید شما خالی است.</p>
+      <a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-high text-primary-container font-body-md text-body-md font-semibold hover:bg-primary-container hover:text-on-primary transition-colors" href="{% url 'courses:list' %}">
+        <span>افزودن دوره جدید</span>
+        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+      </a>
       {% endif %}
-      <p><a href="{% url 'courses:list' %}">بازگشت به دوره‌ها</a></p>
-    </main>
+    </div>
+
+    {% for message in messages %}
+    <div class="rounded-lg p-4 mb-6 bg-surface-container-low border border-border text-on-surface font-body-sm text-body-sm">{{ message }}</div>
+    {% endfor %}
+
+    {% if items %}
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
+      <!-- Items -->
+      <div class="space-y-4">
+        {% for item in items %}
+        <div class="bg-card border border-border rounded-2xl p-4 shadow-sm flex flex-col md:flex-row items-center gap-4 group hover:border-primary-container/50 transition-colors">
+          <div class="flex flex-col md:flex-row items-center gap-4 flex-1 min-w-0">
+            <a href="{% url 'courses:detail' item.course.slug %}" class="flex items-center gap-3">
+              {% if item.course.thumbnail %}
+              <img src="{{ item.course.thumbnail.url }}" alt="{{ item.course.title }}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover" />
+              {% else %}
+              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-surface-container-low flex items-center justify-center">
+                <span class="material-symbols-outlined text-[32px] text-outline/40">school</span>
+              </div>
+              {% endif %}
+              <div class="min-w-0">
+                <h3 class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-1">{{ item.course.title }}</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">{{ item.course.category|default:'دوره' }}</p>
+              </div>
+            </a>
+            <div class="flex flex-col items-end">
+              <span class="font-headline-sm text-headline-sm font-bold text-primary-container">{{ item.course.price|floatformat:0 }} تومان</span>
+              <form method="post" action="{% url 'orders:remove_from_cart' item.pk %}" class="mt-2 sm:mt-0">
+                {% csrf_token %}
+                <button class="h-8 px-2 rounded-lg bg-red-50 text-red-600 text-xs font-medium hover:bg-red-100 transition-colors" type="submit">حذف</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Summary -->
+      <div class="bg-card border border-border rounded-2xl p-6 shadow-sm sticky top-24">
+        <h3 class="font-headline-sm text-headline-sm text-primary-container font-bold mb-4 border-b border-border pb-2">خلاصه سفارش</h3>
+        <div class="space-y-3 mb-6">
+          <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
+            <span>تعداد دوره‌ها</span>
+            <span class="font-medium text-on-surface">{{ items|length }}</span>
+          </div>
+          <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
+            <span>جمع کل</span>
+            <span class="font-headline-sm text-headline-sm font-bold text-primary-container">{{ total|floatformat:0 }} تومان</span>
+          </div>
+        </div>
+        <a class="w-full h-11 rounded-xl bg-primary-container text-white font-semibold flex items-center justify-center gap-2 hover:bg-tertiary-container transition-colors shadow-md shadow-primary-container/25" href="{% url 'orders:checkout' %}">
+          <span>ادامه و پرداخت</span>
+          <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+        </a>
+      </div>
+    </div>
+    {% else %}
+    <div class="bg-card border border-border rounded-2xl p-12 shadow-sm text-center">
+      <span class="material-symbols-outlined text-[64px] text-outline/50 mb-4">shopping_cart</span>
+      <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-2">سبد خرید خالی است</h3>
+      <p class="font-body-md text-body-md text-on-surface-variant mb-6">هنوز هیچ دوره‌ای به سبد خرید اضافه نشده است.</p>
+      <a class="h-11 px-6 rounded-xl bg-primary-container text-white font-semibold hover:bg-tertiary-container transition-colors" href="{% url 'courses:list' %}">
+        مشاهده دوره‌ها
+        <span class="material-symbols-outlined text-[18px] ml-1">chevron_left</span>
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</main>
 {% endblock %}
-{% block footer %}{% endblock %}

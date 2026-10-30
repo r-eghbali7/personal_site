@@ -1,23 +1,16 @@
 """
-URL Configuration — سطح پروژه
+Django URL Configuration for LMS آکادمی طاهری
 """
 
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
-from .search_views import SiteSearchView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('search/', SiteSearchView.as_view(), name='site_search'),
-    path('', include('courses.urls', namespace='courses')),
-    path('accounts/', include('accounts.urls', namespace='accounts')),
-    path('orders/', include('orders.urls', namespace='orders')),
-    path('tickets/', include('tickets.urls', namespace='tickets')),
-    path('blog/', include('blog.urls', namespace='blog')),
+    path('', include('courses.urls')),
+    path('accounts/', include('accounts.urls')),
+    path('orders/', include('orders.urls')),
+    path('tickets/', include('tickets.urls')),
+    path('blog/', include('blog.urls')),
+    path('search/', include('search.urls')),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

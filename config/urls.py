@@ -12,5 +12,5 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
     path('tickets/', include('tickets.urls')),
     path('blog/', include('blog.urls')),
-    path('search/', include('search.urls')),
+    path('site-search/', include('search.urls')),
 ]

@@ -1,8 +1,8 @@
 {% load static %}
 <header class="fixed top-0 left-0 right-0 z-50 h-16 bg-card/90 backdrop-blur-xl border-b border-border shadow-sm">
-  <div class="max-w-7xl w-full mx-auto px-margin h-full flex items-center justify-between gap-2">
-    <!-- Brand (hamishe dida_bashad) -->
-    <div class="flex items-center gap-3 shrink-0">
+  <div class="max-w-7xl w-full mx-auto px-2 sm:px-4 md:px-margin h-full flex items-center justify-between gap-1 sm:gap-2">
+  <!-- Brand -->
+  <div class="hidden xl:flex items-center gap-3 shrink-0">
       <img
         alt="HT Developer Logo"
         class="h-8 w-auto object-contain"
@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <!-- Desktop navigation: yek satr afghi -->
+    <!-- Desktop navigation -->
     <nav class="hidden xl:flex items-center gap-1 p-1 site-nav" data-site-nav data-active-classes="bg-primary-container text-on-primary font-bold rounded-xl">
       <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="home" href="{% url 'courses:home' %}">صفحه اصلی</a>
       <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="courses" href="{% url 'courses:list' %}">دوره‌ها و آموزش‌ها</a>
@@ -24,9 +24,9 @@
       <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="support-tickets" href="{% url 'tickets:list' %}">تیکت پشتیبانی</a>
     </nav>
 
-    <!-- Desktop actions: yek satr afghi -->
+    <!-- Desktop actions -->
     <div class="hidden xl:flex items-center gap-2 shrink-0">
-      <div class="flex items-center relative w-32 sm:w-44 md:w-56 lg:w-64 shrink-0" data-site-search-container>
+      <div class="flex items-center relative w-32 sm:w-44 md:w-56 lg:w-64 shrink-0 z-10" data-site-search-container>
         <span class="material-symbols-outlined absolute right-3 text-outline text-[20px] pointer-events-none">search</span>
         <input
           class="w-full h-10 pr-10 pl-4 bg-background rounded-full border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner transition-colors"
@@ -38,9 +38,9 @@
           autocomplete="off"
           data-site-search
           data-search-url="{% url 'site_search' %}"
-          type="text"
+          type="search"
         />
-        <ul class="site-search-results absolute z-30 mt-1 w-full min-w-full max-w-md bg-card border border-border rounded-xl shadow-lg" id="site-search-results" role="listbox" data-site-search-results hidden></ul>
+        <ul class="site-search-results absolute top-full z-50 mt-1 w-full min-w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden" id="site-search-results" role="listbox" data-site-search-results hidden></ul>
       </div>
       <a class="h-10 w-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center hover:bg-tertiary-container hover:text-on-primary transition-colors" data-path="cart" href="{% url 'orders:cart' %}"><span class="material-symbols-outlined text-[20px]">shopping_bag</span></a>
       <div class="flex items-center gap-2 pr-1">
@@ -49,35 +49,35 @@
       </div>
     </div>
 
-    <!-- Mobile bar actions: yek satr afghi (brand chapa, actions raste) -->
-    <div class="xl:hidden flex items-center gap-2 shrink-0">
-      <button class="h-10 w-10 rounded-xl bg-surface-container-high text-primary-container flex items-center justify-center" type="button" aria-label="بازکردن منو" aria-expanded="false" data-mobile-menu>
+    <!-- Mobile bar actions -->
+    <div class="xl:hidden flex items-center justify-between w-full gap-2">
+      <!-- Right: hamburger menu -->
+      <button class="h-10 w-10 rounded-xl bg-surface-container-high text-primary-container flex items-center justify-center shrink-0" type="button" aria-label="بازکردن منو" aria-expanded="false" data-mobile-menu>
         <span class="material-symbols-outlined text-[24px]">menu</span>
       </button>
-      <button class="h-10 w-10 rounded-xl bg-surface-container-high text-primary-container flex items-center justify-center hover:bg-tertiary-container hover:text-on-primary transition-colors" type="button" aria-label="جستجو" data-mobile-search-toggle>
-        <span class="material-symbols-outlined text-[20px]">search</span>
-      </button>
-      <a class="h-10 w-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center hover:bg-tertiary-container hover:text-on-primary transition-colors" data-path="cart" href="{% url 'orders:cart' %}"><span class="material-symbols-outlined text-[20px]">shopping_bag</span></a>
-      <div class="flex items-center gap-2">
+      <!-- Center: logo -->
+      <a href="{% url 'courses:home' %}" class="flex items-center justify-center shrink-0">
+        <img alt="HT Developer Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg" />
+      </a>
+      <!-- Left: user icon -->
+      <div class="shrink-0">
         {% if user.is_authenticated %}
           <a class="h-10 w-10 rounded-full object-cover border border-border flex items-center justify-center" data-path="user-profile" href="{% url 'accounts:profile' %}">
             <img alt="Profile" class="w-7 h-7 rounded-full object-cover border border-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q" />
           </a>
-          <a class="hidden sm:inline-block font-body-sm text-primary-container font-semibold hover:text-tertiary-container transition-colors" data-path="user-profile" href="{% url 'accounts:profile' %}">حساب کاربری</a>
         {% else %}
           <a class="h-10 w-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center" href="{% url 'accounts:login' %}">
             <span class="material-symbols-outlined text-[20px]">person</span>
           </a>
-          <a class="hidden sm:inline-block font-body-sm text-primary-container font-semibold hover:text-tertiary-container transition-colors" href="{% url 'accounts:login' %}">ورود</a>
         {% endif %}
       </div>
     </div>
   </div>
 </header>
 
-<!-- Mobile panel: silde-down be soorate responsive -->
+<!-- Mobile panel -->
 <div class="xl:hidden fixed top-16 left-0 right-0 z-40 bg-surface-container border-b border-border shadow-lg" data-mobile-panel hidden>
-  <div class="max-w-7xl w-full mx-auto px-margin py-4">
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-margin py-4">
     <nav class="flex flex-col gap-1">
       <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'courses:home' %}">صفحه اصلی</a>
       <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'courses:list' %}">دوره‌ها و آموزش‌ها</a>
@@ -90,7 +90,7 @@
       <a class="flex-1 h-11 rounded-xl bg-primary-container text-on-primary flex items-center justify-center font-semibold hover:bg-tertiary-container transition-colors" href="{% url 'orders:cart' %}">سبد خرید</a>
       {% if user.is_authenticated %}<a class="flex-1 h-11 rounded-xl border border-border text-on-surface-variant flex items-center justify-center font-semibold hover:bg-surface-container-high transition-colors" href="{% url 'accounts:profile' %}">حساب کاربری</a>{% else %}<a class="flex-1 h-11 rounded-xl border border-border text-on-surface-variant flex items-center justify-center font-semibold hover:bg-surface-container-high transition-colors" href="{% url 'accounts:login' %}">ورود</a>{% endif %}
     </div>
-    <div class="mt-4 flex items-center relative w-full" data-site-search-container>
+    <div class="mt-4 flex items-center relative w-full z-10" data-site-search-container>
       <span class="material-symbols-outlined absolute right-3 text-outline text-[20px] pointer-events-none">search</span>
       <input
         class="w-full h-11 pr-10 pl-4 bg-background rounded-full border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner transition-colors"
@@ -102,9 +102,9 @@
         autocomplete="off"
         data-site-search
         data-search-url="{% url 'site_search' %}"
-        type="text"
+        type="search"
       />
-      <ul class="site-search-results absolute z-30 mt-1 w-full min-w-full max-w-md bg-card border border-border rounded-xl shadow-lg" id="site-search-results-mobile" role="listbox" data-site-search-results hidden></ul>
+      <ul class="site-search-results absolute top-full z-50 mt-1 w-full min-w-full max-w-md bg-card border border-border rounded-xl shadow-lg overflow-hidden" id="site-search-results-mobile" role="listbox" data-site-search-results hidden></ul>
     </div>
   </div>
 </div>

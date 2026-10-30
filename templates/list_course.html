@@ -96,16 +96,16 @@
           </div>
         </section>
         <!-- Main Content Layout Area -->
-        <section class="w-full max-w-7xl mx-auto px-margin py-8">
+        <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-margin py-8">
           <!-- Top Filter & Search Toolbar Bar -->
-          <div
-            class="w-full p-4 mb-8 bg-card rounded-2xl shadow-sm flex flex-col lg:flex-row items-center justify-between gap-4"
-          >
+            <div
+              class="w-full p-4 mb-6 sm:mb-8 bg-card rounded-2xl shadow-sm flex flex-col lg:flex-row items-center justify-between gap-4"
+            >
             <!-- Search Input Container -->
             <form
               action="{% url 'courses:list' %}"
               method="get"
-              class="relative w-full lg:w-96"
+              class="relative w-full lg:w-96 z-10"
               data-live-search-container
             >
               {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}" />{% endif %}
@@ -130,7 +130,7 @@
                 type="text"
               />
               <ul
-                class="site-search-results absolute z-30 mt-1 w-full max-w-md bg-card border border-border rounded-xl shadow-lg"
+                class="site-search-results absolute z-50 mt-1 w-full max-w-md bg-card border border-border rounded-xl shadow-lg"
                 id="course-search-results"
                 data-live-search-results
                 hidden
@@ -1564,8 +1564,12 @@
         </script>
       </div>
     </main>
+
+      
 {% endblock %}
-{% block scripts %}<script src="{% static 'js/live-search.js' %}" defer></script>{% endblock %}
+{% block scripts %}
+  <script src="{% static 'js/live-search.js' %}" defer></script>
+{% endblock %}
 {% block footer %}<footer class="w-full bg-background pt-space-xl pb-space-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-margin">
         <div

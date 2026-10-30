@@ -112,22 +112,35 @@
   document.querySelectorAll("[data-mobile-menu]").forEach((button) => {
     const panel = document.querySelector("[data-mobile-panel]");
     if (!panel) return;
+
     const closePanel = () => {
       panel.removeAttribute("open");
-      panel.hidden = true;
       button.setAttribute("aria-expanded", "false");
+      // برای اجرای انیمیشن CSS، کلاس hidden را با تاخیر اضافه می‌کنیم
+      setTimeout(() => {
+        panel.classList.add("hidden");
+        panel.hidden = true;
+      }, 250);
     };
+
     button.addEventListener("click", () => {
-      const open = panel.hasAttribute("open");
-      if (open) {
+      if (panel.hasAttribute("open")) {
         closePanel();
       } else {
-        panel.setAttribute("open", "");
-        panel.hidden = false;
         panel.classList.remove("hidden");
+        panel.hidden = false;
+        // تاخیر کوچک برای اعمال شدن remove class قبل از انیمیشن
+        setTimeout(() => {
+          panel.setAttribute("open", "");
+        }, 10);
         button.setAttribute("aria-expanded", "true");
       }
     });
+
+    panel
+      .querySelectorAll("a")
+      .forEach((link) => link.addEventListener("click", closePanel));
+
     // Clicking a nav link closes the panel
     panel.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", closePanel);
@@ -135,31 +148,17 @@
     // Close when clicking outside
     document.addEventListener("click", (event) => {
       if (!panel.hasAttribute("open")) return;
-      if (!event.target.closest("[data-mobile-panel]") && !event.target.closest("[data-mobile-menu]")) {
+      if (
+        !event.target.closest("[data-mobile-panel]") &&
+        !event.target.closest("[data-mobile-menu]")
+      ) {
         closePanel();
       }
     });
   });
 
-  // Mobile search toggle - show search input when search button is clicked
-  document.querySelectorAll("[data-mobile-search-toggle]").forEach((button) => {
-    const panel = document.querySelector("[data-mobile-panel]");
-    const searchContainer = panel?.querySelector("[data-site-search-container]");
-    if (!searchContainer) return;
-
-    button.addEventListener("click", () => {
-      // Open mobile panel if not open
-      if (!panel?.hasAttribute("open")) {
-        panel?.setAttribute("open", "");
-        panel?.hidden = false;
-        const menuBtn = document.querySelector("[data-mobile-menu]");
-        menuBtn?.setAttribute("aria-expanded", "true");
-      }
-      // Focus on search input after panel opens
-      setTimeout(() => {
-        const searchInput = searchContainer.querySelector("[data-site-search]");
-        searchInput?.focus();
-      }, 300);
-    });
-  });
+  // Close panel when clicking outside
+  // (handled above)
 })();
+
+// Removed mobile search toggle block - search is now in mobile panel opened by hamburger menu

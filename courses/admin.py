@@ -4,7 +4,7 @@ Admin: courses
 
 from django.contrib import admin
 from .models import (
-    Category, Course, Chapter, Lesson, Enrollment,
+    Category, Course, Chapter, Lesson, CourseComment, Enrollment,
     Quiz, Question, Choice, QuizAttempt, FinalProject, ProjectSubmission
 )
 
@@ -50,6 +50,15 @@ class LessonAdmin(admin.ModelAdmin):
     list_filter = ('is_free_preview', 'chapter__course')
     list_editable = ('is_free_preview',)
     search_fields = ('title',)
+
+
+@admin.register(CourseComment)
+class CourseCommentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'is_approved', 'created_at')
+    list_filter = ('is_approved', 'created_at')
+    list_editable = ('is_approved',)
+    search_fields = ('user__phone_number', 'user__full_name', 'body', 'course__title')
+    readonly_fields = ('created_at',)
 
 
 @admin.register(Enrollment)

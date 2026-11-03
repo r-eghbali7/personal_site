@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
+{% load persian_filters %}
 {% block title %}آکادمی حسین طاهری{% endblock %}
 {% block head %}
 <link href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js"></script>
+<link href="{% static 'css/podcast-player.css' %}" rel="stylesheet" />
 <style>
   @layer base {
     /* کانتینر اصلی اسلایدر و ایجاد فضا برای نقطه‌ها در پایین */
@@ -126,38 +128,24 @@
 {% block content %}
 <main class="w-full pt-16 bg-background min-h-screen">
   <div class="flex flex-col w-full">
-    <!-- 1. HERO SECTION (3-Piece Layout Slider) -->
+    <!-- 1. HERO SECTION (Dynamic Banners from Database) -->
+    {% if active_banners %}
     <section class="w-full max-w-7xl mx-auto px-margin pt-8 pb-space-lg">
       <div class="elementor-widget-container">
         <div class="one-keen-slider-container" id="one-slider-f104e3e-container">
           <div id="one-slider-f104e3e" class="keen-slider">
-            <!-- اسلاید اول -->
-            <div class="keen-slider__slide one-slide-item one-slide-active">
-              <a href="https://hosseintaheri.ir/pt/ch/">
-                <picture>
-                  <source media="(max-width: 767px)" srcset="https://hosseintaheri.ir/wp-content/uploads/2026/09/Banner-Web-Decsktop-1000x1000px-Charisma.webp" />
-                  <img class="one-keen-slide-image" src="https://hosseintaheri.ir/wp-content/uploads/2026/09/Banner-Web-Decsktop-2000x600-2.webp" alt="کاریزما" loading="lazy" />
-                </picture>
+            {% for banner in active_banners %}
+            <div class="keen-slider__slide one-slide-item{% if forloop.first %} one-slide-active{% endif %}">
+              <a href="{{ banner.link_url }}" class="block w-full h-full">
+                <img
+                  src="{{ banner.image.url }}"
+                  alt="{{ banner.title|default:'بنر' }}"
+                  class="one-keen-slide-image"
+                  loading="lazy"
+                />
               </a>
             </div>
-            <!-- اسلاید دوم -->
-            <div class="keen-slider__slide one-slide-item">
-              <a href="https://hosseintaheri.ir/product/bmbook/">
-                <picture>
-                  <source media="(max-width: 767px)" srcset="https://hosseintaheri.ir/wp-content/uploads/2026/05/بنر-کتاب-بیزنس-مستری-سایز-موبایلcopy.webp" />
-                  <img class="one-keen-slide-image" src="https://hosseintaheri.ir/wp-content/uploads/2026/06/بنر-بیزنس-مستری-صفحه-اصلی-1.webp" alt="بیزنس مستری" loading="lazy" />
-                </picture>
-              </a>
-            </div>
-            <!-- اسلاید سوم -->
-            <div class="keen-slider__slide one-slide-item">
-              <a href="https://hosseintaheri.ir/pt/b360/">
-                <picture>
-                  <source media="(max-width: 767px)" srcset="https://hosseintaheri.ir/wp-content/uploads/2026/05/بنر-اسلایدر-سایز-موبایل-1080در1080-دوره-طبیزنس360.webp" />
-                  <img class="one-keen-slide-image" src="https://hosseintaheri.ir/wp-content/uploads/2026/06/360-new-02.jpg" alt="بیزنس 360" loading="lazy" />
-                </picture>
-              </a>
-            </div>
+            {% endfor %}
           </div>
 
           <!-- دکمه‌های ناوبری روی بنر -->
@@ -172,13 +160,21 @@
 
           <!-- نقاط راهنما در زیر بنر -->
           <div class="one-slider-dots">
-            <button class="one-dot one-dot-active" aria-label="Slide 1"></button>
-            <button class="one-dot" aria-label="Slide 2"></button>
-            <button class="one-dot" aria-label="Slide 3"></button>
+            {% for banner in active_banners %}
+            <button class="one-dot{% if forloop.first %} one-dot-active{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+            {% endfor %}
           </div>
         </div>
       </div>
     </section>
+    {% else %}
+    <section class="w-full max-w-7xl mx-auto px-margin pt-8 pb-space-lg">
+      <div class="flex items-center justify-center h-96 bg-surface-container-low rounded-3xl border border-border">
+        <span class="material-symbols-outlined text-[64px] text-outline/30">image_not_supported</span>
+        <p class="mt-4 text-sm text-on-surface-variant">هنوز بنری تعریف نشده است.</p>
+      </div>
+    </section>
+    {% endif %}
 
     <!-- 2. PERSONAL BIO & HIGHLIGHTS BANNER -->
     <section class="w-full max-w-7xl mx-auto px-margin py-space-md">
@@ -245,34 +241,38 @@
           </div>
           <p class="font-body-md text-body-md text-on-surface-variant">جامع‌ترین دوره‌های نرم‌افزاری بر اساس آخرین نسخه فریم‌ورک‌ها</p>
         </div>
-        <a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-high text-primary-container font-body-md text-body-md font-semibold hover:bg-primary-container hover:text-on-primary transition-colors" href="#">
-          <span>مشاهده همه دوره‌ها (۵۰)</span>
+        <a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-high text-primary-container font-body-md text-body-md font-semibold hover:bg-primary-container hover:text-on-primary transition-colors" href="{% url 'courses:list' %}">
+          <span>مشاهده همه دوره‌ها ({{ course_count|persian_number }})</span>
           <span class="material-symbols-outlined text-[18px]">chevron_left</span>
         </a>
       </div>
-      <!-- Course Cards Grid -->
+      <!-- Course Cards Grid (از دیتابیس) -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Course Card 1 -->
-        <div class="h-[362px] rounded-[28px] bg-card border border-border overflow-hidden flex flex-col p-4 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:shadow-xl transition-all duration-300 group">
-          <div class="relative h-36 w-full rounded-2xl overflow-hidden bg-primary-container">
-            <div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCgmQ5wZiQhtyJar2i_qZe6f_7XEVVCWJ1fFrw-Pbq7KD551_TPBVI6KQF85PeMWpFYxYPa2KsQ8d92u5OxEm6J1KOzNgtjeVMuazhdtA9CMoKK21TolYs9PA2CPobdEhmJH7aMe0qt4XwrMlQaxaM8KGCszyfeeJ2dEhHn1Gs2dtF42b-r_JUN6fB6qCgFCcQ1j6rdvb4Zz1H9PAoyIt8rYq0vJwROk1xDewDIBhsOHoJBel7mtD0oeQ');"></div>
-            <span class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-primary/85 backdrop-blur-md text-surface-container-lowest font-label-badge text-label-badge font-semibold">فول‌استک مدرن</span>
-            <span class="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-code-sm text-code-sm font-bold">v15.1</span>
-          </div>
+        {% for course in courses|slice:":4" %}
+        <article class="h-[362px] rounded-[28px] bg-card border border-border overflow-hidden flex flex-col p-4 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:shadow-xl transition-all duration-300 group">
+          <a class="relative h-36 w-full rounded-2xl overflow-hidden bg-primary-container block" href="{% url 'courses:detail' course.slug %}">
+            {% if course.thumbnail %}
+            <img alt="{{ course.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" src="{{ course.thumbnail.url }}" />
+            {% else %}
+            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-container to-tertiary">
+              <span class="material-symbols-outlined text-[42px] text-surface-container-lowest/50">school</span>
+            </div>
+            {% endif %}
+            <span class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-primary/85 backdrop-blur-md text-surface-container-lowest font-label-badge text-label-badge font-semibold">{{ course.category.name|default:"دوره تخصصی" }}</span>
+            <span class="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-code-sm text-code-sm font-bold">{{ course.get_level_display }}</span>
+          </a>
           <div class="flex flex-col flex-1 pt-3">
-            <h3 class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-2 leading-snug group-hover:text-tertiary-container transition-colors">دوره جامع مسترکلس Next.js 15 و React Fullstack</h3>
+            <h3 class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-2 leading-snug">
+              <a class="transition-colors hover:text-tertiary-container" href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a>
+            </h3>
             <div class="flex items-center gap-2 mt-2 text-secondary font-body-sm text-body-sm">
               <span class="material-symbols-outlined text-[16px]">person</span>
-              <span>مدرس: حسین طاهری</span>
+              <span>مدرس: {{ course.instructor.full_name|default:"مدرس آکادمی" }}</span>
             </div>
             <div class="flex items-center gap-3 mt-1.5 text-secondary font-body-sm text-body-sm">
               <span class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
-                <span>۴۸ ساعت آموزش</span>
-              </span>
-              <span class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-[16px] text-amber-warning">star</span>
-                <span>۴.۹ (۱,۲۴۰ نظر)</span>
+                <span class="material-symbols-outlined text-[16px] text-outline">menu_book</span>
+                <span>{{ course.chapter_count|persian_number }} فصل · {{ course.lesson_count|persian_number }} درس</span>
               </span>
             </div>
           </div>
@@ -280,17 +280,27 @@
             <div class="flex flex-col">
               <span class="font-label-badge text-[10px] text-secondary">هزینه دوره</span>
               <div class="flex items-baseline gap-1">
-                <span class="font-headline-sm text-headline-sm font-bold text-primary-container">۲,۴۵۰,۰۰۰</span>
+                {% if course.is_free %}
+                <span class="font-headline-sm text-headline-sm font-bold text-primary-container">رایگان</span>
+                {% else %}
+                <span class="font-headline-sm text-headline-sm font-bold text-primary-container">{{ course.price|floatformat:0 }}</span>
                 <span class="font-body-sm text-[11px] text-secondary">تومان</span>
+                {% endif %}
               </div>
             </div>
-            <button class="h-10 px-3.5 rounded-xl bg-primary-container text-surface-container-lowest hover:bg-tertiary-container flex items-center gap-1 font-body-sm text-body-sm font-semibold transition-colors" title="ثبت‌نام در دوره">
-              <span>ثبت‌نام</span>
+            <a class="h-10 px-3.5 rounded-xl bg-primary-container text-surface-container-lowest hover:bg-tertiary-container flex items-center gap-1 font-body-sm text-body-sm font-semibold transition-colors" href="{% url 'courses:detail' course.slug %}" title="مشاهده دوره">
+              <span>مشاهده</span>
               <span class="material-symbols-outlined text-[16px]">arrow_left</span>
-            </button>
+            </a>
           </div>
+        </article>
+        {% empty %}
+        <div class="col-span-full py-16 bg-card rounded-2xl border border-border text-center">
+          <span class="material-symbols-outlined text-[56px] text-outline/50 mb-3">school</span>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-2">هنوز دوره‌ای منتشر نشده است</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant">دوره‌های جدید به زودی در این بخش منتشر می‌شوند.</p>
         </div>
-        <!-- Repeat for other 3 course cards with same structure -->
+        {% endfor %}
       </div>
     </section>
 
@@ -374,61 +384,154 @@
 
     <!-- 6. LATEST PODCASTS SECTION -->
     <section class="w-full max-w-7xl mx-auto px-margin py-space-xl" id="podcasts">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-        <div class="flex flex-col gap-1">
-          <div class="flex items-center gap-2">
-            <span class="h-6 w-1 rounded-full bg-accent-alt"></span>
-            <h2 class="font-headline-lg text-headline-lg text-primary-container font-bold">آخرین اپیزودهای پادکست کدرز</h2>
-          </div>
-          <p class="font-body-md text-body-md text-on-surface-variant">بحث‌های فنی و تجربیات پرو덕شن با مهندس حسین طاهری</p>
-        </div>
-        <a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-high text-primary-container font-body-md text-body-md font-semibold hover:bg-primary-container hover:text-on-primary transition-colors" href="{% url 'blog:list' %}">
-          <span>مشاهده همه اپیزودها</span>
-          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-        </a>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for post in latest_podcasts %}
-        <article class="h-full rounded-[28px] bg-card border border-border overflow-hidden flex flex-col shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] hover:shadow-xl transition-all duration-300 group">
-          {% if post.thumbnail %}
-          <div class="h-48 w-full overflow-hidden relative bg-surface-container-low">
-            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ post.thumbnail.url }}" alt="{{ post.podcast_title|default:post.title }}" loading="lazy" />
-            <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-primary/85 backdrop-blur-md text-surface-container-lowest font-label-badge text-label-badge font-semibold">پادکست</span>
-          </div>
-          {% else %}
-          <div class="h-48 w-full bg-surface-container-low flex items-center justify-center relative">
-            <span class="material-symbols-outlined text-[40px] text-primary-container">podcasts</span>
-            <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-primary/85 backdrop-blur-md text-surface-container-lowest font-label-badge text-label-badge font-semibold">پادکست</span>
-          </div>
-          {% endif %}
-          <div class="p-5 flex flex-col flex-1">
-            <h3 class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-2 leading-snug mb-2 group-hover:text-tertiary-container transition-colors">{{ post.podcast_title|default:post.title }}</h3>
-            {% if post.podcast_description %}
-            <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mb-3 leading-relaxed">{{ post.podcast_description }}</p>
-            {% endif %}
-            <div class="mt-auto flex items-center justify-between gap-4">
-              <div class="flex items-center gap-1 text-secondary font-code-sm text-code-sm">
-                <span class="material-symbols-outlined text-[14px]">schedule</span>
-                <span>{{ post.podcast_duration_minutes }} دقیقه</span>
+      <div class="relative overflow-hidden rounded-[28px] bg-primary-container px-5 py-8 sm:px-8 sm:py-10 lg:px-10 shadow-[0_24px_60px_-30px_rgba(16,58,105,0.75)]">
+        <!-- هاله‌های تزئینی -->
+        <div class="pointer-events-none absolute -top-24 -left-20 w-80 h-80 rounded-full bg-accent-alt/20 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-24 right-1/4 w-72 h-72 rounded-full bg-surface-container-lowest/5 blur-3xl"></div>
+
+        <div class="relative flex flex-col lg:flex-row gap-6 lg:gap-10">
+          <!-- ستون معرفی پادکست -->
+          <aside class="lg:w-[250px] xl:w-[290px] shrink-0 flex flex-col items-center justify-between gap-6 text-center">
+            <h2 class="font-headline-lg text-headline-lg font-extrabold text-on-primary">پادکست‌ها</h2>
+
+            <div class="relative">
+              <div class="absolute inset-0 rounded-full bg-accent-alt/30 blur-2xl"></div>
+              <div class="relative w-36 h-36 sm:w-44 sm:h-44 rounded-full bg-accent-alt flex items-center justify-center shadow-[0_20px_45px_-18px_rgba(38,178,232,0.9)]">
+                <span class="material-symbols-outlined text-primary-container" style="font-size: 100px; font-variation-settings: &quot;FILL&quot; 1">mic</span>
               </div>
-              {% if post.podcast_audio_url %}
-              <audio class="flex-1 w-full" controls preload="none" src="{{ post.podcast_audio_url }}"></audio>
-              {% else %}
-              <a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary-container text-surface-container-lowest text-xs font-semibold hover:bg-tertiary-container transition-colors" href="{% url 'blog:detail' post.slug %}">
-                شنود اپیزود
-                <span class="material-symbols-outlined text-[14px]">chevron_left</span>
-              </a>
-              {% endif %}
             </div>
+
+            <a class="inline-flex items-center gap-2 h-11 px-5 rounded-xl border border-on-primary/40 text-on-primary font-body-sm text-body-sm font-bold hover:bg-on-primary/10 transition-colors" href="{% url 'podcasts:list' %}">
+              <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+              <span>همه پادکست‌ها</span>
+            </a>
+          </aside>
+
+          <!-- لیست اپیزودها -->
+          <div class="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 content-start">
+            {% for post in latest_podcasts %}
+            <article class="podcast-card flex flex-col gap-3 rounded-[20px] border border-on-primary/10 bg-on-primary/[0.12] p-3.5 hover:bg-on-primary/[0.18] transition-colors">
+              <div class="flex items-center gap-3.5 w-full">
+                {% if post.podcast_audio_url %}
+                <button
+                  aria-label="پخش {{ post.podcast_title|default:post.title }}"
+                  class="podcast-play shrink-0 w-12 h-12 rounded-full bg-on-primary/20 text-on-primary flex items-center justify-center hover:bg-accent-alt hover:text-primary-container transition-colors"
+                  data-audio-target="podcast-audio-{{ post.pk }}"
+                  type="button"
+                >
+                  <span class="material-symbols-outlined podcast-play-icon text-[24px]" style="font-variation-settings: &quot;FILL&quot; 1">play_arrow</span>
+                </button>
+                {% else %}
+                <a
+                  aria-label="جزئیات اپیزود"
+                  class="shrink-0 w-12 h-12 rounded-full bg-on-primary/20 text-on-primary flex items-center justify-center hover:bg-accent-alt hover:text-primary-container transition-colors"
+                  href="{% url 'blog:detail' post.slug %}"
+                >
+                  <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: &quot;FILL&quot; 1">play_arrow</span>
+                </a>
+                {% endif %}
+
+                <div class="min-w-0 flex-1">
+                  <h3 class="text-[15px] font-bold text-on-primary leading-6 truncate">{{ post.podcast_title|default:post.title }}</h3>
+                  <p class="mt-0.5 text-[11px] leading-4 text-on-primary/60 truncate">گوینده: {{ post.author.full_name|default:"حسین طاهری" }}</p>
+                  <div class="mt-2 flex flex-wrap items-center gap-2">
+                    {% if post.published_at %}
+                    <span class="inline-flex items-center gap-1 rounded-full bg-primary/50 px-2.5 py-1 text-[11px] font-medium text-on-primary/85">
+                      <span class="material-symbols-outlined text-[14px]">calendar_month</span>
+                      <span>{{ post.published_at|persian_date:"%Y %B %d" }}</span>
+                    </span>
+                    {% endif %}
+                    {% if post.podcast_duration_minutes %}
+                    <span class="inline-flex items-center gap-1 rounded-full bg-primary/50 px-2.5 py-1 text-[11px] font-medium text-on-primary/85">
+                      <span class="material-symbols-outlined text-[14px]">schedule</span>
+                      <span>{{ post.podcast_duration_minutes|persian_number }}:۰۰</span>
+                    </span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="shrink-0 w-16 h-16 rounded-2xl overflow-hidden bg-primary/50 border border-on-primary/10 flex items-center justify-center">
+                  {% if post.author.avatar %}
+                  <img alt="{{ post.author.full_name }}" class="w-full h-full object-cover" loading="lazy" src="{{ post.author.avatar.url }}" />
+                  {% else %}
+                  <span class="material-symbols-outlined text-[26px] text-on-primary/70">person</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              {% if post.podcast_audio_url %}
+              <audio class="hidden podcast-audio" id="podcast-audio-{{ post.pk }}" preload="none" src="{{ post.podcast_audio_url }}"></audio>
+
+              <!-- کنترل‌های پخش: نوار پیشرفت، پرش ۱۰ ثانیه‌ای و سرعت پخش -->
+              <div class="podcast-controls border-t border-on-primary/10 pt-3">
+                <div class="flex items-center gap-2.5">
+                  <span class="podcast-time-current w-9 shrink-0 text-center text-[10px] font-medium text-on-primary/70">۰:۰۰</span>
+                  <input
+                    aria-label="نوار پیشرفت پخش"
+                    class="podcast-seek flex-1"
+                    max="100"
+                    min="0"
+                    step="0.1"
+                    type="range"
+                    value="0"
+                  />
+                  <span class="podcast-time-total w-9 shrink-0 text-center text-[10px] font-medium text-on-primary/70">{% if post.podcast_duration_minutes %}{{ post.podcast_duration_minutes|persian_number }}:۰۰{% else %}۰:۰۰{% endif %}</span>
+                </div>
+
+                <div class="mt-2.5 flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-1">
+                    <button
+                      aria-label="۱۰ ثانیه عقب"
+                      class="podcast-skip w-8 h-8 rounded-lg bg-on-primary/10 text-on-primary flex items-center justify-center hover:bg-on-primary/20 transition-colors"
+                      data-skip="-10"
+                      title="۱۰ ثانیه عقب"
+                      type="button"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">replay_10</span>
+                    </button>
+                    <button
+                      aria-label="۱۰ ثانیه جلو"
+                      class="podcast-skip w-8 h-8 rounded-lg bg-on-primary/10 text-on-primary flex items-center justify-center hover:bg-on-primary/20 transition-colors"
+                      data-skip="10"
+                      title="۱۰ ثانیه جلو"
+                      type="button"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">forward_10</span>
+                    </button>
+                  </div>
+
+                  <div class="flex items-center gap-0.5 rounded-lg bg-on-primary/10 p-0.5" dir="ltr" title="سرعت پخش">
+                    <button
+                      aria-label="پخش کندتر"
+                      class="podcast-rate-down w-7 h-7 rounded-md text-on-primary flex items-center justify-center hover:bg-on-primary/20 transition-colors"
+                      title="کندتر"
+                      type="button"
+                    >
+                      <span class="material-symbols-outlined text-[16px]">remove</span>
+                    </button>
+                    <span class="podcast-rate-label w-9 text-center text-[11px] font-bold text-on-primary">۱×</span>
+                    <button
+                      aria-label="پخش تندتر"
+                      class="podcast-rate-up w-7 h-7 rounded-md text-on-primary flex items-center justify-center hover:bg-on-primary/20 transition-colors"
+                      title="تندتر"
+                      type="button"
+                    >
+                      <span class="material-symbols-outlined text-[16px]">add</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </article>
+            {% empty %}
+            <div class="xl:col-span-2 rounded-2xl border border-on-primary/15 bg-on-primary/5 px-6 py-14 text-center">
+              <span class="material-symbols-outlined text-[54px] text-on-primary/40 mb-3">podcasts</span>
+              <h3 class="font-headline-sm text-headline-sm font-bold text-on-primary mb-2">هنوز اپیزودی منتشر نشده است</h3>
+              <p class="font-body-sm text-body-sm text-on-primary/60">اپیزودهای جدید پادکست به زودی در این بخش قرار می‌گیرند.</p>
+            </div>
+            {% endfor %}
           </div>
-        </article>
-        {% empty %}
-        <div class="col-span-full py-16 bg-card rounded-2xl border border-border text-center">
-          <span class="material-symbols-outlined text-[64px] text-outline/50 mb-4">podcasts</span>
-          <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-2">هنوز اپیزود پودکستی منتشر نشده است</h3>
-          <p class="font-body-md text-body-md text-on-surface-variant">اپیزودهای جدید به زودی در اینجا قرار می‌گیرند.</p>
         </div>
-        {% endfor %}
       </div>
 
       <!-- Social Media Icons -->
@@ -520,5 +623,10 @@
       });
     });
   }
+
+  /* =========================================
+  پخش‌کننده اپیزودهای پادکست از فایل مشترک بارگذاری می‌شود
+  ========================================= */
 </script>
+<script src="{% static 'js/podcast-player.js' %}"></script>
 {% endblock %}

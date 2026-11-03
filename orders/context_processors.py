@@ -3,23 +3,29 @@ Context Processor: cart_processor
 اضافه کردن اطلاعات سبد خرید به context همه templateها
 """
 
+from django.db.models import Count
+
 from .models import Cart
 
 
 def cart_processor(request):
-    """اطلاعات سبد خرید را در context همه صفحات قرار می‌دهد."""
+    """اطلاعات سبد خرید را با حداقل کوئری در context همه صفحات قرار می‌دهد."""
     cart = None
-    cart_count = 0
 
     if request.user.is_authenticated:
-        cart = Cart.objects.filter(user=request.user).first()
+        cart = (
+            Cart.objects.filter(user=request.user)
+            .annotate(items_count=Count('items'))
+            .first()
+        )
     elif request.session.session_key:
-        cart = Cart.objects.filter(session_key=request.session.session_key).first()
-
-    if cart:
-        cart_count = cart.get_items_count()
+        cart = (
+            Cart.objects.filter(session_key=request.session.session_key)
+            .annotate(items_count=Count('items'))
+            .first()
+        )
 
     return {
         'cart': cart,
-        'cart_count': cart_count,
+        'cart_count': getattr(cart, 'items_count', 0) if cart else 0,
     }

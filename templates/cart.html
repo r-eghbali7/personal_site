@@ -21,10 +21,6 @@
       {% endif %}
     </div>
 
-    {% for message in messages %}
-    <div class="rounded-lg p-4 mb-6 bg-surface-container-low border border-border text-on-surface font-body-sm text-body-sm">{{ message }}</div>
-    {% endfor %}
-
     {% if items %}
     <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
       <!-- Items -->
@@ -60,16 +56,60 @@
       <!-- Summary -->
       <div class="bg-card border border-border rounded-2xl p-6 shadow-sm sticky top-24">
         <h3 class="font-headline-sm text-headline-sm text-primary-container font-bold mb-4 border-b border-border pb-2">خلاصه سفارش</h3>
-        <div class="space-y-3 mb-6">
+        <div class="space-y-3 mb-4">
           <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
             <span>تعداد دوره‌ها</span>
             <span class="font-medium text-on-surface">{{ items|length }}</span>
           </div>
           <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
             <span>جمع کل</span>
-            <span class="font-headline-sm text-headline-sm font-bold text-primary-container">{{ total|floatformat:0 }} تومان</span>
+            <span class="font-medium text-on-surface">{{ subtotal|floatformat:0 }} تومان</span>
           </div>
+          {% if coupon and not coupon_error %}
+          <div class="flex justify-between font-body-sm text-body-sm text-green-700">
+            <span>تخفیف ({{ coupon.code }})</span>
+            <span class="font-bold">−{{ discount|floatformat:0 }} تومان</span>
+          </div>
+          {% endif %}
         </div>
+
+        {% if coupon %}
+        <div class="rounded-xl border border-border bg-surface-container-low p-3 mb-4">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-body-sm text-body-sm font-semibold text-primary-container">
+              <span class="material-symbols-outlined text-[16px] align-middle">sell</span>
+              کد «{{ coupon.code }}» روی سبد اعمال شده است
+            </span>
+            <form method="post" action="{% url 'orders:remove_coupon' %}">
+              {% csrf_token %}
+              <button class="text-xs text-red-600 hover:underline" type="submit">حذف کد</button>
+            </form>
+          </div>
+          {% if coupon_error %}<p class="mt-2 text-xs leading-relaxed text-red-600">{{ coupon_error }}</p>{% endif %}
+        </div>
+        {% endif %}
+
+        <form class="mb-5" method="post" action="{% url 'orders:apply_coupon' %}">
+          {% csrf_token %}
+          <label class="block font-body-sm text-body-sm text-on-surface-variant mb-2" for="coupon-code">کد تخفیف دارید؟</label>
+          <div class="flex items-center gap-2">
+            <input
+              class="flex-1 h-10 px-3 bg-surface-container-lowest rounded-xl font-code-sm text-code-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:ring-2 focus:ring-primary-container shadow-inner"
+              id="coupon-code"
+              name="code"
+              placeholder="مثلاً: SPRING2025"
+              autocomplete="off"
+              type="text"
+            />
+            <button class="h-10 px-4 bg-surface-container-high hover:bg-primary-container hover:text-on-primary text-primary-container rounded-xl font-body-sm text-body-sm font-semibold transition-colors" type="submit">اعمال</button>
+          </div>
+        </form>
+
+        <div class="flex items-baseline justify-between border-t border-border pt-4 mb-5">
+          <span class="font-body-sm text-body-sm text-on-surface-variant">مبلغ قابل پرداخت</span>
+          <span class="font-headline-sm text-headline-sm font-bold text-primary-container">{{ payable|floatformat:0 }} تومان</span>
+        </div>
+
         <a class="w-full h-11 rounded-xl bg-primary-container text-white font-semibold flex items-center justify-center gap-2 hover:bg-tertiary-container transition-colors shadow-md shadow-primary-container/25" href="{% url 'orders:checkout' %}">
           <span>ادامه و پرداخت</span>
           <span class="material-symbols-outlined text-[20px]">chevron_left</span>

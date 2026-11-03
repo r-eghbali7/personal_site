@@ -2,13 +2,14 @@
 import json
 from urllib.parse import parse_qs, urlparse
 from django.views import View
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
+from django.template.loader import render_to_string
 from django.urls import reverse
-from .models import Category, Course, Chapter, Lesson, Quiz, FinalProject
+from .models import Category, Course, Chapter, Lesson, CourseComment, Quiz, FinalProject
 from blog.models import BlogPost
 
 
@@ -56,7 +57,16 @@ def is_ajax(request):
 
 class HomeView(View):
     def get(self, request):
-        courses = Course.objects.filter(is_published=True).select_related('category','instructor')
+        courses = (
+            Course.objects.filter(is_published=True)
+            .select_related('category', 'instructor')
+            .annotate(
+                chapter_count=Count('chapters', distinct=True),
+                lesson_count=Count('chapters__lessons', distinct=True),
+            )
+            .order_by('-created_at')
+        )
+        course_count = courses.count()
         categories = Category.objects.all()
         latest_posts = (
             BlogPost.objects.filter(is_published=True)
@@ -77,7 +87,7 @@ class HomeView(View):
             {'name': 'گیت‌هاب', 'url': 'https://github.com/hosseintaheri', 'icon': 'code'},
             {'name': 'لینکدین', 'url': 'https://linkedin.com/in/hosseintaheri', 'icon': 'business'},
         ]
-        context = {'courses': courses, 'categories': categories, 'latest_posts': latest_posts, 'latest_podcasts': latest_podcasts, 'social_media': social_media}
+        context = {'courses': courses, 'course_count': course_count, 'categories': categories, 'latest_posts': latest_posts, 'latest_podcasts': latest_podcasts, 'social_media': social_media}
         if is_ajax(request):
             return JsonResponse({'courses': [{'id':c.id,'title':c.title,'slug':c.slug,'price':str(c.price)} for c in courses], 'categories':[{'id':c.id,'name':c.name,'slug':c.slug} for c in categories]})
         return render(request, 'home.html', context)
@@ -144,11 +154,16 @@ class CourseDetailView(View):
             course.chapters.prefetch_related('lessons', 'quiz').all(),
             request.user,
         )
+        course_comments = list(
+            course.comments.filter(is_approved=True).select_related('user')
+        )
         context = {
             'course': course,
             'chapters': chapters,
             'enrolled': course.is_enrolled(request.user),
             'final_project': FinalProject.objects.filter(course=course).first(),
+            'course_comments': course_comments,
+            'course_comment_count': len(course_comments),
             'related_courses': Course.objects.filter(
                 is_published=True,
                 category=course.category,
@@ -157,6 +172,62 @@ class CourseDetailView(View):
         if is_ajax(request):
             return JsonResponse({'course':{'id':course.id,'title':course.title,'slug':course.slug,'price':str(course.price)},'chapters':[{'id':ch.id,'title':ch.title} for ch in chapters]})
         return render(request, 'detail_course.html', context)
+
+
+class CourseCommentCreateView(View):
+    """ثبت دیدگاه دوره؛ برای درخواست‌های AJAX پاسخ JSON برمی‌گرداند."""
+
+    MAX_LENGTH = 2000
+
+    def _redirect_url(self, course):
+        return f"{reverse('courses:detail', kwargs={'slug': course.slug})}#reviews"
+
+    def _error(self, request, course, message, is_ajax):
+        if is_ajax:
+            return JsonResponse({'error': message}, status=400)
+        messages.error(request, message)
+        return redirect(self._redirect_url(course))
+
+    def post(self, request, slug):
+        course = get_object_or_404(Course, slug=slug, is_published=True)
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+        if not request.user.is_authenticated:
+            if is_ajax:
+                return JsonResponse({'error': 'login required'}, status=401)
+            return redirect(f"{reverse('accounts:login')}?next={request.path}")
+
+        body = (request.POST.get('body') or '').strip()
+        if len(body) < 2:
+            return self._error(request, course, 'متن دیدگاه خیلی کوتاه است.', is_ajax)
+        if len(body) > self.MAX_LENGTH:
+            return self._error(
+                request,
+                course,
+                f'متن دیدگاه حداکثر {self.MAX_LENGTH} نویسه است.',
+                is_ajax,
+            )
+
+        comment = CourseComment.objects.create(
+            course=course,
+            user=request.user,
+            body=body,
+        )
+
+        if is_ajax:
+            return JsonResponse({
+                'message': 'دیدگاه شما ثبت شد.',
+                'level': 'success',
+                'html': render_to_string(
+                    'includes/comment_item.html',
+                    {'comment': comment},
+                    request=request,
+                ),
+                'comment_count': course.comments.filter(is_approved=True).count(),
+            })
+
+        messages.success(request, 'دیدگاه شما ثبت شد.')
+        return redirect(self._redirect_url(course))
 
 
 class ChapterDetailView(View):
@@ -191,7 +262,7 @@ class LessonView(View):
         if not self.lesson.can_access(request.user):
             if not request.user.is_authenticated:
                 return redirect(f"{reverse('accounts:login')}?next={request.path}")
-            raise PermissionDenied
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, course_slug, lesson_id):
@@ -206,7 +277,7 @@ class QuizView(LoginRequiredMixin, View):
     def get(self, request, quiz_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
         if not quiz.chapter.course.is_free and not quiz.chapter.course.is_enrolled(request.user):
-            raise PermissionDenied
+            raise Http404
         questions = quiz.questions.prefetch_related('choices')
         context = {'quiz': quiz, 'questions': questions}
         if is_ajax(request):
@@ -217,10 +288,14 @@ class QuizSubmitView(LoginRequiredMixin, View):
     def post(self, request, quiz_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
         if not quiz.chapter.course.is_free and not quiz.chapter.course.is_enrolled(request.user):
-            raise PermissionDenied
-        try:
-            data = json.loads(request.body or '{}')
-        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise Http404
+        # فقط برای درخواست‌های JSON بدنه را مستقیم می‌خوانیم تا با CSRF تداخل نکند.
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body or '{}')
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                data = request.POST
+        else:
             data = request.POST
         answers = data.get('answers', {})
         if not isinstance(answers, dict):
@@ -243,7 +318,7 @@ class FinalProjectView(LoginRequiredMixin, View):
     def get(self, request, course_slug):
         course = get_object_or_404(Course, slug=course_slug)
         if not course.is_free and not course.is_enrolled(request.user):
-            raise PermissionDenied
+            raise Http404
         project = get_object_or_404(FinalProject, course=course)
         context = {'course': course, 'project': project}
         if is_ajax(request):
@@ -252,7 +327,7 @@ class FinalProjectView(LoginRequiredMixin, View):
     def post(self, request, course_slug):
         course = get_object_or_404(Course, slug=course_slug)
         if not course.is_free and not course.is_enrolled(request.user):
-            raise PermissionDenied
+            raise Http404
         project = get_object_or_404(FinalProject, course=course)
         from courses.models import ProjectSubmission
         submitted_file = request.FILES.get('file')

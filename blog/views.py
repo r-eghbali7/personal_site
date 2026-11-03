@@ -10,11 +10,14 @@ from django.views import View
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import IntegrityError, transaction
-from django.db.models import F, Q
+from django.db.models import Count, F, Prefetch, Q
+from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils import timezone
 from accounts.models import CustomUser, OTPCode
 from accounts.services import send_otp_code
-from .models import BlogCouponClaim, BlogPost, Comment
+from .content import article_content_and_toc
+from .models import BlogCouponClaim, BlogPost, Comment, PodcastComment, PodcastLike
 
 def is_ajax(request):
     return request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('accept','')
@@ -41,7 +44,11 @@ class BlogListView(View):
             .order_by('category')
         )
         categories = list(categories_query)
-        page_obj = Paginator(posts, 9).get_page(request.GET.get('page'))
+        paginator = Paginator(posts, 9)
+        # در حالت بدون فیلتر، تعداد کلِ محاسبه‌شده را دوباره نشمار
+        if not selected_category and not search_query:
+            paginator.count = article_count
+        page_obj = paginator.get_page(request.GET.get('page'))
         context = {
             'posts': page_obj.object_list,
             'page_obj': page_obj,
@@ -61,13 +68,7 @@ class BlogListView(View):
                 'pages': page_obj.paginator.num_pages,
                 'total': page_obj.paginator.count,
             })
-        response = render(request, 'list_blog.html', context)
-        response.content = response.content.replace(
-            b'</body>',
-            b'<script src="/static/js/site-header.js" defer></script></body>',
-            1,
-        )
-        return response
+        return render(request, 'list_blog.html', context)
 
 class BlogDetailView(View):
     def get(self, request, slug):
@@ -75,6 +76,7 @@ class BlogDetailView(View):
         BlogPost.objects.filter(pk=post.pk).update(views_count=F('views_count') + 1)
         post.refresh_from_db(fields=['views_count'])
         comments = post.comments.filter(is_approved=True).select_related('user')
+        post_content_html, toc = article_content_and_toc(post.content)
         pending_coupon = request.session.get('blog_coupon_pending', {})
         coupon_claim = None
         claim_id = request.session.get('blog_coupon_claim_id')
@@ -83,12 +85,14 @@ class BlogDetailView(View):
         context = {
             'post': post,
             'comments': comments,
+            'post_content_html': post_content_html,
+            'toc': toc,
             'coupon_otp_sent': pending_coupon.get('post_id') == post.pk,
             'coupon_phone': pending_coupon.get('phone', ''),
             'coupon_claim': coupon_claim,
         }
         if is_ajax(request):
-            return JsonResponse({'post':{'id':post.id,'title':post.title,'slug':post.slug,'content':post.content},'comments':[{'id':c.id,'body':c.body,'user':str(c.user)} for c in comments]})
+            return JsonResponse({'post':{'id':post.id,'title':post.title,'slug':post.slug,'content':post.content},'comments':[{'id':c.id,'body':c.body,'user': c.user.full_name or 'کاربر آکادمی'} for c in comments]})
         return render(request, 'detail_blog.html', context)
 
 
@@ -199,20 +203,159 @@ class BlogCommentView(View):
                 return redirect(f"/accounts/login/?next={request.path}")
             return JsonResponse({'error': 'login required'}, status=401)
         post = get_object_or_404(BlogPost, slug=slug, is_published=True)
-        try:
-            data = json.loads(request.body or '{}')
-        except (json.JSONDecodeError, UnicodeDecodeError):
+        # خواندن request.body بعد از پردازش فرم توسط CSRF خطا می‌دهد؛
+        # فقط برای درخواست‌های JSON بدنه را مستقیم می‌خوانیم.
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body or '{}')
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                return JsonResponse({'error': 'ساختار درخواست معتبر نیست.'}, status=400)
+        else:
             data = request.POST
         if not hasattr(data, 'get'):
             return JsonResponse({'error': 'invalid request body'}, status=400)
         body = (data.get('body') or '').strip()
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
         if len(body) < 2 or len(body) > 5000:
-            if request.headers.get('x-requested-with') != 'XMLHttpRequest':
-                messages.error(request, 'متن دیدگاه باید بین ۲ تا ۵۰۰۰ نویسه باشد.')
+            error_message = 'متن دیدگاه باید بین ۲ تا ۵۰۰۰ نویسه باشد.'
+            if not is_ajax:
+                messages.error(request, error_message)
                 return redirect('blog:detail', slug=slug)
-            return JsonResponse({'error': 'comment length must be between 2 and 5000 characters'}, status=400)
+            return JsonResponse({'error': error_message}, status=400)
         c = Comment.objects.create(post=post, user=request.user, body=body, is_approved=False)
-        if request.headers.get('x-requested-with') != 'XMLHttpRequest':
+        if not is_ajax:
             messages.success(request, 'دیدگاه شما پس از تأیید نمایش داده می‌شود.')
             return redirect('blog:detail', slug=slug)
-        return JsonResponse({'success': True, 'comment': {'id': c.id, 'body': c.body, 'user': str(c.user)}})
+        return JsonResponse({
+            'success': True,
+            'pending': True,
+            'message': 'دیدگاه شما پس از تأیید نمایش داده می‌شود.',
+            'level': 'success',
+            'comment': {
+                'id': c.id,
+                'body': c.body,
+                'user': c.user.full_name or 'کاربر آکادمی',
+            },
+        })
+
+
+class PodcastListView(View):
+    """صفحه مستقل پادکست‌ها: همه اپیزودها زیر هم با دیدگاه و دکمه پسندیدن."""
+
+    def get(self, request):
+        posts = (
+            BlogPost.objects.filter(is_published=True)
+            .exclude(podcast_audio_url='')
+            .select_related('author')
+            .prefetch_related(
+                Prefetch(
+                    'podcast_comments',
+                    queryset=PodcastComment.objects.filter(is_approved=True).select_related('user'),
+                    to_attr='approved_comments',
+                )
+            )
+            .annotate(
+                like_count=Count('podcast_likes', distinct=True),
+                comment_count=Count(
+                    'podcast_comments',
+                    filter=Q(podcast_comments__is_approved=True),
+                    distinct=True,
+                ),
+            )
+            .order_by('-published_at', '-created_at')
+        )
+        posts = list(posts)
+        liked_ids = set()
+        if request.user.is_authenticated and posts:
+            liked_ids = set(
+                PodcastLike.objects.filter(
+                    user=request.user,
+                    post_id__in=[post.pk for post in posts],
+                ).values_list('post_id', flat=True)
+            )
+        return render(request, 'podcasts.html', {
+            'posts': posts,
+            'liked_ids': liked_ids,
+            'podcast_count': len(posts),
+        })
+
+
+class PodcastLikeToggleView(View):
+    """افزودن/برداشتن قلب (پسندیدن) یک اپیزود — با پاسخ JSON برای درخواست‌های AJAX."""
+
+    def post(self, request, slug):
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+        if not request.user.is_authenticated:
+            if is_ajax:
+                return JsonResponse({'error': 'login required'}, status=401)
+            return redirect(f"{reverse('accounts:login')}?next={reverse('podcasts:list')}")
+
+        post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+        like, created = PodcastLike.objects.get_or_create(post=post, user=request.user)
+        if not created:
+            like.delete()
+
+        like_count = PodcastLike.objects.filter(post=post).count()
+        message = 'این اپیزود را پسندیدید.' if created else 'پسندیدن این اپیزود برداشته شد.'
+        level = 'success' if created else 'error'
+
+        if is_ajax:
+            return JsonResponse({
+                'liked': created,
+                'like_count': like_count,
+                'message': message,
+                'level': level,
+            })
+
+        getattr(messages, level)(request, message)
+        return redirect(f"{reverse('podcasts:list')}#episode-{post.pk}")
+
+
+class PodcastCommentCreateView(View):
+    """ثبت دیدگاه برای یک اپیزود پادکست — با پاسخ JSON برای درخواست‌های AJAX."""
+
+    MAX_LENGTH = 2000
+
+    def post(self, request, slug):
+        post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+        anchor = f"{reverse('podcasts:list')}#episode-{post.pk}"
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+        if not request.user.is_authenticated:
+            if is_ajax:
+                return JsonResponse({'error': 'login required'}, status=401)
+            return redirect(f"{reverse('accounts:login')}?next={reverse('podcasts:list')}")
+
+        body = (request.POST.get('body') or '').strip()
+        if len(body) < 2:
+            return self._error(request, anchor, 'متن دیدگاه خیلی کوتاه است.', is_ajax)
+        if len(body) > self.MAX_LENGTH:
+            return self._error(
+                request,
+                anchor,
+                f'متن دیدگاه حداکثر {self.MAX_LENGTH} نویسه است.',
+                is_ajax,
+            )
+
+        comment = PodcastComment.objects.create(post=post, user=request.user, body=body)
+
+        if is_ajax:
+            return JsonResponse({
+                'message': 'دیدگاه شما ثبت شد.',
+                'level': 'success',
+                'html': render_to_string(
+                    'includes/comment_item.html',
+                    {'comment': comment},
+                    request=request,
+                ),
+                'comment_count': post.podcast_comments.filter(is_approved=True).count(),
+            })
+
+        messages.success(request, 'دیدگاه شما ثبت شد.')
+        return redirect(anchor)
+
+    def _error(self, request, anchor, message, is_ajax):
+        if is_ajax:
+            return JsonResponse({'error': message}, status=400)
+        messages.error(request, message)
+        return redirect(anchor)

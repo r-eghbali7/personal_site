@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% load persian_filters %}
+{% load course_tags %}
 {% block title %}آکادمی حسین طاهری{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
 {% block head %}<meta content="web_standard" name="shell-type" />{% endblock %}
@@ -122,7 +124,7 @@
               <p
                 class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed max-w-4xl text-justify"
               >
-                {{ course.short_description|default:course.description }}
+                {{ course.short_description|default:course.description|striptags|truncatechars:260 }}
                 {% comment %}
                 آموزش گام‌به‌گام و میکروسرویس‌محور اکوسیستم App Router، React
                 Server Components (RSC)، Server Actions، سیستم کشینگ
@@ -319,31 +321,14 @@
                     <h2
                       class="font-headline-md text-headline-md text-primary-container font-bold"
                     >
-                      چرا این دوره با تمام آموزش‌های وب تفاوت دارد؟
+                      درباره این دوره
                     </h2>
                   </div>
-                  <p
-                    class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
+                  <div
+                    class="rich-text font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
                   >
-                    دنیای وب در حال گذار از روش‌های سنتی Client-Side Rendering
-                    به معماری‌های ترکیبی مدرن مبتنی بر سرور (RSC) است. نسخه جدید
-                    React 19 با امکاناتی نظیر اکشن‌های سروری، کامپوننت‌های
-                    غیرهمزمان، بهبود تگ‌های Document و ارتقای هوک‌های جدید، شیوه
-                    توسعه وب را متحول کرده است. در کنار آن، Next.js 15 استاندارد
-                    بی‌رقیب شرکت‌های بزرگ نرم‌افزاری جهان برای تولید سیستم‌های
-                    با مقیاس‌پذیری بالاست.
-                  </p>
-                  <p
-                    class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
-                  >
-                    در این دوره صرفاً به آموزش تئوری APIها نخواهیم پرداخت؛ بلکه
-                    شما در نقش یک Senior Fullstack Developer وارد پروژه‌های
-                    پیچیده تجاری می‌شوید. تمام الگوهای معماری از لایه‌بندی
-                    داده‌ها، استراتژی‌های Tag Revalidation، مهار N+1 Query در
-                    دیتابیس PostgreSQL، ایزوله‌سازی کدهای سرور و کلاینت و امنیت
-                    نشست‌های توزیع‌شده با بالاترین استانداردهای سازمانی تدریس
-                    می‌شوند.
-                  </p>
+                    {{ course.description|rich_text }}
+                  </div>
                   <!-- Metrics Highlight Cards -->
                   <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
                     <div
@@ -587,7 +572,7 @@
                       <span class="material-symbols-outlined shrink-0 text-outline transition-transform group-open:rotate-180">expand_more</span>
                     </summary>
                     <div class="border-t border-border p-5">
-                      {% if chapter.description %}<p class="mb-4 leading-7">{{ chapter.description|linebreaksbr }}</p>{% endif %}
+                      {% if chapter.description %}<div class="rich-text mb-4 leading-7">{{ chapter.description|rich_text }}</div>{% endif %}
                       <p class="mb-4 text-sm text-outline">{{ chapter.lesson_list|length }} درس · مجموع {{ chapter.total_duration_minutes }} دقیقه</p>
                       <div class="flex flex-col gap-4">
                         {% for lesson in chapter.lesson_list %}
@@ -596,10 +581,18 @@
                             <h3 class="font-semibold text-on-surface">{{ lesson.order }}. {{ lesson.title }}</h3>
                             <span class="text-sm text-outline">{{ lesson.duration_minutes }} دقیقه{% if lesson.is_free_preview %} · پیش‌نمایش رایگان{% endif %}</span>
                           </div>
-                          {% if lesson.can_play and lesson.player_kind == 'video' %}
-                          <video class="w-full max-h-[560px] rounded-lg bg-black" controls preload="metadata" src="{{ lesson.player_url }}">مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.</video>
-                          {% elif lesson.can_play and lesson.player_kind == 'embed' %}
-                          <div class="aspect-video overflow-hidden rounded-lg bg-black"><iframe class="h-full w-full" src="{{ lesson.player_url }}" title="{{ lesson.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>
+                          {% if lesson.can_play and lesson.video_file %}
+                          <video
+                            aria-label="پخش ویدئوی {{ lesson.title }}"
+                            class="w-full max-h-[560px] rounded-lg bg-black"
+                            controls
+                            playsinline
+                            preload="metadata"
+                            {% if course.thumbnail %}poster="{{ course.thumbnail.url }}"{% endif %}
+                          >
+                            <source src="{{ lesson.video_file.url }}" />
+                            مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.
+                          </video>
                           {% elif lesson.can_play %}<p class="text-sm text-outline">ویدئوی این درس هنوز بارگذاری نشده است.</p>
                           {% else %}<p class="text-sm text-outline">برای پخش این ویدئو ابتدا در دوره ثبت‌نام کنید.</p>{% endif %}
                         </article>
@@ -1596,6 +1589,57 @@
                       >
                     </div>
                   </div>
+
+                  <!-- دیدگاه‌های واقعی دوره (AJAX) -->
+                  <div class="mt-6 rounded-2xl bg-surface-container-lowest p-5 shadow-sm" id="course-comments">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+                      <h3 class="font-headline-sm text-headline-sm text-primary-container font-bold">
+                        دیدگاه‌ها و پرسش‌های شما
+                        <span class="font-body-sm text-body-sm font-normal text-outline">(<span id="course-comment-count">{{ course_comment_count|persian_number }}</span>)</span>
+                      </h3>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <form
+                      class="ajax-comment-form mt-3 flex flex-col gap-2"
+                      data-count-ids="course-comment-count"
+                      data-list-id="course-comment-list"
+                      data-login-url="{% url 'accounts:login' %}?next={{ request.path }}"
+                      method="post"
+                      action="{% url 'courses:comment' course.slug %}"
+                    >
+                      {% csrf_token %}
+                      <label class="sr-only" for="course-comment-body">متن دیدگاه برای {{ course.title }}</label>
+                      <textarea
+                        class="w-full rounded-xl border border-border bg-background px-3 py-2 text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container resize-y"
+                        id="course-comment-body"
+                        maxlength="2000"
+                        minlength="2"
+                        name="body"
+                        placeholder="دیدگاه یا پرسش خود را درباره این دوره بنویسید..."
+                        required
+                        rows="2"
+                      ></textarea>
+                      <div class="flex justify-end">
+                        <button class="h-9 px-4 rounded-xl bg-primary-container text-on-primary text-xs font-bold hover:bg-tertiary-container transition-colors disabled:opacity-60" type="submit">ارسال دیدگاه</button>
+                      </div>
+                    </form>
+                    {% else %}
+                    <p class="mt-3 font-body-sm text-body-sm text-on-surface-variant">
+                      برای ثبت دیدگاه
+                      <a class="text-primary-container font-semibold hover:underline" href="{% url 'accounts:login' %}?next={{ request.path }}">وارد حساب کاربری</a>
+                      شوید.
+                    </p>
+                    {% endif %}
+
+                    <div class="mt-4 flex flex-col gap-3" id="course-comment-list">
+                      {% for comment in course_comments %}
+                      {% include "includes/comment_item.html" %}
+                      {% empty %}
+                      <p class="comment-empty font-body-sm text-body-sm text-outline">هنوز دیدگاهی ثبت نشده است؛ اولین نفر باشید.</p>
+                      {% endfor %}
+                    </div>
+                  </div>
                 </section>
                 <!-- Section: FAQ Accordion -->
                 <section
@@ -1957,25 +2001,38 @@
                       >
                     </div>
                   </div>
-                  <!-- Student Coupon / Referral Box -->
-                  <div class="flex flex-col gap-2 pt-1">
+                  <!-- Coupon Box -->
+                  <form
+                    action="{% url 'orders:apply_coupon' %}"
+                    class="flex flex-col gap-2 pt-1"
+                    method="post"
+                  >
+                    {% csrf_token %}
                     <label
                       class="font-body-sm text-body-sm text-on-surface-variant font-medium"
-                      >کد تخفیف دانشجویی دارید؟</label
+                      for="course-coupon-code"
+                      >کد تخفیف دارید؟</label
                     >
                     <div class="flex items-center gap-2">
                       <input
                         class="flex-1 h-10 px-3 bg-surface-container-lowest rounded-xl font-code-sm text-code-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:ring-2 focus:ring-primary-container shadow-inner"
+                        id="course-coupon-code"
+                        name="code"
                         placeholder="مثلا: STUDENT_2025"
+                        autocomplete="off"
                         type="text"
                       />
                       <button
                         class="h-10 px-4 bg-surface-container-high hover:bg-primary-container hover:text-on-primary text-primary-container rounded-xl font-body-sm text-body-sm font-semibold transition-colors"
+                        type="submit"
                       >
                         اعمال
                       </button>
                     </div>
-                  </div>
+                    <span class="text-[11px] leading-relaxed text-outline"
+                      >کد تخفیف روی سبد خرید اعمال می‌شود.</span
+                    >
+                  </form>
                   <!-- Share and Bookmark Widget -->
                   <div
                     class="flex items-center justify-between pt-2 border-t border-border"
@@ -2512,3 +2569,4 @@
         </div>
       </div>
     </footer>{% endblock %}
+{% block scripts %}<script src="{% static 'js/comments.js' %}"></script>{% endblock %}

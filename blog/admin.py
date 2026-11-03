@@ -3,7 +3,7 @@ Admin: blog
 """
 
 from django.contrib import admin
-from .models import BlogCouponClaim, BlogPost, Comment
+from .models import BlogCouponClaim, BlogPost, Comment, PodcastComment, PodcastLike
 
 
 class CommentInline(admin.TabularInline):
@@ -51,3 +51,20 @@ class BlogCouponClaimAdmin(admin.ModelAdmin):
     list_filter = ('discount_percent', 'verified_at')
     search_fields = ('phone_number', 'coupon_code')
     readonly_fields = ('phone_number', 'coupon_code', 'discount_percent', 'post', 'verified_at')
+
+
+@admin.register(PodcastComment)
+class PodcastCommentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'post', 'is_approved', 'created_at')
+    list_filter = ('is_approved', 'created_at')
+    list_editable = ('is_approved',)
+    search_fields = ('user__phone_number', 'user__full_name', 'body', 'post__title')
+    readonly_fields = ('created_at',)
+
+
+@admin.register(PodcastLike)
+class PodcastLikeAdmin(admin.ModelAdmin):
+    list_display = ('post', 'user', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('user__phone_number', 'user__full_name', 'post__title')
+    readonly_fields = ('created_at',)

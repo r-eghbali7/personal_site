@@ -133,6 +133,37 @@ class OTPVerifyForm(forms.Form):
         return code
 
 
+class PasswordResetForm(forms.Form):
+    """فرم تغییر رمز عبور در فراموشی رمز عبور."""
+
+    password = forms.CharField(
+        min_length=8,
+        label='رمز عبور جدید',
+        widget=forms.PasswordInput,
+        error_messages={
+            'required': 'رمز عبور الزامی است.',
+            'min_length': 'رمز عبور باید حداقل ۸ کاراکتر باشد.',
+        },
+    )
+    confirm_password = forms.CharField(
+        min_length=8,
+        label='تأیید رمز عبور جدید',
+        widget=forms.PasswordInput,
+        error_messages={
+            'required': 'تأیید رمز عبور الزامی است.',
+            'min_length': 'رمز عبور باید حداقل ۸ کاراکتر باشد.',
+        },
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+        if password and confirm_password and password != confirm_password:
+            raise forms.ValidationError('رمز عبور و تایید آن مطابقت ندارند.')
+        return cleaned_data
+
+
 class ProfileForm(forms.ModelForm):
     """فرم ویرایش پروفایل کاربر."""
 

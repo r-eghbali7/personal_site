@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load course_tags %}
 {% block title %}{{ project.title }}{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
 {% block head %}    <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,7 +18,7 @@
       <div class="max-w-760 mx-auto px-margin py-space-lg">
         <p><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></p>
         <h1>{{ project.title }}</h1>
-        <div>{{ project.description|linebreaks }}</div>
+        <div class="rich-text">{{ project.description|rich_text }}</div>
         {% if project.sample_file %}<p><a href="{{ project.sample_file.url }}">دریافت فایل نمونه</a></p>{% endif %}
         <form id="project-form" method="post" enctype="multipart/form-data">{% csrf_token %}
           <label for="submission-file">فایل پروژه</label>

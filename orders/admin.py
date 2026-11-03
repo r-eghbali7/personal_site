@@ -3,7 +3,88 @@ Admin: orders
 """
 
 from django.contrib import admin
-from .models import Cart, CartItem, Order, OrderItem, Transaction
+
+from .models import (
+    Cart,
+    CartItem,
+    Coupon,
+    CouponRedemption,
+    Order,
+    OrderItem,
+    Transaction,
+)
+
+
+class CouponRedemptionInline(admin.TabularInline):
+    model = CouponRedemption
+    extra = 0
+    can_delete = False
+    readonly_fields = ('user', 'order', 'discount_amount', 'created_at')
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Coupon)
+class CouponAdmin(admin.ModelAdmin):
+    list_display = (
+        'code',
+        'title',
+        'discount_type',
+        'value',
+        'user',
+        'course',
+        'valid_from',
+        'valid_until',
+        'is_active',
+        'used_count',
+        'usage_limit',
+    )
+    list_filter = ('is_active', 'discount_type', 'course')
+    list_editable = ('is_active',)
+    search_fields = ('code', 'title', 'user__phone_number', 'user__full_name', 'course__title')
+    readonly_fields = ('used_count', 'created_at', 'updated_at')
+    inlines = [CouponRedemptionInline]
+    fieldsets = (
+        (
+            'کد و مقدار تخفیف',
+            {
+                'fields': ('code', 'title', 'discount_type', 'value', 'max_discount', 'is_active'),
+            },
+        ),
+        (
+            'محدوده استفاده (همه موارد اختیاری)',
+            {
+                'fields': (
+                    'user',
+                    'course',
+                    'valid_from',
+                    'valid_until',
+                    'usage_limit',
+                    'per_user_limit',
+                ),
+                'description': (
+                    'خالی گذاشتن «کاربر اختصاصی» یعنی کد همگانی برای همه کاربران؛ '
+                    'خالی گذاشتن «دوره اختصاصی» یعنی کد روی همه محصولات اعمال می‌شود؛ '
+                    'و خالی گذاشتن تاریخ‌ها یعنی کد بدون محدودیت زمانی است.'
+                ),
+            },
+        ),
+        (
+            'آمار استفاده',
+            {
+                'fields': ('used_count', 'created_at', 'updated_at'),
+            },
+        ),
+    )
+
+
+@admin.register(CouponRedemption)
+class CouponRedemptionAdmin(admin.ModelAdmin):
+    list_display = ('coupon', 'user', 'order', 'discount_amount', 'created_at')
+    list_filter = ('coupon', 'created_at')
+    search_fields = ('coupon__code', 'user__phone_number')
+    readonly_fields = ('coupon', 'user', 'order', 'discount_amount', 'created_at')
 
 
 class CartItemInline(admin.TabularInline):
@@ -41,12 +122,27 @@ class TransactionInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'user', 'total_amount', 'status', 'created_at')
-    list_filter = ('status', 'created_at')
+    list_display = (
+        'pk',
+        'user',
+        'subtotal_amount',
+        'discount_amount',
+        'coupon',
+        'total_amount',
+        'status',
+        'created_at',
+    )
+    list_filter = ('status', 'coupon', 'created_at')
     search_fields = ('user__phone_number', 'user__full_name')
     list_editable = ('status',)
     inlines = [OrderItemInline, TransactionInline]
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = (
+        'created_at',
+        'updated_at',
+        'subtotal_amount',
+        'discount_amount',
+        'coupon',
+    )
 
 
 @admin.register(Transaction)

@@ -1,4 +1,5 @@
 """Views: tickets"""
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import HttpResponseForbidden
@@ -34,6 +35,7 @@ class TicketCreateView(LoginRequiredMixin, View):
                 sender=request.user,
                 body=form.cleaned_data['body'],
             )
+        messages.success(request, 'تیکت شما با موفقیت ثبت شد.')
         return redirect('tickets:detail', pk=ticket.pk)
 
 
@@ -62,6 +64,7 @@ class TicketDetailView(LoginRequiredMixin, View):
                 sender=request.user,
                 body=form.cleaned_data['body'],
             )
+            messages.success(request, 'پاسخ شما ثبت شد.')
             return redirect('tickets:detail', pk=pk)
         return render(request, 'ticket_detail.html', {
             'ticket': ticket,

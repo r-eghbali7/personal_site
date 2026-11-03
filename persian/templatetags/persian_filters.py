@@ -27,6 +27,79 @@ register = template.Library()
 PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹"
 PERSIAN_COMMA = "٬"
 
+JALALI_MONTHS = [
+    "فروردین",
+    "اردیبهشت",
+    "خرداد",
+    "تیر",
+    "مرداد",
+    "شهریور",
+    "مهر",
+    "آبان",
+    "آذر",
+    "دی",
+    "بهمن",
+    "اسفند",
+]
+
+_GREGORIAN_MONTH_DAYS = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
+
+
+def gregorian_to_jalali(gy, gm, gd):
+    """
+    تبدیل تاریخ میلادی به شمسی بدون وابستگی خارجی.
+
+    پیاده‌سازی استاندارد (بر پایه الگوریتم jalaali-js)؛ در صورت نصب نبودن
+    jdatetime از همین تابع استفاده می‌شود.
+    """
+    if gy > 1600:
+        jy = 979
+        gy -= 1600
+    else:
+        jy = 0
+        gy -= 621
+    gy2 = gy + 1 if gm > 2 else gy
+    days = (
+        (365 * gy)
+        + ((gy2 + 3) // 4)
+        - ((gy2 + 99) // 100)
+        + ((gy2 + 399) // 400)
+        - 80
+        + gd
+        + _GREGORIAN_MONTH_DAYS[gm - 1]
+    )
+    jy += 33 * (days // 12053)
+    days %= 12053
+    jy += 4 * (days // 1461)
+    days %= 1461
+    if days > 365:
+        jy += (days - 1) // 365
+        days = (days - 1) % 365
+    if days < 186:
+        jm = 1 + days // 31
+        jd = 1 + days % 31
+    else:
+        jm = 7 + (days - 186) // 30
+        jd = 1 + (days - 186) % 30
+    return jy, jm, jd
+
+
+def _format_jalali(fmt, jy, jm, jd):
+    """جایگزینی نشانه‌های تاریخ در قالب با مقادیر شمسی."""
+    month = JALALI_MONTHS[jm - 1]
+    replacements = {
+        "%Y": str(jy),
+        "%y": str(jy % 100).zfill(2),
+        "%m": str(jm).zfill(2),
+        "%d": str(jd).zfill(2),
+        "%B": month,
+        "%b": month,
+    }
+    formatted = fmt
+    for token, replacement in replacements.items():
+        formatted = formatted.replace(token, replacement)
+    return formatted
+
 
 def to_persian_digits(text):
     """Convert all ASCII digits 0-9 in *text* to Persian digits ۰-۹."""
@@ -99,12 +172,21 @@ def persian_date(value, fmt=None):
             formatted = jdt.strftime("%Y/%m/%d")
         return to_persian_digits(formatted)
 
-    # Fallback (no jdatetime installed): just convert digits
-    fallback_fmt = fmt or "%Y/%m/%d"
-    try:
-        formatted = value.strftime(fallback_fmt)
-    except (AttributeError, ValueError):
-        formatted = str(value)
+    # Fallback (jdatetime نصب نیست): تبدیل داخلی میلادی به شمسی
+    if isinstance(value, datetime):
+        if value.tzinfo is not None:
+            value = timezone.localtime(value)
+        gy, gm, gd = value.year, value.month, value.day
+    elif isinstance(value, date):
+        gy, gm, gd = value.year, value.month, value.day
+    else:
+        return to_persian_digits(value)
+
+    jy, jm, jd = gregorian_to_jalali(gy, gm, gd)
+    if fmt:
+        formatted = _format_jalali(fmt, jy, jm, jd)
+    else:
+        formatted = f"{jy}/{jm:02d}/{jd:02d}"
     return to_persian_digits(formatted)
 
 

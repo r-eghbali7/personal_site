@@ -17,11 +17,9 @@
     <!-- Desktop navigation -->
     <nav class="hidden xl:flex items-center gap-1 p-1 site-nav" data-site-nav data-active-classes="bg-primary-container text-on-primary font-bold rounded-xl">
       <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="home" href="{% url 'courses:home' %}">صفحه اصلی</a>
-      <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="courses" href="{% url 'courses:list' %}">دوره‌ها و آموزش‌ها</a>
+      <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="courses" href="{% url 'courses:list' %}">دوره‌ها</a>
       <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="blog" href="{% url 'blog:list' %}">وبلاگ</a>
-      <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="podcasts" href="{% url 'courses:home' %}#podcasts">پادکست‌ها</a>
-      <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="online-quiz" href="{% url 'courses:quiz_list' %}">آزمون آنلاین</a>
-      <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="support-tickets" href="{% url 'tickets:list' %}">تیکت پشتیبانی</a>
+      <a class="px-3.5 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="podcasts" href="{% url 'podcasts:list' %}">پادکست‌ها</a>
     </nav>
 
     <!-- Desktop actions -->
@@ -80,11 +78,9 @@
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-margin py-4">
     <nav class="flex flex-col gap-1">
       <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'courses:home' %}">صفحه اصلی</a>
-      <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'courses:list' %}">دوره‌ها و آموزش‌ها</a>
+      <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'courses:list' %}">دوره‌ها</a>
       <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'blog:list' %}">وبلاگ</a>
-      <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'courses:home' %}#podcasts">پادکست‌ها</a>
-      <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'courses:quiz_list' %}">آزمون آنلاین</a>
-      <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'tickets:list' %}">تیکت پشتیبانی</a>
+      <a class="px-4 py-3 block rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="{% url 'podcasts:list' %}">پادکست‌ها</a>
     </nav>
     <div class="mt-4 flex flex-col sm:flex-row gap-2">
       <a class="flex-1 h-11 rounded-xl bg-primary-container text-on-primary flex items-center justify-center font-semibold hover:bg-tertiary-container transition-colors" href="{% url 'orders:cart' %}">سبد خرید</a>

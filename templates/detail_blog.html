@@ -2,7 +2,84 @@
 {% load static %}
 {% block title %}آکادمی حسین طاهری{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
-{% block head %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block head %}<meta content="web_standard" name="shell-type" />
+<style>
+  .article-body { color: #43474f; line-height: 2; }
+  .article-body h2 {
+    margin: 1.9rem 0 0.85rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ceced1;
+    font-family: "Plus Jakarta Sans", "Vazirmatn", sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #103a69;
+  }
+  .article-body h3 {
+    margin: 1.6rem 0 0.6rem;
+    font-family: "Plus Jakarta Sans", "Vazirmatn", sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #103a69;
+  }
+  .article-body h4 {
+    margin: 1.3rem 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1b20;
+  }
+  .article-body h1 {
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ceced1;
+    font-family: "Plus Jakarta Sans", "Vazirmatn", sans-serif;
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #103a69;
+  }
+  .article-body h5 {
+    margin: 1.1rem 0 0.4rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1b20;
+  }
+  .article-body h6 {
+    margin: 1rem 0 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #43474f;
+  }
+  .article-body p { margin: 0.7rem 0; line-height: 2; }
+  .article-body ul, .article-body ol { margin: 0.8rem 0; padding-right: 1.5rem; }
+  .article-body ul { list-style: disc; }
+  .article-body ol { list-style: decimal; }
+  .article-body li { margin: 0.35rem 0; }
+  .article-body a { color: #103a69; text-decoration: underline; }
+  .article-body blockquote {
+    margin: 1.25rem 0;
+    padding: 0.85rem 1rem;
+    border-right: 4px solid #26b2e8;
+    background: #f4f3f9;
+    border-radius: 0.75rem;
+  }
+  .article-body img, .article-body iframe, .article-body video { max-width: 100%; height: auto; border-radius: 1rem; }
+  .article-body figure { margin: 1rem 0; }
+  .article-body figcaption { margin-top: 0.5rem; text-align: center; font-size: 0.8rem; color: #737780; }
+  .article-body table { width: 100%; margin: 1rem 0; border-collapse: collapse; }
+  .article-body th, .article-body td { border: 1px solid #ceced1; padding: 0.5rem 0.75rem; }
+  .article-body pre {
+    margin: 1rem 0;
+    padding: 1rem;
+    overflow: auto;
+    direction: ltr;
+    text-align: left;
+    border-radius: 1rem;
+    background: #00244a;
+    color: #e3e2e8;
+  }
+  .article-body [id] { scroll-margin-top: 96px; }
+  .article-body .media { margin: 1.25rem 0; }
+</style>
+{% endblock %}
 {% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
 {% block content %}<main class="w-full pt-16 bg-background min-h-screen">
       <div class="flex flex-col w-full">
@@ -80,7 +157,7 @@
               <p
                 class="font-headline-sm text-headline-sm text-on-surface-variant font-normal leading-relaxed text-justify max-w-4xl"
               >
-                {{ post.summary|default:post.content|truncatechars:300 }}
+                {{ post.summary|default:post.content|striptags|truncatechars:300 }}
               </p>
             </div>
             <!-- Meta Bar & Interactive Utilities -->
@@ -245,8 +322,8 @@
               id="article-content"
             >
               {% if post.content %}
-              <section class="rounded-2xl bg-card p-6 text-on-surface-variant leading-8" id="section-1">
-                {{ post.content|linebreaks }}
+              <section class="article-body rounded-2xl bg-card p-6 text-on-surface-variant leading-8" id="article-body">
+                {{ post_content_html|safe }}
               </section>
               {% else %}
               <!-- Executive Summary Box -->
@@ -1114,9 +1191,8 @@
                     دیدگاه‌های شما پس از بازبینی سریع توسط تیم آموزش و شخص مهندس
                     طاهری پاسخ داده می‌شوند.
                   </p>
-                  {% for message in messages %}<p>{{ message }}</p>{% endfor %}
                   {% if user.is_authenticated %}
-                  <form method="post" action="{% url 'blog:comment' post.slug %}">
+                  <form class="ajax-comment-form" data-login-url="{% url 'accounts:login' %}?next={{ request.path }}" method="post" action="{% url 'blog:comment' post.slug %}">
                     {% csrf_token %}
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <input
@@ -1167,7 +1243,7 @@
                 <div class="flex flex-col gap-6">
                   {% for comment in comments %}
                   <article class="p-6 rounded-2xl bg-card shadow-sm flex flex-col gap-3">
-                    <div class="flex items-center justify-between"><strong>{{ comment.user }}</strong><span class="font-body-sm text-secondary">{{ comment.created_at|date:"Y-m-d H:i" }}</span></div>
+                    <div class="flex items-center justify-between"><strong>{{ comment.user.full_name|default:"کاربر آکادمی" }}</strong><span class="font-body-sm text-secondary">{{ comment.created_at|date:"Y-m-d H:i" }}</span></div>
                     <p class="font-body-md text-on-surface leading-relaxed">{{ comment.body|linebreaksbr }}</p>
                   </article>
                   {% empty %}<p class="text-secondary">هنوز دیدگاه تأییدشده‌ای ثبت نشده است.</p>
@@ -1299,63 +1375,24 @@
                   >
                   <span>فهرست سرفصل‌های مقاله</span>
                 </div>
+                {% if toc %}
                 <nav class="flex flex-col gap-2 font-body-md text-body-md">
+                  {% for item in toc %}
                   <a
-                    class="toc-link p-2 rounded-xl text-primary-container font-semibold bg-surface-container transition-all flex items-center gap-2"
-                    href="#section-1"
+                    class="toc-link p-2 rounded-xl transition-all flex items-center gap-2 {% if item.level == 2 %}text-primary-container font-semibold hover:bg-surface-container{% else %}text-secondary hover:text-primary{% endif %}"
+                    href="#{{ item.id }}"
+                    style="padding-inline-start: calc(0.5rem + {{ item.indent }}px)"
                   >
-                    <span class="w-1.5 h-1.5 rounded-full bg-accent-alt"></span>
-                    <span>۱. مقدمه و بحران همگام‌سازی</span>
+                    <span class="w-1.5 h-1.5 shrink-0 rounded-full {% if item.level == 2 %}bg-accent-alt{% else %}bg-outline-variant{% endif %}"></span>
+                    <span>{{ item.text }}</span>
                   </a>
-                  <a
-                    class="toc-link p-2 rounded-xl text-secondary hover:text-primary transition-all flex items-center gap-2"
-                    href="#section-2"
-                  >
-                    <span
-                      class="w-1.5 h-1.5 rounded-full bg-transparent"
-                    ></span>
-                    <span>۲. مقایسه فنی Kafka در برابر RabbitMQ</span>
-                  </a>
-                  <a
-                    class="toc-link p-2 rounded-xl text-secondary hover:text-primary transition-all flex items-center gap-2"
-                    href="#section-3"
-                  >
-                    <span
-                      class="w-1.5 h-1.5 rounded-full bg-transparent"
-                    ></span>
-                    <span
-                      >۳. الگوهای حیاتی پروداکشن (Outbox &amp;
-                      Idempotency)</span
-                    >
-                  </a>
-                  <a
-                    class="toc-link p-2 rounded-xl text-secondary hover:text-primary transition-all flex items-center gap-2"
-                    href="#section-4"
-                  >
-                    <span
-                      class="w-1.5 h-1.5 rounded-full bg-transparent"
-                    ></span>
-                    <span>۴. پیاده‌سازی کانسومر در TypeScript</span>
-                  </a>
-                  <a
-                    class="toc-link p-2 rounded-xl text-secondary hover:text-primary transition-all flex items-center gap-2"
-                    href="#section-5"
-                  >
-                    <span
-                      class="w-1.5 h-1.5 rounded-full bg-transparent"
-                    ></span>
-                    <span>۵. چک‌لیست استقرار روی پروداکشن</span>
-                  </a>
-                  <a
-                    class="toc-link p-2 rounded-xl text-secondary hover:text-primary transition-all flex items-center gap-2"
-                    href="#comments-section"
-                  >
-                    <span
-                      class="w-1.5 h-1.5 rounded-full bg-transparent"
-                    ></span>
-                    <span>۶. دیدگاه‌ها و پاسخ‌های استاد</span>
-                  </a>
+                  {% endfor %}
                 </nav>
+                {% else %}
+                <p class="font-body-sm text-body-sm text-outline leading-relaxed">
+                  برای این مقاله هنوز سرتیتر (h2 / h3) ثبت نشده است؛ با افزودن سرتیتر در ادیتور، فهرست سرفصل‌ها خودکار ساخته می‌شود.
+                </p>
+                {% endif %}
               </div>
               {% if post.architecture_quiz_title %}
               <section class="rounded-2xl bg-card p-6 shadow-sm flex flex-col gap-3">
@@ -1391,7 +1428,6 @@
                   <h4 class="font-headline-sm text-headline-sm text-primary font-bold">خبرنامه هفتگی معماری</h4>
                 </div>
                 <p class="font-body-sm text-body-sm text-secondary leading-relaxed">شماره موبایل خود را وارد کنید تا پس از تأیید، کد تخفیف {{ post.coupon_discount_percent }}٪ تهیه دوره برایتان نمایش داده شود.</p>
-                {% for message in messages %}<p class="rounded-lg bg-surface-container-low p-3 text-sm" role="status">{{ message }}</p>{% endfor %}
                 {% if coupon_claim %}
                 <div class="rounded-xl border border-green-300 bg-green-50 p-4 text-green-800" role="status">
                   <p class="font-semibold">کد تخفیف شما ({{ coupon_claim.discount_percent }}٪)</p>
@@ -1872,3 +1908,4 @@
         </div>
       </div>
     </footer>{% endblock %}
+{% block scripts %}<script src="{% static 'js/comments.js' %}"></script>{% endblock %}

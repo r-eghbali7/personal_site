@@ -107,6 +107,7 @@
 - detail_course.html - جزئیات دوره
 - list_blog.html - لیست مقالات
 - detail_blog.html - جزئیات مقاله
+- podcasts.html - صفحه همه اپیزودهای پادکست (پخش، قلب و دیدگاه)
 - cart.html - سبد خرید
 - checkout.html - تسویه‌حساب
 - quiz_list.html - لیست آزمون‌ها
@@ -114,6 +115,8 @@
 - ticket_list.html - لیست تیکت‌ها
 - ticket_detail.html - جزئیات تیکت
 - ticket_create.html - ایجاد تیکت جدید
+- 404.html - صفحه خطای «پیدا نشد» (و نمایش خطاهای دسترسی ۴۰۳ به‌صورت ۴۰۴)
+- 500.html - صفحه خطای داخلی سرور
 - و...
 
 ## توجه

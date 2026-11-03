@@ -5,6 +5,7 @@ App: courses — مدل‌های دوره، فصل، جلسه، کوییز، پ�
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
+from ckeditor.fields import RichTextField
 
 
 class Category(models.Model):
@@ -43,7 +44,7 @@ class Course(models.Model):
         blank=True,
         verbose_name='توضیح کوتاه',
     )
-    description = models.TextField(verbose_name='توضیحات کامل')
+    description = RichTextField('توضیحات کامل', config_name='extends')
     learning_outcomes = models.JSONField(
         default=list,
         blank=True,
@@ -97,6 +98,9 @@ class Course(models.Model):
         verbose_name = 'دوره'
         verbose_name_plural = 'دوره‌ها'
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['is_published', '-created_at']),
+        ]
 
     def __str__(self):
         return self.title
@@ -130,7 +134,7 @@ class Chapter(models.Model):
         verbose_name='دوره',
     )
     title = models.CharField(max_length=200, verbose_name='عنوان فصل')
-    description = models.TextField(blank=True, verbose_name='توضیحات فصل')
+    description = RichTextField('توضیحات فصل', blank=True, config_name='extends')
     order = models.PositiveIntegerField(default=0, verbose_name='ترتیب')
 
     class Meta:
@@ -218,6 +222,41 @@ class Lesson(models.Model):
         return False
 
 
+class CourseComment(models.Model):
+    """دیدگاه کاربران درباره یک دوره."""
+
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='دوره',
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='course_comments',
+        verbose_name='کاربر',
+    )
+    body = models.TextField(verbose_name='متن دیدگاه')
+    is_approved = models.BooleanField(
+        default=True,
+        verbose_name='تأیید شده',
+        help_text='برای پنهان کردن دیدگاه از سایت، تیک آن را بردارید.',
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ثبت')
+
+    class Meta:
+        verbose_name = 'دیدگاه دوره'
+        verbose_name_plural = 'دیدگاه‌های دوره'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['course', 'is_approved']),
+        ]
+
+    def __str__(self):
+        return f'{self.user} روی دوره {self.course_id}'
+
+
 class Enrollment(models.Model):
     """ثبت‌نام کاربر در یک دوره."""
 
@@ -282,7 +321,7 @@ class Question(models.Model):
         related_name='questions',
         verbose_name='آزمون',
     )
-    body = models.TextField(verbose_name='متن سؤال')
+    body = RichTextField(verbose_name='متن سؤال')
     order = models.PositiveIntegerField(default=0, verbose_name='ترتیب')
 
     class Meta:
@@ -359,7 +398,7 @@ class FinalProject(models.Model):
         verbose_name='دوره',
     )
     title = models.CharField(max_length=250, verbose_name='عنوان پروژه')
-    description = models.TextField(verbose_name='شرح پروژه')
+    description = RichTextField('شرح پروژه', config_name='extends')
     sample_file = models.FileField(
         upload_to='projects/samples/',
         blank=True,

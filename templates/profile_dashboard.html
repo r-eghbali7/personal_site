@@ -27,8 +27,6 @@
     </dl>
   </section>
 
-  {% for message in messages %}<p class="rounded-xl bg-surface-container-low p-4 text-on-surface" role="status">{{ message }}</p>{% endfor %}
-
   <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
     <nav class="flex gap-2 overflow-x-auto rounded-2xl bg-card p-2 shadow-sm lg:col-span-3 lg:flex-col" aria-label="بخش‌های پروفایل">
       <button class="profile-tab shrink-0 rounded-lg bg-primary-container px-4 py-3 text-right text-on-primary" id="btn-tab-courses" type="button" onclick="switchProfileTab('tab-courses')">دوره‌های من ({{ enrollment_count }})</button>
@@ -48,7 +46,7 @@
             <div class="min-w-0">
               <p class="text-sm text-outline">{{ enrollment.course.category.name|default:'دوره آموزشی' }} · {{ enrollment.course.get_level_display }}</p>
               <h3 class="mt-1 font-headline-sm text-headline-sm font-bold text-primary"><a href="{% url 'courses:detail' enrollment.course.slug %}" class="hover:underline">{{ enrollment.course.title }}</a></h3>
-              <p class="mt-2 text-sm text-on-surface-variant">{{ enrollment.course.short_description|default:enrollment.course.description|truncatechars:180 }}</p>
+              <p class="mt-2 text-sm text-on-surface-variant">{{ enrollment.course.short_description|default:enrollment.course.description|striptags|truncatechars:180 }}</p>
             </div>
             <span class="shrink-0 rounded-lg bg-surface-container-low px-3 py-2 text-sm text-outline">ثبت‌نام: {{ enrollment.enrolled_at|date:'Y/m/d' }}</span>
           </div>

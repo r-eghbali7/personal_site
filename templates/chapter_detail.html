@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load course_tags %}
 {% block title %}{{ chapter.title }} | {{ course.title }}{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
 {% block head %}    <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -15,7 +16,7 @@
       <section class="mb-6 rounded-2xl bg-card p-6 md:p-8">
         <p class="text-sm text-outline">فصل {{ chapter.order }} از {{ chapters|length }}</p>
         <h1 class="mt-2 font-headline-lg text-headline-lg font-bold text-primary-container">{{ chapter.title }}</h1>
-        {% if chapter.description %}<div class="mt-4 leading-8">{{ chapter.description|linebreaksbr }}</div>{% endif %}
+        {% if chapter.description %}<div class="rich-text mt-4 leading-8">{{ chapter.description|rich_text }}</div>{% endif %}
         <p class="mt-4 text-sm text-outline">{{ chapter.lesson_list|length }} ویدئو · مجموع {{ chapter.total_duration_minutes }} دقیقه</p>
       </section>
       <section aria-label="ویدئوهای فصل" class="grid gap-5">

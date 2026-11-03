@@ -1,0 +1,66 @@
+/* استایل مشترک محتوای غنی (ادیتور CKEditor) در صفحات دوره */
+.rich-text { color: #43474f; line-height: 2; }
+.rich-text h1 {
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #ceced1;
+  font-family: "Plus Jakarta Sans", "Vazirmatn", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #103a69;
+}
+.rich-text h2 {
+  margin: 1.8rem 0 0.85rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #ceced1;
+  font-family: "Plus Jakarta Sans", "Vazirmatn", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #103a69;
+}
+.rich-text h3 {
+  margin: 1.5rem 0 0.6rem;
+  font-family: "Plus Jakarta Sans", "Vazirmatn", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #103a69;
+}
+.rich-text h4, .rich-text h5, .rich-text h6 {
+  margin: 1.2rem 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1b20;
+}
+.rich-text p { margin: 0.7rem 0; }
+.rich-text ul, .rich-text ol { margin: 0.8rem 0; padding-right: 1.5rem; }
+.rich-text ul { list-style: disc; }
+.rich-text ol { list-style: decimal; }
+.rich-text li { margin: 0.35rem 0; }
+.rich-text a { color: #103a69; text-decoration: underline; }
+.rich-text blockquote {
+  margin: 1.25rem 0;
+  padding: 0.85rem 1rem;
+  border-right: 4px solid #26b2e8;
+  background: #f4f3f9;
+  border-radius: 0.75rem;
+}
+.rich-text img, .rich-text iframe, .rich-text video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+}
+.rich-text figure { margin: 1rem 0; }
+.rich-text figcaption { margin-top: 0.5rem; text-align: center; font-size: 0.8rem; color: #737780; }
+.rich-text table { width: 100%; margin: 1rem 0; border-collapse: collapse; }
+.rich-text th, .rich-text td { border: 1px solid #ceced1; padding: 0.5rem 0.75rem; }
+.rich-text pre {
+  margin: 1rem 0;
+  padding: 1rem;
+  overflow: auto;
+  direction: ltr;
+  text-align: left;
+  border-radius: 1rem;
+  background: #00244a;
+  color: #e3e2e8;
+}
+.rich-text [id] { scroll-margin-top: 96px; }

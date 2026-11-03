@@ -1,0 +1,21 @@
+{% if active_banners %}
+<section class="w-full mb-8 relative overflow-hidden rounded-3xl bg-surface-container border border-border shadow-sm">
+  {% for banner in active_banners %}
+  <a
+    href="{{ banner.link_url }}"
+    class="block w-full h-48 sm:h-64 md:h-80 rounded-3xl overflow-hidden border-0 group"
+    target="_self"
+    rel="noopener noreferrer"
+  >
+    <img
+      src="{{ banner.image.url }}"
+      alt="{{ banner.title|default:'بنر' }}"
+      class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors duration-300"></div>
+  </a>
+  {% empty %}
+  {% endfor %}
+</section>
+{% endif %}

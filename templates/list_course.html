@@ -407,11 +407,11 @@
                     <div>
                       <p class="text-sm text-outline">{{ course.category.name|default:'دوره آموزشی' }} · {{ course.get_level_display }}</p>
                       <h2 class="font-headline-sm text-headline-sm text-primary font-bold mt-2"><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></h2>
-                      <p class="text-sm text-on-surface-variant mt-2">{{ course.short_description|default:course.description|truncatechars:150 }}</p>
+                      <p class="text-sm text-on-surface-variant mt-2">{{ course.short_description|default:course.description|striptags|truncatechars:150 }}</p>
                       <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-sm text-outline">
                         <span><span class="material-symbols-outlined align-middle text-base">layers</span> {{ course.chapter_count }} فصل</span>
                         <span><span class="material-symbols-outlined align-middle text-base">groups</span> {{ course.student_count }} دانشجو</span>
-                        <span>مدرس: {{ course.instructor.full_name|default:course.instructor.phone_number }}</span>
+                        <span>مدرس: {{ course.instructor.full_name|default:"مدرس آکادمی" }}</span>
                       </div>
                     </div>
                     <div class="flex items-center justify-between gap-3"><span class="font-bold text-primary-container">{% if course.is_free %}رایگان{% else %}{{ course.price|floatformat:0 }} تومان{% endif %}</span><a class="h-10 px-4 rounded-xl bg-primary-container text-on-primary flex items-center" href="{% url 'courses:detail' course.slug %}">مشاهده دوره</a></div>

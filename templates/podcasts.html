@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% load static %}
+{% load persian_filters %}
+{% block title %}پادکست‌ها | آکادمی حسین طاهری{% endblock %}
+{% block head %}<link href="{% static 'css/podcast-player.css' %}" rel="stylesheet" />{% endblock %}
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block content %}<main class="w-full pt-16 min-h-screen bg-background">
+  <div class="max-w-5xl mx-auto px-margin py-space-lg">
+    <!-- سربرگ صفحه -->
+    <section class="relative overflow-hidden rounded-[28px] bg-primary-container px-6 py-8 sm:px-10 sm:py-10 shadow-[0_24px_60px_-30px_rgba(16,58,105,0.75)]">
+      <div class="pointer-events-none absolute -top-24 -left-16 w-72 h-72 rounded-full bg-accent-alt/20 blur-3xl"></div>
+      <div class="pointer-events-none absolute -bottom-24 right-1/4 w-64 h-64 rounded-full bg-surface-container-lowest/5 blur-3xl"></div>
+
+      <div class="relative flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
+        <div class="flex flex-col items-center sm:items-start gap-2 text-center sm:text-right">
+          <span class="inline-flex items-center gap-1.5 text-accent-alt font-body-sm text-body-sm font-bold">
+            <span class="material-symbols-outlined text-[18px]">podcasts</span>
+            پادکست آکادمی
+          </span>
+          <h1 class="font-headline-lg text-headline-lg sm:text-[32px] sm:leading-snug text-on-primary font-extrabold leading-snug">همه اپیزودهای پادکست</h1>
+          <p class="font-body-sm text-body-sm text-on-primary/70 leading-relaxed max-w-xl">
+            گفت‌وگوهای فنی و تجربه‌های واقعی ساخت نرم‌افزار. هر اپیزود را همین‌جا بشنوید، سرعت پخش را تنظیم کنید،
+            دیدگاهتان را بنویسید و اپیزودهای مورد علاقه‌تان را بپسندید.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="rounded-2xl border border-on-primary/10 bg-on-primary/10 px-4 py-3 text-center">
+            <span class="block font-code-md text-code-md font-extrabold text-on-primary">{{ podcast_count|persian_number }}</span>
+            <span class="text-[11px] text-on-primary/60">اپیزود منتشرشده</span>
+          </div>
+          <div class="hidden sm:flex w-20 h-20 rounded-full bg-accent-alt items-center justify-center shadow-[0_16px_35px_-16px_rgba(38,178,232,0.9)]">
+            <span class="material-symbols-outlined text-primary-container" style="font-size: 44px; font-variation-settings: &quot;FILL&quot; 1">mic</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- فهرست اپیزودها (زیر هم) -->
+    <section class="podcast-list-page mt-8 flex flex-col gap-6">
+      {% for post in posts %}
+      <article class="podcast-card scroll-mt-24 rounded-[24px] border border-border bg-card p-4 sm:p-6 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)]" id="episode-{{ post.pk }}">
+        <div class="flex items-start gap-3.5 sm:gap-4">
+          {% if post.podcast_audio_url %}
+          <button
+            aria-label="پخش {{ post.podcast_title|default:post.title }}"
+            class="podcast-play shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary-container text-on-primary flex items-center justify-center hover:bg-tertiary-container transition-colors shadow-md shadow-primary-container/25"
+            data-audio-target="podcast-audio-{{ post.pk }}"
+            type="button"
+          >
+            <span class="material-symbols-outlined podcast-play-icon text-[26px]" style="font-variation-settings: &quot;FILL&quot; 1">play_arrow</span>
+          </button>
+          {% endif %}
+
+          <div class="min-w-0 flex-1">
+            <h2 class="text-body-lg sm:text-[17px] font-bold text-primary-container leading-7">
+              {{ post.podcast_title|default:post.title }}
+            </h2>
+            <p class="mt-1 text-body-sm text-on-surface-variant">
+              گوینده: {{ post.author.full_name|default:"حسین طاهری" }}
+            </p>
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              {% if post.published_at %}
+              <span class="inline-flex items-center gap-1 rounded-full bg-surface-container-high px-2.5 py-1 text-[11px] font-medium text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px]">calendar_month</span>
+                <span>{{ post.published_at|persian_date:"%Y %B %d" }}</span>
+              </span>
+              {% endif %}
+              {% if post.podcast_duration_minutes %}
+              <span class="inline-flex items-center gap-1 rounded-full bg-surface-container-high px-2.5 py-1 text-[11px] font-medium text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px]">schedule</span>
+                <span>{{ post.podcast_duration_minutes|persian_number }}:۰۰</span>
+              </span>
+              {% endif %}
+              <span class="inline-flex items-center gap-1 rounded-full bg-surface-container-high px-2.5 py-1 text-[11px] font-medium text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px]">forum</span>
+                <span><span id="comment-badge-{{ post.pk }}">{{ post.comment_count|persian_number }}</span> دیدگاه</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- دکمه قلب -->
+          {% if user.is_authenticated %}
+          <form class="podcast-like-form shrink-0" data-login-url="{% url 'accounts:login' %}?next={{ request.path }}" method="post" action="{% url 'podcasts:like' post.slug %}">
+            {% csrf_token %}
+            <button
+              aria-label="{% if post.id in liked_ids %}برداشتن پسندیدن{% else %}پسندیدن{% endif %}"
+              aria-pressed="{% if post.id in liked_ids %}true{% else %}false{% endif %}"
+              class="podcast-like-button flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl border transition-colors disabled:opacity-60 {% if post.id in liked_ids %}border-red-200 bg-red-50 text-red-600{% else %}border-border bg-surface-container-low text-outline hover:border-red-200 hover:text-red-600{% endif %}"
+              data-liked="{% if post.id in liked_ids %}true{% else %}false{% endif %}"
+              title="{% if post.id in liked_ids %}برداشتن پسندیدن{% else %}پسندیدن{% endif %}"
+              type="submit"
+            >
+              <span class="material-symbols-outlined podcast-like-icon text-[24px]" style="font-variation-settings: &quot;FILL&quot; {% if post.id in liked_ids %}1{% else %}0{% endif %}">favorite</span>
+              <span class="podcast-like-count text-[10px] font-bold">{{ post.like_count|persian_number }}</span>
+            </button>
+          </form>
+          {% else %}
+          <a
+            aria-label="پسندیدن (نیاز به ورود)"
+            class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl border border-border bg-surface-container-low text-outline hover:border-red-200 hover:text-red-600 transition-colors shrink-0"
+            href="{% url 'accounts:login' %}?next={{ request.path }}"
+            title="برای پسندیدن وارد شوید"
+          >
+            <span class="material-symbols-outlined text-[24px]">favorite_border</span>
+            <span class="text-[10px] font-bold">{{ post.like_count|persian_number }}</span>
+          </a>
+          {% endif %}
+        </div>
+
+        {% if post.podcast_description %}
+        <p class="mt-3 text-body-sm text-on-surface-variant leading-7 text-justify">{{ post.podcast_description }}</p>
+        {% endif %}
+
+        {% if post.podcast_audio_url %}
+        <audio class="hidden podcast-audio" id="podcast-audio-{{ post.pk }}" preload="none" src="{{ post.podcast_audio_url }}"></audio>
+
+        <!-- پخش‌کننده: نوار پیشرفت، پرش ۱۰ ثانیه‌ای و سرعت -->
+        <div class="podcast-controls mt-4 rounded-2xl border border-border bg-surface-container-low p-3 sm:p-4">
+          <div class="flex items-center gap-2.5">
+            <span class="podcast-time-current w-9 shrink-0 text-center text-[11px] font-medium text-outline">۰:۰۰</span>
+            <input
+              aria-label="نوار پیشرفت پخش {{ post.podcast_title|default:post.title }}"
+              class="podcast-seek flex-1"
+              max="100"
+              min="0"
+              step="0.1"
+              type="range"
+              value="0"
+            />
+            <span class="podcast-time-total w-9 shrink-0 text-center text-[11px] font-medium text-outline">{% if post.podcast_duration_minutes %}{{ post.podcast_duration_minutes|persian_number }}:۰۰{% else %}۰:۰۰{% endif %}</span>
+          </div>
+
+          <div class="mt-3 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1">
+              <button aria-label="۱۰ ثانیه عقب" class="podcast-skip w-9 h-9 rounded-lg bg-card border border-border text-primary-container flex items-center justify-center hover:bg-surface-container-high transition-colors" data-skip="-10" title="۱۰ ثانیه عقب" type="button">
+                <span class="material-symbols-outlined text-[18px]">replay_10</span>
+              </button>
+              <button aria-label="۱۰ ثانیه جلو" class="podcast-skip w-9 h-9 rounded-lg bg-card border border-border text-primary-container flex items-center justify-center hover:bg-surface-container-high transition-colors" data-skip="10" title="۱۰ ثانیه جلو" type="button">
+                <span class="material-symbols-outlined text-[18px]">forward_10</span>
+              </button>
+            </div>
+
+            <div class="flex items-center gap-0.5 rounded-lg border border-border bg-card p-0.5" dir="ltr" title="سرعت پخش">
+              <button aria-label="پخش کندتر" class="podcast-rate-down w-8 h-8 rounded-md text-primary-container flex items-center justify-center hover:bg-surface-container-high transition-colors" title="کندتر" type="button">
+                <span class="material-symbols-outlined text-[16px]">remove</span>
+              </button>
+              <span class="podcast-rate-label w-10 text-center text-[11px] font-bold text-primary-container">۱×</span>
+              <button aria-label="پخش تندتر" class="podcast-rate-up w-8 h-8 rounded-md text-primary-container flex items-center justify-center hover:bg-surface-container-high transition-colors" title="تندتر" type="button">
+                <span class="material-symbols-outlined text-[16px]">add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- دیدگاه‌های همین اپیزود (فقط بعد از زدن پخش و با انیمیشن نمایش داده می‌شود) -->
+        <div class="podcast-comments">
+          <div class="podcast-comments-box rounded-2xl border border-border bg-surface-container-lowest p-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+              <h3 class="flex items-center gap-2 text-body-md font-bold text-primary-container">
+                <span class="material-symbols-outlined text-[20px]">forum</span>
+                دیدگاه‌ها
+                <span class="text-body-sm font-normal text-outline">(<span id="comment-count-{{ post.pk }}">{{ post.comment_count|persian_number }}</span>)</span>
+              </h3>
+            </div>
+
+            {% if user.is_authenticated %}
+            <form
+              class="ajax-comment-form mt-3 flex flex-col gap-2"
+              data-count-ids="comment-count-{{ post.pk }},comment-badge-{{ post.pk }}"
+              data-list-id="comments-list-{{ post.pk }}"
+              data-login-url="{% url 'accounts:login' %}?next={{ request.path }}"
+              method="post"
+              action="{% url 'podcasts:comment' post.slug %}"
+            >
+              {% csrf_token %}
+              <label class="sr-only" for="comment-{{ post.pk }}">متن دیدگاه برای {{ post.podcast_title|default:post.title }}</label>
+              <textarea
+                class="w-full rounded-xl border border-border bg-background px-3 py-2 text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container resize-y"
+                id="comment-{{ post.pk }}"
+                maxlength="2000"
+                minlength="2"
+                name="body"
+                placeholder="دیدگاهتان درباره این اپیزود..."
+                required
+                rows="2"
+              ></textarea>
+              <div class="flex justify-end">
+                <button class="h-9 px-4 rounded-xl bg-primary-container text-on-primary text-xs font-bold hover:bg-tertiary-container transition-colors disabled:opacity-60" type="submit">ارسال دیدگاه</button>
+              </div>
+            </form>
+            {% else %}
+            <p class="mt-3 text-body-sm text-on-surface-variant">
+              برای ثبت دیدگاه
+              <a class="text-primary-container font-semibold hover:underline" href="{% url 'accounts:login' %}?next={{ request.path }}">وارد حساب کاربری</a>
+              شوید.
+            </p>
+            {% endif %}
+
+            <div class="mt-4 flex flex-col gap-3" id="comments-list-{{ post.pk }}">
+              {% for comment in post.approved_comments %}
+              {% include "includes/comment_item.html" %}
+              {% empty %}
+              <p class="comment-empty text-body-sm text-outline">هنوز دیدگاهی ثبت نشده است؛ اولین نفر باشید.</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <div class="rounded-[24px] border border-border bg-card px-6 py-16 text-center">
+        <span class="material-symbols-outlined text-[56px] text-outline/50 mb-4">podcasts</span>
+        <h2 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">هنوز اپیزودی منتشر نشده است</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">اپیزودهای جدید پادکست به زودی در این صفحه قرار می‌گیرند.</p>
+      </div>
+      {% endfor %}
+    </section>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/podcast-player.js' %}"></script>
+<script src="{% static 'js/podcast-like.js' %}"></script>
+<script src="{% static 'js/comments.js' %}"></script>
+{% endblock %}

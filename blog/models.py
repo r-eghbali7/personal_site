@@ -6,6 +6,8 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
+from ckeditor.fields import RichTextField
+
 
 
 class BlogPost(models.Model):
@@ -18,7 +20,7 @@ class BlogPost(models.Model):
         blank=True,
         verbose_name='خلاصه مقاله',
     )
-    content = models.TextField(verbose_name='محتوای مقاله')
+    content = RichTextField('محتوای مقاله')
     thumbnail = models.ImageField(
         upload_to='blog/thumbnails/',
         blank=True,
@@ -92,6 +94,9 @@ class BlogPost(models.Model):
         verbose_name = 'مقاله'
         verbose_name_plural = 'مقالات'
         ordering = ['-published_at', '-created_at']
+        indexes = [
+            models.Index(fields=['is_published', '-published_at']),
+        ]
 
     def __str__(self):
         return self.title
@@ -142,7 +147,7 @@ class Comment(models.Model):
         related_name='blog_comments',
         verbose_name='کاربر',
     )
-    body = models.TextField(verbose_name='متن نظر')
+    body = RichTextField(verbose_name='متن نظر')
     is_approved = models.BooleanField(
         default=False,
         verbose_name='تأیید شده',
@@ -154,6 +159,71 @@ class Comment(models.Model):
         verbose_name = 'نظر'
         verbose_name_plural = 'نظرات'
         ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['post', 'is_approved']),
+        ]
 
     def __str__(self):
         return f'نظر {self.user} روی "{self.post.title[:40]}"'
+
+
+class PodcastLike(models.Model):
+    """پسندیدن یک اپیزود پادکست (قلب) توسط کاربر."""
+
+    post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.CASCADE,
+        related_name='podcast_likes',
+        verbose_name='اپیزود پادکست',
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='podcast_likes',
+        verbose_name='کاربر',
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ پسندیدن')
+
+    class Meta:
+        verbose_name = 'پسندیدن پادکست'
+        verbose_name_plural = 'پسندیدن‌های پادکست'
+        unique_together = ('post', 'user')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.user} — {self.post.pk}'
+
+
+class PodcastComment(models.Model):
+    """دیدگاه کاربر روی یک اپیزود پادکست."""
+
+    post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.CASCADE,
+        related_name='podcast_comments',
+        verbose_name='اپیزود پادکست',
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='podcast_comments',
+        verbose_name='کاربر',
+    )
+    body = RichTextField(verbose_name='متن دیدگاه')
+    is_approved = models.BooleanField(
+        default=True,
+        verbose_name='تأیید شده',
+        help_text='برای پنهان کردن دیدگاه از سایت، تیک آن را بردارید.',
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ثبت')
+
+    class Meta:
+        verbose_name = 'دیدگاه پادکست'
+        verbose_name_plural = 'دیدگاه‌های پادکست'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['post', 'is_approved']),
+        ]
+
+    def __str__(self):
+        return f'{self.user} روی اپیزود {self.post.pk}'

@@ -1,4 +1,14 @@
-# LMS آکادمی طاهری — وابستگی‌های پروژه
-django>=6.1
-pillow>=10.0
-requests>=2.31
+asgiref==3.13.0
+certifi==2026.10.23
+charset-normalizer==3.5.2
+Django==6.1.2
+django-ckeditor==6.7.4
+django-ckeditor-5==0.2.20
+django-js-asset==5.0.0
+idna==3.20
+pillow==13.0.0
+requests==2.34.2
+sqlparse==0.6.0
+tzdata==2026.6
+urllib3==2.8.0
+python-dotenv==1.2.4

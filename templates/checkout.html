@@ -19,10 +19,6 @@
       </a>
     </div>
 
-    {% for message in messages %}
-    <div class="rounded-lg p-4 mb-6 bg-surface-container-low border border-border text-on-surface font-body-sm text-body-sm">{{ message }}</div>
-    {% endfor %}
-
     <div class="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8">
       <!-- Order items -->
       <div class="bg-card border border-border rounded-2xl p-6 shadow-sm">
@@ -40,9 +36,21 @@
             </div>
           </div>
           {% endfor %}
-          <div class="mt-4 pt-4 border-t border-border flex justify-between font-headline-sm text-headline-sm font-bold text-primary-container">
-            <span>مبلغ کل</span>
-            <span>{{ total|floatformat:0 }} تومان</span>
+          <div class="mt-4 space-y-2 border-t border-border pt-4">
+            <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
+              <span>جمع کل</span>
+              <span>{{ subtotal|floatformat:0 }} تومان</span>
+            </div>
+            {% if coupon and not coupon_error %}
+            <div class="flex justify-between font-body-sm text-body-sm text-green-700">
+              <span>تخفیف ({{ coupon.code }})</span>
+              <span>−{{ discount|floatformat:0 }} تومان</span>
+            </div>
+            {% endif %}
+            <div class="flex justify-between font-headline-sm text-headline-sm font-bold text-primary-container">
+              <span>مبلغ قابل پرداخت</span>
+              <span>{{ payable|floatformat:0 }} تومان</span>
+            </div>
           </div>
           {% else %}
           <p class="text-center py-8 text-on-surface-variant">سبد خرید خالی است.</p>
@@ -53,11 +61,37 @@
       <!-- Payment -->
       <div class="bg-card border border-border rounded-2xl p-6 shadow-sm">
         <h3 class="font-headline-sm text-headline-sm text-primary-container font-bold mb-4 border-b border-border pb-2">پرداخت</h3>
+        <div class="rounded-xl border border-border bg-surface-container-low p-4 mb-4">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="font-body-sm text-body-sm font-semibold text-on-surface">کد تخفیف</span>
+            {% if coupon %}
+            <form method="post" action="{% url 'orders:remove_coupon' %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{% url 'orders:checkout' %}" />
+              <button class="text-xs text-red-600 hover:underline" type="submit">حذف «{{ coupon.code }}»</button>
+            </form>
+            {% endif %}
+          </div>
+          {% if coupon_error %}<p class="mb-2 text-xs leading-relaxed text-red-600">{{ coupon_error }}</p>{% endif %}
+          <form class="flex items-center gap-2" method="post" action="{% url 'orders:apply_coupon' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'orders:checkout' %}" />
+            <input
+              class="flex-1 h-10 px-3 bg-surface-container-lowest rounded-xl font-code-sm text-code-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:ring-2 focus:ring-primary-container shadow-inner"
+              name="code"
+              placeholder="مثلاً: SPRING2025"
+              autocomplete="off"
+              type="text"
+            />
+            <button class="h-10 px-4 bg-surface-container-high hover:bg-primary-container hover:text-on-primary text-primary-container rounded-xl font-body-sm text-body-sm font-semibold transition-colors" type="submit">اعمال</button>
+          </form>
+        </div>
+
         <form method="post" action="{% url 'orders:payment_request' %}" class="space-y-4">
           {% csrf_token %}
           <div class="bg-surface-container-low rounded-xl p-4 border border-border">
             <p class="font-body-sm text-body-sm text-on-surface-variant mb-2">پس از کلیک دکمه زیر، به درگاه پرداخت منتقل می‌شوید.</p>
-            <p class="font-body-sm text-body-sm text-on-surface"><strong>مبلغ قابل پرداخت:</strong> <span class="text-primary-container font-bold">{{ total|floatformat:0 }} تومان</span></p>
+            <p class="font-body-sm text-body-sm text-on-surface"><strong>مبلغ قابل پرداخت:</strong> <span class="text-primary-container font-bold">{{ payable|floatformat:0 }} تومان</span></p>
           </div>
           <button type="submit" class="w-full h-11 rounded-xl bg-primary-container text-white font-semibold flex items-center justify-center gap-2 hover:bg-tertiary-container transition-colors shadow-md shadow-primary-container/25">
             <span>انتقال به درگاه پرداخت</span>

@@ -1,0 +1,76 @@
+{% load static %}
+<style>
+  .toast {
+    animation: toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .toast.toast-leaving {
+    animation: toast-out 0.3s ease-in forwards;
+  }
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translate3d(26px, -10px, 0) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  @keyframes toast-out {
+    from {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translate3d(26px, -10px, 0) scale(0.97);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toast,
+    .toast.toast-leaving {
+      animation: none;
+    }
+  }
+</style>
+
+<!-- محل نمایش پیام‌های شناور (Toast) در بالا سمت راست صفحه -->
+<div
+  aria-atomic="false"
+  aria-live="polite"
+  class="pointer-events-none fixed right-4 top-20 z-[100] flex w-[calc(100vw-2rem)] max-w-sm flex-col gap-2"
+  id="toast-container"
+>
+  {% for message in messages %}
+  <div
+    class="toast pointer-events-auto flex w-full items-start gap-3 rounded-2xl border px-4 py-3 shadow-xl backdrop-blur-sm {% if message.level_tag == 'success' %}border-green-200 bg-green-50 text-green-900{% elif message.level_tag == 'error' %}border-red-200 bg-red-50 text-red-900{% elif message.level_tag == 'warning' %}border-amber-200 bg-amber-50 text-amber-900{% elif message.level_tag == 'debug' %}border-border bg-card text-on-surface{% else %}border-sky-200 bg-sky-50 text-sky-900{% endif %}"
+    role="status"
+  >
+    <span
+      class="material-symbols-outlined text-[22px] shrink-0 {% if message.level_tag == 'success' %}text-green-600{% elif message.level_tag == 'error' %}text-red-600{% elif message.level_tag == 'warning' %}text-amber-600{% elif message.level_tag == 'debug' %}text-outline{% else %}text-sky-600{% endif %}"
+      style="font-variation-settings: 'FILL' 1"
+      >{% if message.level_tag == 'success' %}check_circle{% elif message.level_tag == 'error' %}error{% elif message.level_tag == 'warning' %}warning{% elif message.level_tag == 'debug' %}bug_report{% else %}info{% endif %}</span
+    >
+    <p class="flex-1 text-body-sm leading-6">{{ message }}</p>
+    <button
+      aria-label="بستن پیام"
+      class="toast-close shrink-0 text-outline hover:text-on-surface transition-colors"
+      type="button"
+    >
+      <span class="material-symbols-outlined text-[18px]">close</span>
+    </button>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- کلاس‌های رنگ توست از قبل تولید شوند تا Tailwind آن‌ها را بشناسد -->
+<div
+  aria-hidden="true"
+  class="hidden pointer-events-auto items-start gap-3 px-4 py-3 shadow-xl backdrop-blur-sm transition-all duration-300 border-green-200 bg-green-50 text-green-900 text-green-600 border-red-200 bg-red-50 text-red-900 text-red-600 border-amber-200 bg-amber-50 text-amber-900 text-amber-600 border-sky-200 bg-sky-50 text-sky-900 text-sky-600"
+></div>
+
+<script src="{% static 'js/toasts.js' %}"></script>

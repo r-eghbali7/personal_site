@@ -24,7 +24,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.cache import never_cache
 
 from .models import CustomUser, OTPCode
-from .forms import RegisterForm, LoginForm, OTPVerifyForm, OTPRequestForm, ProfileForm
+from .forms import PasswordResetForm, RegisterForm, LoginForm, OTPVerifyForm, OTPRequestForm, ProfileForm
 from .services import send_otp_code
 from tickets.forms import TicketCreateForm
 from tickets.models import Ticket, TicketMessage
@@ -154,7 +154,7 @@ class OTPVerifyView(View):
     template_name = 'otp.html'
 
     def get(self, request):
-        register_data = request.session.get('register_data')
+        register_data = request.session.get('register_data') or request.session.get('reset_password_data')
         if not register_data:
             messages.error(request, 'لطفاً ابتدا شماره موبایل خود را وارد کنید.')
             return redirect('accounts:register')
@@ -167,7 +167,7 @@ class OTPVerifyView(View):
         })
 
     def post(self, request):
-        register_data = request.session.get('register_data')
+        register_data = request.session.get('register_data') or request.session.get('reset_password_data')
         if not register_data:
             return redirect('accounts:register')
 
@@ -208,6 +208,12 @@ class OTPVerifyView(View):
                 full_name=register_data.get('full_name', ''),
             )
             logger.info('New user registered: %s', phone)
+        elif action == 'reset_password':
+            # رمز عبور جدید صفحه به کاربر available است
+            del request.session['reset_password_data']
+            request.session['reset_password_confirmed'] = {'phone_number': phone}
+            messages.success(request, 'کد تأیید معتبر است. لطفاً رمز عبور جدید را وارد کنید.')
+            return redirect('accounts:password_reset')
         else:
             # ورود کاربر موجود از طریق OTP
             try:
@@ -257,7 +263,110 @@ class OTPResendView(View):
 
 
 # ──────────────────────────────────────────────────────────────
-# خروج
+# フォームパスワードリセット (OTP フロー)
+# ──────────────────────────────────────────────────────────────
+
+@method_decorator(never_cache, name='dispatch')
+class ForgotPasswordRequestView(View):
+    """
+    フォームパスワードリセット - ステップ1:
+    電話番号入力 → 存在確認 → OTP送信 → OTP確認画面へ
+    """
+
+    template_name = 'forgot_password.html'
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('courses:home')
+        return render(request, self.template_name, {'form': OTPRequestForm()})
+
+    def post(self, request):
+        form = OTPRequestForm(request.POST)
+        if not form.is_valid():
+            errors = {}
+            for field, error_list in form.errors.items():
+                errors[field] = error_list[0]
+            return render(request, self.template_name, {
+                'form': form,
+                'errors': errors,
+            })
+
+        mobile = form.cleaned_data['mobile']
+
+        # ユーザー存在確認
+        if not CustomUser.objects.filter(phone_number=mobile).exists():
+            messages.error(request, 'کاربری با این شماره موبایل یافت نشد.')
+            return render(request, self.template_name, {'form': form})
+
+        # リセット情報をセッションに保存
+        request.session['reset_password_data'] = {
+            'phone_number': mobile,
+            'action': 'reset_password',
+        }
+
+        # OTP 生成・送信
+        otp = OTPCode.create_for_phone(mobile)
+        result = send_otp_code(mobile, otp.code)
+
+        if not result['success']:
+            logger.warning('OTP send failed for %s: %s', mobile, result['message'])
+            if settings.DEBUG:
+                messages.warning(request, f'ارسال پیامک ناموفق بود. کد تست: {otp.code}')
+            else:
+                messages.error(request, 'ارسال کد تأیید ناموفق بود. کمی بعد دوباره تلاش کنید.')
+        else:
+            messages.success(request, f'کد تأیید به شماره {mobile} ارسال شد.')
+
+        return redirect('accounts:otp_verify')
+
+
+@method_decorator(never_cache, name='dispatch')
+class PasswordResetView(View):
+    """
+    フォームパスワードリセット - ステップ3:
+    新パスワード入力 → ユーザー更新 → ログイン
+    """
+
+    template_name = 'password_reset.html'
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('courses:home')
+        reset_data = request.session.get('reset_password_confirmed')
+        if not reset_data:
+            messages.error(request, 'لطفاً ابتدا از طریق فراموشی رمز عبور شروع کنید.')
+            return redirect('accounts:forgot_password')
+        return render(request, self.template_name, {'form': PasswordResetForm()})
+
+    def post(self, request):
+        reset_data = request.session.get('reset_password_confirmed')
+        if not reset_data:
+            messages.error(request, 'نشست منقضی شده است. لطفاً دوباره تلاش کنید.')
+            return redirect('accounts:forgot_password')
+
+        form = PasswordResetForm(request.POST)
+        if not form.is_valid():
+            return render(request, self.template_name, {'form': form})
+
+        phone = reset_data['phone_number']
+        try:
+            user = CustomUser.objects.get(phone_number=phone)
+        except CustomUser.DoesNotExist:
+            messages.error(request, 'کاربری با این شماره یافت نشد.')
+            return redirect('accounts:forgot_password')
+
+        user.set_password(form.cleaned_data['password'])
+        user.save()
+
+        del request.session['reset_password_confirmed']
+
+        login(request, user, backend='accounts.backends.PhoneAuthBackend')
+        messages.success(request, 'رمز عبور با موفقیت تغییر کرد.')
+        return redirect('courses:home')
+
+
+# ──────────────────────────────────────────────────────────────
+# 退出
 # ──────────────────────────────────────────────────────────────
 
 class LogoutView(View):

@@ -1,0 +1,96 @@
+/* =========================================
+کنترل‌های پخش اپیزود پادکست
+========================================= */
+.podcast-controls {
+  display: none;
+}
+
+.podcast-card.is-active .podcast-controls {
+  display: block;
+}
+
+/* در صفحه اختصاصی پادکست‌ها کنترل‌ها همیشه باز هستند */
+.podcast-list-page .podcast-controls {
+  display: block;
+}
+
+/* باکس دیدگاه‌ها فقط برای اپیزودی که پخش شده و با انیمیشن نرم باز می‌شود */
+.podcast-list-page .podcast-comments {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: 0;
+  opacity: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-top 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.35s ease,
+    visibility 0s linear 0.5s;
+}
+
+.podcast-list-page .podcast-comments-box {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.podcast-list-page .podcast-card.is-active .podcast-comments {
+  grid-template-rows: 1fr;
+  margin-top: 1rem;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-top 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.35s ease,
+    visibility 0s linear 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .podcast-list-page .podcast-comments {
+    transition: none;
+  }
+}
+
+.podcast-seek {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  cursor: pointer;
+  direction: rtl;
+  --seek-fill: #26b2e8;
+  --seek-track: rgba(255, 255, 255, 0.2);
+  background: var(--seek-track);
+}
+
+.podcast-list-page .podcast-seek {
+  --seek-track: rgba(16, 58, 105, 0.18);
+}
+
+.podcast-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+  background: #26b2e8;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 3px rgba(38, 178, 232, 0.25);
+  cursor: pointer;
+}
+
+.podcast-seek::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+  background: #26b2e8;
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+.podcast-seek:focus-visible {
+  outline: 2px solid #26b2e8;
+  outline-offset: 3px;
+}

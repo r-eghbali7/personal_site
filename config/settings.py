@@ -5,7 +5,12 @@ Django Settings — LMS آکادمی طاهری
 from pathlib import Path
 import os
 
+from dotenv import load_dotenv
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 # ──────────────────────────────────────────────────────────────
 # SECURITY
@@ -33,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # ادیتور محتوای وبلاگ
+    "ckeditor",
+    'django_ckeditor_5',
     # Local Apps
     'accounts',
     'courses',
@@ -41,6 +49,7 @@ INSTALLED_APPS = [
     'blog',
     'persian',
     'search',
+    'banners',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +77,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # Context processor سفارشی برای سبد خرید
                 'orders.context_processors.cart_processor',
+                # بنرهای فعال
+                'banners.context_processors.active_banners',
             ],
         },
     },
@@ -124,6 +135,108 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# ──────────────────────────────────────────────────────────────
+# CKEDITOR 5 — ادیتور محتوای وبلاگ
+# ──────────────────────────────────────────────────────────────
+# CKEDITOR_5_CONFIGS = {
+#     'default': {
+#         'language': 'fa',
+#         'toolbar': {
+#             'items': [
+#                 'heading', '|',
+#                 'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code', '|',
+#                 'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+#                 'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent', '|',
+#                 'alignment', '|',
+#                 'link', 'insertImage', 'imageUpload', 'mediaEmbed', 'insertTable', 'blockQuote', '|',
+#                 'htmlEmbed', 'codeBlock', 'specialCharacters', 'horizontalLine', 'pageBreak', '|',
+#                 'findAndReplace', 'selectAll', 'removeFormat', 'sourceEditing', '|',
+#                 'undo', 'redo',
+#             ],
+#         'toolbar': 'full',
+#         'extraPlugins': ','.join([
+#             'codesnippet',
+#             'html5video',
+#             'pastefromgdocs',
+#         ]),
+    
+#             'shouldNotGroupWhenFull': True,
+#         },
+
+#         'heading': {
+#             'options': [
+#                 {'model': 'paragraph', 'title': 'متن', 'class': 'ck-heading_paragraph'},
+#                 {'model': 'heading1', 'view': 'h1', 'title': 'سرتیتر ۱', 'class': 'ck-heading_heading1'},
+#                 {'model': 'heading2', 'view': 'h2', 'title': 'سرتیتر ۲', 'class': 'ck-heading_heading2'},
+#                 {'model': 'heading3', 'view': 'h3', 'title': 'سرتیتر ۳', 'class': 'ck-heading_heading3'},
+#                 {'model': 'heading4', 'view': 'h4', 'title': 'سرتیتر ۴', 'class': 'ck-heading_heading4'},
+#                 {'model': 'heading5', 'view': 'h5', 'title': 'سرتیتر ۵', 'class': 'ck-heading_heading5'},
+#                 {'model': 'heading6', 'view': 'h6', 'title': 'سرتیتر ۶', 'class': 'ck-heading_heading6'},
+#             ],
+#         },
+#         'mediaEmbed': {
+#             'previewsInData': True,
+#         },
+#         'htmlEmbed': {
+#             'showPreviews': True,
+#         },
+#         'image': {
+#             'toolbar': [
+#                 'imageTextAlternative', 'imageStyle:alignLeft', 'imageStyle:alignRight', 
+#                 'imageStyle:alignCenter', 'linkImage', '|'
+#             ],
+#             'styles': ['full', 'side', 'alignLeft', 'alignRight', 'alignCenter'],
+#         },
+#         'table': {
+#             'contentToolbar': [
+#                 'tableColumn', 'tableRow', 'mergeTableCells', 
+#                 'tableProperties', 'tableCellProperties'
+#             ],
+#         },
+#         'list': {
+#             'properties': {
+#                 'styles': True,
+#                 'startIndex': True,
+#                 'reversed': True,
+#             }
+#         },
+#         # این بخش اجازه می‌دهد تگ‌های ویدیو و HTML اختصاصی توسط ادیتور حذف نشوند
+#         'htmlSupport': {
+#             'allow': [
+#                 {'name': '/.*/', 'attributes': True, 'classes': True, 'styles': True}
+#             ]
+#         },
+
+#     },
+# }
+
+# # مدل‌ها از config_name='extends' استفاده می‌کنند؛ این نام باید در دیکشنری وجود داشته باشد.
+# CKEDITOR_5_CONFIGS['extends'] = CKEDITOR_5_CONFIGS['default']
+
+# CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'staff'
+# CKEDITOR_5_MAX_FILE_SIZE = 50  # برای ویدیو بهتر است حجم را کمی بیشتر کنید (مثلا ۵۰ مگابایت)
+
+CKEDITOR_UPLOAD_PATH = 'uploads/CKEditor'
+CKEDITOR_IMAGE_BACKEND = "pillow"
+CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
+CKEDITOR_CODESNIPPET = "/static/ckeditor/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js"
+CKEDITOR_CONFIGS = {
+    'default':
+        {
+            # 'contentsCss': [
+            #     '{% static "css/site.css" %}',  # مسیر فایل CSS  که فونت‌ها رو تعریف کردید
+            # ],
+            'toolbar': 'full',
+            'width': 'auto',
+            'extraPlugins': ','.join([
+                'codesnippet',
+                'html5video',
+                'pastefromgdocs',
+                
+            ]),
+        },
+}
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ──────────────────────────────────────────────────────────────
@@ -135,15 +248,14 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 14  # 14 روز
 # ──────────────────────────────────────────────────────────────
 # OTP — کاوه‌نگار
 # ──────────────────────────────────────────────────────────────
-# KAVENEGAR_API_KEY = os.environ.get('KAVENEGAR_API_KEY', '')
-KAVENEGAR_API_KEY = "6D4B7557415A7974556D37755977535830755A72476250327035484E674147634C586F376F544B56684E343D"
+KAVENEGAR_API_KEY = os.environ.get('KAVENEGAR_API_KEY', '')
 OTP_EXPIRY_MINUTES = 5
 
 # ──────────────────────────────────────────────────────────────
 # ZARINPAL — درگاه پرداخت
 # ──────────────────────────────────────────────────────────────
 ZARINPAL_MERCHANT_ID = os.environ.get('ZARINPAL_MERCHANT_ID', '')
-ZARINPAL_SANDBOX = True  # در محیط production روی False تنظیم شود
+ZARINPAL_SANDBOX = os.environ.get('ZARINPAL_SANDBOX', 'False').lower() in ('1', 'true', 'yes')
 
 # ──────────────────────────────────────────────────────────────
 # MESSAGES

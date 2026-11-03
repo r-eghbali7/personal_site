@@ -31,8 +31,10 @@ class KavenegarService:
         payload = {
             'receptor': phone_number,
             'token': code,
-            'template': 'verify',   # نام قالب پیامک تعریف‌شده در پنل کاوه‌نگار
+            'template': 'goldestone',   # نام قالب پیامک تعریف‌شده در پنل کاوه‌نگار
+            'type': 'sms'
         }
+        
         try:
             response = requests.post(url, data=payload, timeout=10)
             data = response.json()

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}خطای سرور | آکادمی حسین طاهری{% endblock %}
+{% block meta %}<meta content="noindex, nofollow" name="robots" />{% endblock %}
+{% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
+{% block content %}<main class="w-full pt-16 min-h-screen bg-background flex items-center">
+  <div class="relative w-full overflow-hidden py-space-xl">
+    <!-- Ambient Glow -->
+    <div class="absolute -top-24 right-1/4 w-[420px] h-[420px] bg-error-container/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 left-10 w-[320px] h-[320px] bg-accent-alt/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative max-w-3xl mx-auto px-margin w-full">
+      <div class="bg-card border border-border rounded-[28px] p-8 sm:p-12 shadow-[0_10px_30px_-8px_rgba(15,23,42,0.06)] flex flex-col items-center gap-6 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-error-container/40 text-destructive flex items-center justify-center">
+          <span class="material-symbols-outlined text-[34px]">report</span>
+        </div>
+
+        <div class="flex flex-col items-center gap-2">
+          <span class="font-code-md text-code-md font-extrabold tracking-[0.35em] text-outline">۵۰۰</span>
+          <h1 class="font-headline-lg text-headline-lg sm:text-[32px] sm:leading-snug text-primary-container font-bold leading-snug">
+            خطایی از سمت سرور رخ داد
+          </h1>
+          <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-xl">
+            در پردازش این درخواست مشکلی پیش آمد و صفحه نتوانست نمایش داده شود.
+            لطفاً چند لحظه بعد دوباره تلاش کنید؛ اگر مشکل ادامه داشت، از طریق تیکت به ما اطلاع دهید.
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 w-full sm:w-auto">
+          <button class="h-11 px-6 rounded-xl bg-primary-container text-on-primary font-body-sm text-body-sm font-bold flex items-center justify-center gap-2 hover:bg-tertiary-container transition-colors shadow-md shadow-primary-container/25" onclick="window.location.reload()" type="button">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+            <span>تلاش دوباره</span>
+          </button>
+          <a class="h-11 px-6 rounded-xl bg-surface-container-high text-primary-container font-body-sm text-body-sm font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-colors" href="{% url 'courses:home' %}">
+            <span class="material-symbols-outlined text-[18px]">home</span>
+            <span>بازگشت به صفحه اصلی</span>
+          </a>
+        </div>
+
+        <div class="w-full border-t border-border pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 font-body-sm text-body-sm text-outline">
+          <span class="font-code-sm text-code-sm">HTTP 500 — Internal Server Error</span>
+          <a class="text-primary-container font-semibold hover:underline" href="{% url 'tickets:list' %}">
+            گزارش مشکل به پشتیبانی
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

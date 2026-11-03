@@ -1681,9 +1681,6 @@
                     enctype="multipart/form-data"
                   >
                     {% csrf_token %}
-                    {% for message in messages %}
-                    <p class="md:col-span-2 text-sm text-primary">{{ message }}</p>
-                    {% endfor %}
                     <div class="flex flex-col gap-space-xs">
                       <label
                         class="font-headline-sm text-headline-sm text-on-surface"

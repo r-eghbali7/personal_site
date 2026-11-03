@@ -3,7 +3,7 @@
     home: "/",
     courses: "/courses/",
     blog: "/blog/",
-    podcasts: "/#podcasts",
+    podcasts: "/podcasts/",
     "online-quiz": "/quizzes/",
     "support-tickets": "/tickets/",
     cart: "/orders/cart/",

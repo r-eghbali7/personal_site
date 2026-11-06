@@ -29,6 +29,50 @@ if not DEBUG and SECRET_KEY == 'development-only-change-before-deploying':
     raise RuntimeError('DJANGO_SECRET_KEY must be configured when DJANGO_DEBUG is disabled.')
 
 # ──────────────────────────────────────────────────────────────
+# PRODUCTION SECURITY
+# ──────────────────────────────────────────────────────────────
+SECURE_SSL_REDIRECT = os.environ.get(
+    'DJANGO_SECURE_SSL_REDIRECT', str(not DEBUG)
+).lower() in ('1', 'true', 'yes')
+SECURE_HSTS_SECONDS = int(os.environ.get(
+    'DJANGO_SECURE_HSTS_SECONDS', '31536000' if not DEBUG else '0'
+))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get(
+    'DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False'
+).lower() in ('1', 'true', 'yes')
+SECURE_HSTS_PRELOAD = os.environ.get(
+    'DJANGO_SECURE_HSTS_PRELOAD', 'False'
+).lower() in ('1', 'true', 'yes')
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+X_FRAME_OPTIONS = 'DENY'
+
+# Enable only when a trusted reverse proxy overwrites X-Forwarded-Proto.
+if os.environ.get('DJANGO_SECURE_PROXY_SSL_HEADER', 'False').lower() in ('1', 'true', 'yes'):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Authentication and OTP abuse limits. Rates use django-ratelimit syntax.
+RATELIMIT_LOGIN_IP = '10/m'
+RATELIMIT_LOGIN_PHONE = '5/m'
+RATELIMIT_REGISTER_IP = '5/h'
+RATELIMIT_REGISTER_PHONE = '3/h'
+RATELIMIT_OTP_VERIFY_IP = '10/m'
+RATELIMIT_OTP_VERIFY_PHONE = '5/m'
+RATELIMIT_OTP_RESEND_IP = '3/h'
+RATELIMIT_OTP_RESEND_PHONE = '3/h'
+RATELIMIT_FORGOT_PASSWORD_IP = '5/h'
+RATELIMIT_FORGOT_PASSWORD_PHONE = '3/h'
+RATELIMIT_PASSWORD_RESET_IP = '5/h'
+RATELIMIT_PASSWORD_RESET_PHONE = '5/h'
+RATELIMIT_IP_META_KEY = os.environ.get('DJANGO_RATELIMIT_IP_META_KEY', 'REMOTE_ADDR')
+
+# ──────────────────────────────────────────────────────────────
 # APPLICATIONS
 # ──────────────────────────────────────────────────────────────
 INSTALLED_APPS = [

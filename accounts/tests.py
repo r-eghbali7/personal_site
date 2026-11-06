@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.core.cache import cache
 
 from courses.models import Category, Course, Enrollment
 from orders.models import Order, OrderItem
@@ -51,6 +52,34 @@ class AccountFlowTests(TestCase):
 			{'mobile': user.phone_number, 'password': 'secure-pass-123', 'next': 'https://example.com/'},
 		)
 		self.assertRedirects(response, reverse('courses:home'))
+
+	def test_login_is_rate_limited_by_phone(self):
+		self.addCleanup(cache.clear)
+		cache.clear()
+		login_url = reverse('accounts:login')
+		payload = {'mobile': '09123456789', 'password': 'wrong-password'}
+
+		for _ in range(5):
+			response = self.client.post(login_url, payload)
+			self.assertEqual(response.status_code, 200)
+
+		response = self.client.post(login_url, payload)
+		self.assertEqual(response.status_code, 404)
+
+	def test_otp_verification_is_rate_limited_by_session_phone(self):
+		self.addCleanup(cache.clear)
+		cache.clear()
+		phone = '09123456789'
+		session = self.client.session
+		session['register_data'] = {'phone_number': phone, 'action': 'register'}
+		session.save()
+
+		for _ in range(5):
+			response = self.client.post(reverse('accounts:otp_verify'), {'code': '000000'})
+			self.assertEqual(response.status_code, 200)
+
+		response = self.client.post(reverse('accounts:otp_verify'), {'code': '000000'})
+		self.assertEqual(response.status_code, 404)
 
 	def test_profile_update_and_logout_use_server_endpoints(self):
 		user = CustomUser.objects.create_user(

@@ -9,6 +9,7 @@ Views: accounts
 """
 
 import logging
+from django.http import HttpRequest
 from django.views import View
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -22,6 +23,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.cache import never_cache
+from django_ratelimit.decorators import ratelimit
 
 from .models import CustomUser, OTPCode
 from .forms import PasswordResetForm, RegisterForm, LoginForm, OTPVerifyForm, OTPRequestForm, ProfileForm
@@ -32,11 +34,32 @@ from tickets.models import Ticket, TicketMessage
 logger = logging.getLogger(__name__)
 
 
+def _otp_phone_rate_limit_key(_group: str, request: HttpRequest) -> str:
+    for session_key in ('register_data', 'reset_password_data', 'reset_password_confirmed'):
+        flow_data = request.session.get(session_key)
+        if flow_data and flow_data.get('phone_number'):
+            return flow_data['phone_number']
+    return request.META['REMOTE_ADDR']
+
+
 # ──────────────────────────────────────────────────────────────
 # ثبت‌نام
 # ──────────────────────────────────────────────────────────────
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(
+    ratelimit(key='ip', rate=settings.RATELIMIT_REGISTER_IP, method='POST', block=True),
+    name='dispatch',
+)
+@method_decorator(
+    ratelimit(
+        key='post:mobile',
+        rate=settings.RATELIMIT_REGISTER_PHONE,
+        method='POST',
+        block=True,
+    ),
+    name='dispatch',
+)
 class RegisterView(View):
     """
     مرحله اول ثبت‌نام:
@@ -97,6 +120,19 @@ class RegisterView(View):
 # ──────────────────────────────────────────────────────────────
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(
+    ratelimit(key='ip', rate=settings.RATELIMIT_LOGIN_IP, method='POST', block=True),
+    name='dispatch',
+)
+@method_decorator(
+    ratelimit(
+        key='post:mobile',
+        rate=settings.RATELIMIT_LOGIN_PHONE,
+        method='POST',
+        block=True,
+    ),
+    name='dispatch',
+)
 class LoginView(View):
     """
     ورود با شماره موبایل + رمز عبور.
@@ -140,6 +176,19 @@ class LoginView(View):
 # ──────────────────────────────────────────────────────────────
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(
+    ratelimit(key='ip', rate=settings.RATELIMIT_OTP_VERIFY_IP, method='POST', block=True),
+    name='dispatch',
+)
+@method_decorator(
+    ratelimit(
+        key=_otp_phone_rate_limit_key,
+        rate=settings.RATELIMIT_OTP_VERIFY_PHONE,
+        method='POST',
+        block=True,
+    ),
+    name='dispatch',
+)
 class OTPVerifyView(View):
     """
     تأیید کد OTP.
@@ -238,6 +287,19 @@ class OTPVerifyView(View):
         return result
 
 
+@method_decorator(
+    ratelimit(key='ip', rate=settings.RATELIMIT_OTP_RESEND_IP, method='POST', block=True),
+    name='dispatch',
+)
+@method_decorator(
+    ratelimit(
+        key=_otp_phone_rate_limit_key,
+        rate=settings.RATELIMIT_OTP_RESEND_PHONE,
+        method='POST',
+        block=True,
+    ),
+    name='dispatch',
+)
 class OTPResendView(View):
     """ارسال مجدد کد OTP."""
 
@@ -267,6 +329,24 @@ class OTPResendView(View):
 # ──────────────────────────────────────────────────────────────
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(
+    ratelimit(
+        key='ip',
+        rate=settings.RATELIMIT_FORGOT_PASSWORD_IP,
+        method='POST',
+        block=True,
+    ),
+    name='dispatch',
+)
+@method_decorator(
+    ratelimit(
+        key='post:mobile',
+        rate=settings.RATELIMIT_FORGOT_PASSWORD_PHONE,
+        method='POST',
+        block=True,
+    ),
+    name='dispatch',
+)
 class ForgotPasswordRequestView(View):
     """
     フォームパスワードリセット - ステップ1:
@@ -321,6 +401,19 @@ class ForgotPasswordRequestView(View):
 
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(
+    ratelimit(key='ip', rate=settings.RATELIMIT_PASSWORD_RESET_IP, method='POST', block=True),
+    name='dispatch',
+)
+@method_decorator(
+    ratelimit(
+        key=_otp_phone_rate_limit_key,
+        rate=settings.RATELIMIT_PASSWORD_RESET_PHONE,
+        method='POST',
+        block=True,
+    ),
+    name='dispatch',
+)
 class PasswordResetView(View):
     """
     フォームパスワードリセット - ステップ3:

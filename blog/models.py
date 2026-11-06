@@ -6,7 +6,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 
 
@@ -20,7 +20,7 @@ class BlogPost(models.Model):
         blank=True,
         verbose_name='خلاصه مقاله',
     )
-    content = RichTextField('محتوای مقاله')
+    content = CKEditor5Field('محتوای مقاله', config_name='extends')
     thumbnail = models.ImageField(
         upload_to='blog/thumbnails/',
         blank=True,
@@ -152,7 +152,7 @@ class Comment(models.Model):
         related_name='blog_comments',
         verbose_name='کاربر',
     )
-    body = RichTextField(verbose_name='متن نظر')
+    body = CKEditor5Field(verbose_name='متن نظر', config_name='extends')
     is_approved = models.BooleanField(
         default=False,
         verbose_name='تأیید شده',
@@ -214,7 +214,7 @@ class PodcastComment(models.Model):
         related_name='podcast_comments',
         verbose_name='کاربر',
     )
-    body = RichTextField(verbose_name='متن دیدگاه')
+    body = CKEditor5Field(verbose_name='متن دیدگاه', config_name='extends')
     is_approved = models.BooleanField(
         default=True,
         verbose_name='تأیید شده',

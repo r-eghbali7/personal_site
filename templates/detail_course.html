@@ -518,6 +518,14 @@
                     </div>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    {% if course.learning_outcomes %}
+                    {% for outcome in course.learning_outcomes %}
+                    <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-surface-container-lowest shadow-sm">
+                      <span class="material-symbols-outlined text-primary-container text-[22px] flex-shrink-0 mt-0.5">verified</span>
+                      <span class="font-body-md text-body-md text-on-surface font-semibold">{{ outcome }}</span>
+                    </div>
+                    {% endfor %}
+                    {% else %}
                     <div
                       class="flex items-start gap-3 p-3.5 rounded-2xl bg-surface-container-lowest shadow-sm"
                     >
@@ -674,8 +682,27 @@
                         >
                       </div>
                     </div>
+                    {% endif %}
                   </div>
                 </section>
+                {% for landing_section in course.landing_sections %}
+                <section class="bg-card rounded-[28px] p-8 shadow-sm flex flex-col gap-space-md">
+                  <h2 class="font-headline-md text-headline-md text-primary-container font-bold">{{ landing_section.title }}</h2>
+                  {% if landing_section.body %}
+                  <div class="font-body-md text-body-md text-on-surface-variant leading-relaxed">{{ landing_section.body|rich_text }}</div>
+                  {% endif %}
+                  {% if landing_section.items %}
+                  <ul class="flex flex-col gap-2 font-body-sm text-body-sm text-on-surface-variant">
+                    {% for item in landing_section.items %}
+                    <li class="flex items-start gap-2">
+                      <span class="material-symbols-outlined text-primary-container text-[18px]">check_circle</span>
+                      <span>{{ item }}</span>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                  {% endif %}
+                </section>
+                {% endfor %}
                 <!-- Section: Interactive Curriculum / Accordions -->
                 {% if chapters %}
                 <section class="bg-card rounded-[28px] p-8 shadow-sm flex flex-col gap-4" id="curriculum">
@@ -708,6 +735,17 @@
                             <source src="{{ lesson.video_file.url }}" />
                             مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.
                           </video>
+                          {% elif lesson.can_play and lesson.player_kind == 'embed' %}
+                          <div class="aspect-video w-full overflow-hidden rounded-lg bg-black">
+                            <iframe
+                              class="h-full w-full"
+                              src="{{ lesson.player_url }}"
+                              title="پخش ویدئوی {{ lesson.title }}"
+                              loading="lazy"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowfullscreen
+                            ></iframe>
+                          </div>
                           {% elif lesson.can_play %}<p class="text-sm text-outline">ویدئوی این درس هنوز بارگذاری نشده است.</p>
                           {% else %}<p class="text-sm text-outline">برای پخش این ویدئو ابتدا در دوره ثبت‌نام کنید.</p>{% endif %}
                         </article>

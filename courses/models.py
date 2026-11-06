@@ -5,7 +5,7 @@ App: courses — مدل‌های دوره، فصل، جلسه، کوییز، پ�
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 
 class Category(models.Model):
@@ -44,7 +44,7 @@ class Course(models.Model):
         blank=True,
         verbose_name='توضیح کوتاه',
     )
-    description = RichTextField('توضیحات کامل', config_name='extends')
+    description = CKEditor5Field('توضیحات کامل', config_name='extends')
     learning_outcomes = models.JSONField(
         default=list,
         blank=True,
@@ -180,7 +180,7 @@ class Chapter(models.Model):
         verbose_name='دوره',
     )
     title = models.CharField(max_length=200, verbose_name='عنوان فصل')
-    description = RichTextField('توضیحات فصل', blank=True, config_name='extends')
+    description = CKEditor5Field('توضیحات فصل', blank=True, config_name='extends')
     order = models.PositiveIntegerField(default=0, verbose_name='ترتیب')
 
     class Meta:
@@ -367,7 +367,7 @@ class Question(models.Model):
         related_name='questions',
         verbose_name='آزمون',
     )
-    body = RichTextField(verbose_name='متن سؤال')
+    body = CKEditor5Field(verbose_name='متن سؤال', config_name='extends')
     order = models.PositiveIntegerField(default=0, verbose_name='ترتیب')
 
     class Meta:
@@ -444,7 +444,7 @@ class FinalProject(models.Model):
         verbose_name='دوره',
     )
     title = models.CharField(max_length=250, verbose_name='عنوان پروژه')
-    description = RichTextField('شرح پروژه', config_name='extends')
+    description = CKEditor5Field('شرح پروژه', config_name='extends')
     sample_file = models.FileField(
         upload_to='projects/samples/',
         blank=True,

@@ -74,4 +74,5 @@ npx tailwindcss@3.4.17 -c tailwind.config.js -i static/css/tailwind.input.css -o
 
 ## تست‌ها
 
-- مجموعاً ۸۴ تست اجرا می‌شود؛ تنها شکست باقی‌مانده تست قدیمی `test_course_landing_content_and_inline_videos_are_database_backed` است که انتظارهای قالب قدیمی دوره را دارد و از قبل ناموفق بوده است.
+- ویرایشگر محتوای مقاله و دوره با CKEditor 5 پیکربندی شده است.
+- مجموعاً ۹۰ تست اجرا می‌شود و همهٔ تست‌ها موفق هستند.

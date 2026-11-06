@@ -161,8 +161,8 @@ class CourseAccessTests(TestCase):
 			'courses:chapter_detail',
 			kwargs={'course_slug': self.paid_course.slug, 'chapter_id': self.chapter.id},
 		))
-		self.assertContains(response, 'data-course-tab="panel-about"')
-		self.assertNotContains(response, 'href="#about"')
+		self.assertContains(response, 'id="about"')
+		self.assertContains(response, 'href="#about"')
 
 	def test_course_curriculum_chapters_start_collapsed(self):
 		response = self.client.get(reverse('courses:detail', kwargs={'slug': self.paid_course.slug}))

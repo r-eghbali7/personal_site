@@ -6,9 +6,10 @@ django-ckeditor==6.7.4
 django-ckeditor-5==0.2.20
 django-js-asset==5.0.0
 idna==3.20
+kavenegar==1.1.2
 pillow==13.0.0
+python-dotenv==1.2.4
 requests==2.34.2
 sqlparse==0.6.0
 tzdata==2026.6
 urllib3==2.8.0
-python-dotenv==1.2.4

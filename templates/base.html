@@ -34,6 +34,16 @@
         main > :first-child { margin-top: 0 !important; }
         main > :last-child { margin-bottom: 0 !important; }
       }
+      body {
+        background-color: #f8fafc !important;
+        background-image:
+          linear-gradient(to right, rgba(16, 58, 105, 0.04) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(16, 58, 105, 0.04) 1px, transparent 1px);
+        background-size: 32px 32px;
+      }
+      main.bg-background {
+        background-color: transparent;
+      }
       ::-webkit-scrollbar { display: none; }
 
       /* Scroll reveal effect */

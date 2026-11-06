@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 {% load persian_filters %}
-{% block title %}آکادمی حسین طاهری{% endblock %}
+{% block title %}{{ post.title }} | آکادمی پارسا اقبالی{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block seo_description %}{{ post.summary|default:post.content|striptags|truncatechars:160 }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ post.title }} | آکادمی پارسا اقبالی{% endblock %}
+{% block og_description %}{{ post.summary|default:post.content|striptags|truncatechars:160 }}{% endblock %}
+{% block twitter_title %}{{ post.title }} | آکادمی پارسا اقبالی{% endblock %}
+{% block twitter_description %}{{ post.summary|default:post.content|striptags|truncatechars:160 }}{% endblock %}
+{% block twitter_card %}{% if post.thumbnail %}summary_large_image{% else %}summary{% endif %}{% endblock %}
 {% block head %}<meta content="web_standard" name="shell-type" />
 <style>
   .article-body { color: #43474f; line-height: 2; }
@@ -169,7 +176,7 @@
               <div class="flex flex-wrap items-center gap-4">
                 <img
                   class="w-12 h-12 rounded-full object-cover shadow-sm"
-                  data-alt="Professional modern portrait photo of a senior Iranian male software architect Hossein Taheri wearing dark glasses and navy blazer, soft studio lighting, tech conference background, hyper-realistic, depth of field."
+                  data-alt="Professional modern portrait photo of a senior Iranian male software architect Parsa Eghbali wearing dark glasses and navy blazer, soft studio lighting, tech conference background, hyper-realistic, depth of field."
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuARlQkqapaHwcg2E-4leqlkoN9dvpz5lYNniPFot6ncJzXaU_IIQVOirgW0GXWEnqdYWp4DyC_vVzTwUS4P_N9JC6DYeKViR8VJTxP2ZS8nJkIWjdoDmv8LEZ_fgRfIeBVhzrjMbY1enl9G0i3t7xAaP8CXXsT-eZ1XH6R_f3YEQe9vactJSBG3MB5_HQs5v-DCHBb5M1TpebnMsVvbUWN4YE7HptD0eWudrEwIl3gFDTxhmPNQr9TORw"
                 />
                 <div class="flex flex-col">
@@ -977,7 +984,7 @@
               >
                 <img
                   class="w-24 h-24 rounded-2xl object-cover shadow-md shrink-0"
-                  data-alt="Close up professional portrait of Hossein Taheri software engineer and tech educator, navy blue themed background, confident smile, clean Iranian tech leader profile."
+                  data-alt="Close up professional portrait of Parsa Eghbali software engineer and tech educator, navy blue themed background, confident smile, clean Iranian tech leader profile."
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8-1B_qvR_xrwZl8ftxFIoOsAKCPJCV1aLy7VatWoY_jCaz3D5adeqi_d52IEm_71OXE0tQwTTdDzKR9GbYVG49fft_LOgBCG7lver2liH5M8HiglHB-jGw8v3_lt9zyOO6arntMpYzGxmBTbVOhy6r52bPPElvrCgq7Mo3VzhhmQnyN7rD-GMeYYRd02jfeXu6cNg29kibwdi4_Jv4HFXLr9D1XWXplt2QaSR1Uun9Fe5DCI5_jG6DQ"
                 />
                 <div class="flex flex-col gap-2">
@@ -988,7 +995,7 @@
                       <h3
                         class="font-headline-md text-headline-md text-primary font-bold"
                       >
-                        حسین طاهری
+                        پارسا اقبالی
                       </h3>
                       <span
                         class="px-2.5 py-0.5 rounded-full bg-primary-container text-on-primary text-[10px] font-bold"
@@ -1275,12 +1282,12 @@
                         <div class="flex items-center gap-2">
                           <img
                             class="w-8 h-8 rounded-full object-cover"
-                            data-alt="Hossein Taheri headshot instructor verified badge avatar."
+                            data-alt="Parsa Eghbali headshot instructor verified badge avatar."
                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8gpHegvkjnI8ObM7Nl0c19q1viXz3aBggNZUxw2nHbE0aTw07vSRfn9_RvBzJbt_KX6BGifBJyUqPktR-1CPP3jCbQ6NeMFpxT89SrTak1_bwzIbwxpbCJiFM8FzbYLZwAQuLhhymg4VM5RN6wsxS-V-Ly2hWepUAYWM29PVOpe2ZFg9yVJBiVwNHqVqQjl-cAk6UUODwayMFoFPLAz7J3KzV1eL437bbHhJd8RJby88wiJ7w8tnHdg"
                           />
                           <span
                             class="font-headline-sm text-headline-sm text-primary font-bold"
-                            >حسین طاهری</span
+                            >پارسا اقبالی</span
                           >
                           <span
                             class="px-2 py-0.5 rounded-md bg-primary-container text-on-primary text-[10px] font-bold"
@@ -1464,7 +1471,7 @@
                     class="font-body-sm text-body-sm text-on-primary-container leading-relaxed"
                   >
                     طراحی، استقرار کلاستر کافکا، معماری رویدادمحور و امنیت
-                    اینترپرایز همراه با منتورینگ هفتگی مستقیم مهندس حسین طاهری.
+                    اینترپرایز همراه با منتورینگ هفتگی مستقیم مهندس پارسا اقبالی.
                   </p>
                 </div>
                 <div
@@ -1626,7 +1633,7 @@
           if (copyCodeBtn && copyCodeLabel) {
             copyCodeBtn.addEventListener("click", () => {
               navigator.clipboard.writeText(
-                `// Order Consumer Implementation\\n// Copied from Hossein Taheri DevAcademy`,
+                `// Order Consumer Implementation\\n// Copied from Parsa Eghbali DevAcademy`,
               );
               copyCodeLabel.textContent = "Copied!";
               setTimeout(() => {
@@ -1693,13 +1700,13 @@
               <h3
                 class="font-headline-sm text-headline-sm text-primary-container font-bold"
               >
-                حسین طاهری | DevAcademy
+                پارسا اقبالی | DevAcademy
               </h3>
             </div>
             <p
               class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
             >
-              حسین طاهری، مهندس ارشد نرم‌افزار و مدرس حوزه‌های Full-Stack با بیش
+              پارسا اقبالی، مهندس ارشد نرم‌افزار و مدرس حوزه‌های Full-Stack با بیش
               از یک دهه تجربه طراحی سامانه‌های توزیع‌شده. رسالت ما در این
               آکادمی، تربیت متخصصان فنی، مسلط بر مهارت‌های کاربردی بازار کار
               جهانی و استانداردهای روز نرم‌افزار است.
@@ -1718,7 +1725,7 @@
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-outline text-[18px]"
                   >mail</span
-                ><span>info@hosseintaheri.dev</span>
+                ><span>r.eghbali2002@gmail.com</span>
               </div>
             </div>
           </div>
@@ -1887,7 +1894,7 @@
           </div>
         </div>
         <div class="mt-6 text-center font-body-sm text-body-sm text-outline">
-          © تمامی حقوق مادی و معنوی برای آکادمی توسعه نرم‌افزار حسین طاهری محفوظ
+          © تمامی حقوق مادی و معنوی برای آکادمی توسعه نرم‌افزار پارسا اقبالی محفوظ
           است.
         </div>
       </div>

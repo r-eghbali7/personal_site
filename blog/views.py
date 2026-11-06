@@ -88,6 +88,7 @@ class BlogDetailView(View):
         )
         context = {
             'post': post,
+            'seo_image': request.build_absolute_uri(post.thumbnail.url) if post.thumbnail else '',
             'comments': comments,
             'post_content_html': post_content_html,
             'toc': toc,

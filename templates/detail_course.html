@@ -2,8 +2,14 @@
 {% load static %}
 {% load persian_filters %}
 {% load course_tags %}
-{% block title %}آکادمی حسین طاهری{% endblock %}
+{% block title %}{{ course.title }} | آکادمی پارسا اقبالی{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
+{% block seo_description %}{{ meta_description|default:course.title|striptags|truncatechars:160 }}{% endblock %}
+{% block og_title %}{{ course.title }} | آکادمی پارسا اقبالی{% endblock %}
+{% block og_description %}{{ meta_description|default:course.title|striptags|truncatechars:160 }}{% endblock %}
+{% block twitter_title %}{{ course.title }} | آکادمی پارسا اقبالی{% endblock %}
+{% block twitter_description %}{{ meta_description|default:course.title|striptags|truncatechars:160 }}{% endblock %}
+{% block twitter_card %}{% if course.thumbnail %}summary_large_image{% else %}summary{% endif %}{% endblock %}
 {% block head %}<meta content="web_standard" name="shell-type" />
 <style>
   /* قسمت «درباره دوره»: نمایش بخشی از متن + دکمه مشاهده بیشتر */
@@ -930,7 +936,7 @@
                     class="flex flex-col md:flex-row items-center md:items-start gap-6 bg-surface-container-lowest p-6 rounded-2xl shadow-sm"
                   >
                     <img
-                      alt="مهندس حسین طاهری - مدرس دوره"
+                      alt="مهندس پارسا اقبالی - مدرس دوره"
                       class="w-32 h-32 rounded-2xl object-cover shadow-md flex-shrink-0"
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q"
                     />
@@ -944,7 +950,7 @@
                           <h3
                             class="font-headline-sm text-headline-sm text-primary-container font-bold"
                           >
-                            مهندس حسین طاهری
+                            مهندس پارسا اقبالی
                           </h3>
                           <p
                             class="font-body-sm text-body-sm text-secondary font-medium"
@@ -1284,7 +1290,7 @@
                       >
                         تمامی دانشجویان به بخش تیکت پشتیبانی اختصاصی وب‌سایت و
                         همچنین گروه فنی VIP تلگرام دسترسی مستقیم دارند. سوالات
-                        فنی و بررسی کدهای شما توسط شخص مهندس حسین طاهری و
+                        فنی و بررسی کدهای شما توسط شخص مهندس پارسا اقبالی و
                         منتورهای ارشد آکادمی حداکثر ظرف ۱۲ ساعت کاری پاسخ داده
                         می‌شود.
                       </div>
@@ -1902,13 +1908,13 @@
               <h3
                 class="font-headline-sm text-headline-sm text-primary-container font-bold"
               >
-                حسین طاهری | DevAcademy
+                پارسا اقبالی | DevAcademy
               </h3>
             </div>
             <p
               class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify"
             >
-              حسین طاهری، مهندس ارشد نرم‌افزار و مدرس حوزه‌های Full-Stack با بیش
+              پارسا اقبالی، مهندس ارشد نرم‌افزار و مدرس حوزه‌های Full-Stack با بیش
               از یک دهه تجربه طراحی سامانه‌های توزیع‌شده. رسالت ما در این
               آکادمی، تربیت متخصصان فنی، مسلط بر مهارت‌های کاربردی بازار کار
               جهانی و استانداردهای روز نرم‌افزار است.
@@ -1927,7 +1933,7 @@
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-outline text-[18px]"
                   >mail</span
-                ><span>info@hosseintaheri.dev</span>
+                ><span>r.eghbali2002@gmail.com</span>
               </div>
             </div>
           </div>
@@ -2096,7 +2102,7 @@
           </div>
         </div>
         <div class="mt-6 text-center font-body-sm text-body-sm text-outline">
-          © تمامی حقوق مادی و معنوی برای آکادمی توسعه نرم‌افزار حسین طاهری محفوظ
+          © تمامی حقوق مادی و معنوی برای آکادمی توسعه نرم‌افزار پارسا اقبالی محفوظ
           است.
         </div>
       </div>

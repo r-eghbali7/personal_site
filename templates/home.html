@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load persian_filters %}
-{% block title %}آکادمی حسین طاهری{% endblock %}
+{% block title %}آکادمی پارسا اقبالی{% endblock %}
 {% block head %}
 <link href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.js"></script>
@@ -182,10 +182,10 @@
         <!-- Instructor Visual Column -->
         <div class="lg:col-span-4 flex flex-col items-center text-center">
           <div class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-3xl overflow-hidden border-4 border-surface-container-lowest shadow-md">
-            <img alt="حسین طاهری | مدرس و معمار ارشد نرم‌افزار" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q" />
+            <img alt="پارسا اقبالی | مدرس و معمار ارشد نرم‌افزار" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q" />
             <div class="absolute bottom-2 right-2 left-2 py-1.5 px-3 rounded-xl bg-primary-container/90 backdrop-blur-md text-surface-container-lowest flex items-center justify-center gap-1.5 shadow-sm">
               <span class="material-symbols-outlined text-accent-alt text-[16px]">verified</span>
-              <span class="font-body-sm text-body-sm font-semibold">حسین طاهری | Hossein Taheri</span>
+              <span class="font-body-sm text-body-sm font-semibold">پارسا اقبالی | Parsa Eghbali</span>
             </div>
           </div>
           <span class="mt-4 font-headline-sm text-headline-sm text-primary-container font-bold">معمار ارشد نرم‌افزار و منتور ارشد</span>
@@ -433,7 +433,7 @@
 
                 <div class="min-w-0 flex-1">
                   <h3 class="text-[15px] font-bold text-on-primary leading-6 truncate">{{ post.podcast_title|default:post.title }}</h3>
-                  <p class="mt-0.5 text-[11px] leading-4 text-on-primary/60 truncate">گوینده: {{ post.author.full_name|default:"حسین طاهری" }}</p>
+                  <p class="mt-0.5 text-[11px] leading-4 text-on-primary/60 truncate">گوینده: {{ post.author.full_name|default:"پارسا اقبالی" }}</p>
                   <div class="mt-2 flex flex-wrap items-center gap-2">
                     {% if post.published_at %}
                     <span class="inline-flex items-center gap-1 rounded-full bg-primary/50 px-2.5 py-1 text-[11px] font-medium text-on-primary/85">

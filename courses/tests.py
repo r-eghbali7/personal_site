@@ -300,7 +300,7 @@ class HomePodcastSectionTests(TestCase):
 		self.author = CustomUser.objects.create_user(
 			phone_number='09120000777',
 			password='test-password-123',
-			full_name='حسین طاهری',
+			full_name='پارسا اقبالی',
 		)
 		self.post = BlogPost.objects.create(
 			title='اپیزود آزمایشی',
@@ -321,7 +321,7 @@ class HomePodcastSectionTests(TestCase):
 		self.assertContains(response, 'پادکست‌ها')
 		self.assertContains(response, 'همه پادکست‌ها')
 		self.assertContains(response, self.post.podcast_title)
-		self.assertContains(response, 'گوینده: حسین طاهری')
+		self.assertContains(response, 'گوینده: پارسا اقبالی')
 		self.assertContains(response, '۱۴۰۵ فروردین ۱۷')
 		self.assertContains(response, '۸:۰۰')
 		self.assertContains(

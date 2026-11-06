@@ -46,7 +46,7 @@
 ```django
 {% extends "base.html" %}
 
-{% block title %}عنوان صفحه | آکادمی حسین طاهری{% endblock %}
+{% block title %}عنوان صفحه | آکادمی پارسا اقبالی{% endblock %}
 
 {% block head %}
 <!-- CSS اختصاصی این صفحه -->

@@ -190,6 +190,8 @@ class CourseDetailView(View):
         total_video_duration = lesson_stats['total_video_duration']
         context = {
             'course': course,
+            'meta_description': meta_description,
+            'seo_image': request.build_absolute_uri(course.thumbnail.url) if course.thumbnail else '',
             'pages': {
                 'title': course.title,
                 'description': meta_description,

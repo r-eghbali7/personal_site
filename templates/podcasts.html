@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load persian_filters %}
-{% block title %}پادکست‌ها | آکادمی حسین طاهری{% endblock %}
+{% block title %}پادکست‌ها | آکادمی پارسا اقبالی{% endblock %}
 {% block head %}<link href="{% static 'css/podcast-player.css' %}" rel="stylesheet" />{% endblock %}
 {% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
 {% block content %}<main class="w-full pt-16 min-h-screen bg-background">
@@ -57,7 +57,7 @@
               {{ post.podcast_title|default:post.title }}
             </h2>
             <p class="mt-1 text-body-sm text-on-surface-variant">
-              گوینده: {{ post.author.full_name|default:"حسین طاهری" }}
+              گوینده: {{ post.author.full_name|default:"پارسا اقبالی" }}
             </p>
             <div class="mt-2 flex flex-wrap items-center gap-2">
               {% if post.published_at %}

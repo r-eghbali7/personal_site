@@ -76,6 +76,11 @@ class BlogPost(models.Model):
         default=10,
         verbose_name='درصد کد تخفیف مقاله',
     )
+    enterprise_project_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name='تعداد پروژه‌های انترپرایز',
+        help_text='تعداد پروژه‌های جامع انترپرایز (برای نمایش در بخش آمار)',
+    )
     views_count = models.PositiveIntegerField(default=0, verbose_name='بازدید')
     read_time_minutes = models.PositiveIntegerField(
         default=5,

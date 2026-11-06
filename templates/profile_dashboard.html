@@ -65,7 +65,7 @@
           {% for ticket in recent_tickets %}
           <a class="rounded-xl bg-card p-4 shadow-sm hover:bg-surface-container-low" href="{% url 'tickets:detail' ticket.pk %}">
             <div class="flex flex-wrap items-center justify-between gap-2"><h3 class="font-semibold text-primary">{{ ticket.subject }}</h3><span class="rounded-full bg-surface-container-high px-2.5 py-1 text-xs">{{ ticket.get_status_display }}</span></div>
-            <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-outline"><span>شماره {{ ticket.pk }}</span><span>{% if ticket.course %}{{ ticket.course.title }}{% else %}پرسش عمومی{% endif %}</span><span>{{ ticket.created_at|date:'Y/m/d H:i' }}</span><span>{{ ticket.messages.count }} پیام</span></div>
+            <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-outline"><span>شماره {{ ticket.pk }}</span><span>{% if ticket.course %}{{ ticket.course.title }}{% else %}پرسش عمومی{% endif %}</span><span>{{ ticket.created_at|date:'Y/m/d H:i' }}</span><span>{{ ticket.message_count }} پیام</span></div>
           </a>
           {% empty %}<p class="rounded-xl bg-card p-5 text-outline">تاکنون تیکتی ثبت نکرده‌اید.</p>{% endfor %}
         </div>

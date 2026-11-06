@@ -63,6 +63,13 @@ class Course(models.Model):
         null=True,
         verbose_name='تصویر بندانگشتی',
     )
+    intro_video = models.FileField(
+        upload_to='courses/intro_videos/',
+        blank=True,
+        null=True,
+        verbose_name='ویدیوی معرفی دوره',
+        help_text='ویدیوی معرفی/پیش‌نمایش دوره که در بالای صفحه با پخش‌کننده قابل تماشاست.',
+    )
     price = models.DecimalField(
         max_digits=12,
         decimal_places=0,
@@ -75,6 +82,40 @@ class Course(models.Model):
         choices=LEVEL_CHOICES,
         default='beginner',
         verbose_name='سطح دوره',
+    )
+    detail_badge = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='برچسب صفحه جزئیات',
+    )
+    level_description = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='شرح سطح دوره',
+    )
+    project_focus = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='نوع پروژه‌های دوره',
+    )
+    language = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='زبان دوره',
+    )
+    prerequisites = models.TextField(
+        blank=True,
+        verbose_name='پیش‌نیازهای دوره',
+    )
+    access_details = models.TextField(
+        blank=True,
+        verbose_name='جزئیات دسترسی دوره',
+    )
+    included_features = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name='موارد شامل دوره',
+        help_text='فهرستی از موارد با کلیدهای icon و text.',
     )
     is_published = models.BooleanField(default=False, verbose_name='منتشر شده')
     category = models.ForeignKey(
@@ -90,6 +131,11 @@ class Course(models.Model):
         on_delete=models.CASCADE,
         related_name='teaching_courses',
         verbose_name='مدرس',
+    )
+    enterprise_project_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name='تعداد پروژه‌های انترپرایز',
+        help_text='تعداد پروژه‌های جامع انترپرایز دوره (برای نمایش در بخش آمار)',
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='آخرین بروزرسانی')

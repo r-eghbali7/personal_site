@@ -2,6 +2,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
+from django.db.models import Count
 from django.http import HttpResponseForbidden
 from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
@@ -12,7 +13,9 @@ from .models import Ticket, TicketMessage
 
 class TicketListView(LoginRequiredMixin, View):
     def get(self, request):
-        tickets = request.user.tickets.prefetch_related('messages').all()
+        tickets = request.user.tickets.annotate(
+            message_count=Count('messages'),
+        )
         return render(request, 'ticket_list.html', {'tickets': tickets})
 
 

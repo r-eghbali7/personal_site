@@ -445,8 +445,8 @@ class ProfileView(LoginRequiredMixin, View):
             chapter_count=Count('course__chapters', distinct=True),
             lesson_count=Count('course__chapters__lessons', distinct=True),
         )
-        tickets = user.tickets.select_related('course').prefetch_related(
-            'messages__sender',
+        tickets = user.tickets.select_related('course').annotate(
+            message_count=Count('messages'),
         ).order_by('-created_at')
         orders = user.orders.prefetch_related('items__course').order_by('-created_at')
         quiz_attempts = user.quiz_attempts.select_related(

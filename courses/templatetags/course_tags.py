@@ -13,6 +13,19 @@ _BLOCK_TAG_RE = re.compile(
     re.IGNORECASE,
 )
 
+FEATURE_ICON_MAP = {
+    'infinity': 'all_inclusive',
+    'folder-down': 'folder_zip',
+    'laptop': 'laptop_mac',
+    'headset': 'headset_mic',
+    'monitor-play': 'play_circle',
+    'refresh-cw': 'sync',
+    'clipboard-check': 'assignment_turned_in',
+    'award': 'workspace_premium',
+    'clock': 'schedule',
+    'users': 'groups',
+}
+
 
 @register.filter
 def rich_text(value):
@@ -27,3 +40,11 @@ def rich_text(value):
     if _BLOCK_TAG_RE.search(str(value)):
         return mark_safe(value)
     return linebreaks(value)
+
+
+@register.filter
+def course_feature_icon(value):
+    """Translate common Lucide icon IDs to Material Symbols names."""
+    if not value:
+        return ''
+    return FEATURE_ICON_MAP.get(str(value).strip().lower(), value)

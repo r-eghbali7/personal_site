@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load persian_filters %}
 {% block title %}آکادمی حسین طاهری{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
 {% block head %}<meta content="web_standard" name="shell-type" />
@@ -144,7 +145,7 @@
                 <span
                   class="w-2 h-2 rounded-full bg-accent-alt animate-pulse"
                 ></span>
-                <span>بروزرسانی شده: بهار ۱۴۰۴</span>
+                <span>بروزرسانی شده: {{ post.updated_at|persian_date:"%d %B %Y" }}</span>
               </span>
             </div>
             <!-- Main Title & Subtitle -->
@@ -194,7 +195,7 @@
                     <span class="material-symbols-outlined text-[18px]"
                       >calendar_today</span
                     >
-                    <span>۱۸ اردیبهشت ۱۴۰۴</span>
+                    <span>{{ post.published_at|persian_date:"%Y %B %d" }}</span>
                   </span>
                   <span class="flex items-center gap-1">
                     <span class="material-symbols-outlined text-[18px]"
@@ -218,24 +219,7 @@
               </div>
               <!-- Action Buttons Cluster -->
               <div class="flex items-center gap-2 self-end lg:self-center">
-                <div
-                  class="flex items-center bg-surface-container rounded-xl p-1 gap-1"
-                >
-                  <button
-                    class="h-8 w-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors font-code-sm text-code-sm font-bold"
-                    id="font-decrease"
-                    title="کاهش سایز متن"
-                  >
-                    A-
-                  </button>
-                  <button
-                    class="h-8 w-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors font-code-sm text-code-sm font-bold"
-                    id="font-increase"
-                    title="افزایش سایز متن"
-                  >
-                    A+
-                  </button>
-                </div>
+                
                 <button
                   class="h-10 w-10 rounded-xl bg-surface-container hover:bg-primary-container hover:text-on-primary text-primary-container transition-all flex items-center justify-center"
                   id="bookmark-btn"

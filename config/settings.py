@@ -75,8 +75,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # Context processor سفارشی برای سبد خرید
-                'orders.context_processors.cart_processor',
                 # بنرهای فعال
                 'banners.context_processors.active_banners',
             ],
@@ -232,7 +230,18 @@ CKEDITOR_CONFIGS = {
                 'codesnippet',
                 'html5video',
                 'pastefromgdocs',
-                
+
+            ]),
+        },
+    'extends':
+        {
+            'toolbar': 'full',
+            'width': 'auto',
+            'extraPlugins': ','.join([
+                'codesnippet',
+                'html5video',
+                'pastefromgdocs',
+
             ]),
         },
 }

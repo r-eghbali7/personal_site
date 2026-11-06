@@ -10,7 +10,7 @@ from django.views import View
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import IntegrityError, transaction
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q, Sum
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -82,6 +82,10 @@ class BlogDetailView(View):
         claim_id = request.session.get('blog_coupon_claim_id')
         if claim_id:
             coupon_claim = BlogCouponClaim.objects.filter(pk=claim_id, post=post).first()
+        stats = BlogPost.objects.filter(is_published=True).aggregate(
+            total_articles=Count('id'),
+            total_reading_minutes=Sum('read_time_minutes'),
+        )
         context = {
             'post': post,
             'comments': comments,
@@ -90,6 +94,9 @@ class BlogDetailView(View):
             'coupon_otp_sent': pending_coupon.get('post_id') == post.pk,
             'coupon_phone': pending_coupon.get('phone', ''),
             'coupon_claim': coupon_claim,
+            'total_articles': stats['total_articles'],
+            'total_reading_minutes': stats['total_reading_minutes'] or 0,
+            'enterprise_project_count': post.enterprise_project_count,
         }
         if is_ajax(request):
             return JsonResponse({'post':{'id':post.id,'title':post.title,'slug':post.slug,'content':post.content},'comments':[{'id':c.id,'body':c.body,'user': c.user.full_name or 'کاربر آکادمی'} for c in comments]})

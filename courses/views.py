@@ -6,7 +6,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 from django.template.loader import render_to_string
 from django.urls import reverse
 from .models import Category, Course, Chapter, Lesson, CourseComment, Quiz, FinalProject
@@ -14,10 +14,22 @@ from blog.models import BlogPost
 
 
 def prepare_chapter_media(chapters, user):
+    """چیدمان جلسات هر فصل برای پخش.
+
+    وضعیت دسترسی (رایگان / پیش‌نمایش / ثبت‌نام‌شده) فقط یک‌بار برای کل دوره
+    محاسبه می‌شود تا از کوئری‌های تکراری (N+1) برای هر جلسه جلوگیری شود.
+    """
+    chapters = list(chapters)
+    if not chapters:
+        return chapters
+    course = chapters[0].course
+    free_or_enrolled = course.is_free or (
+        user.is_authenticated and course.is_enrolled(user)
+    )
     for chapter in chapters:
         lessons = list(chapter.lessons.all())
         for lesson in lessons:
-            lesson.can_play = lesson.can_access(user)
+            lesson.can_play = free_or_enrolled or lesson.is_free_preview
             lesson.player_kind = None
             lesson.player_url = ''
             if not lesson.can_play:
@@ -157,8 +169,32 @@ class CourseDetailView(View):
         course_comments = list(
             course.comments.filter(is_approved=True).select_related('user')
         )
+        from django.utils.html import strip_tags
+        plain = ' '.join(strip_tags(course.description or '').split())
+        meta_description = (course.short_description or plain)[:160]
+        has_video = (
+            (Q(video_file__isnull=False) & ~Q(video_file=''))
+            | Q(video_url__gt='')
+        )
+        lesson_stats = Lesson.objects.filter(
+            chapter__course=course,
+        ).aggregate(
+            total_video_duration=Sum(
+                'duration_seconds',
+                filter=has_video,
+                default=0,
+            ),
+            total_videos=Count('pk', filter=has_video),
+            total_lessons=Count('pk'),
+        )
+        total_video_duration = lesson_stats['total_video_duration']
         context = {
             'course': course,
+            'pages': {
+                'title': course.title,
+                'description': meta_description,
+                'canonical': request.build_absolute_uri(request.path),
+            },
             'chapters': chapters,
             'enrolled': course.is_enrolled(request.user),
             'final_project': FinalProject.objects.filter(course=course).first(),
@@ -168,6 +204,11 @@ class CourseDetailView(View):
                 is_published=True,
                 category=course.category,
             ).exclude(pk=course.pk).select_related('category')[:3],
+            'total_video_duration_hours': total_video_duration // 3600,
+            'total_video_duration_minutes': (total_video_duration % 3600) // 60,
+            'total_video_count': lesson_stats['total_videos'],
+            'total_lessons': lesson_stats['total_lessons'],
+            'enterprise_project_count': course.enterprise_project_count,
         }
         if is_ajax(request):
             return JsonResponse({'course':{'id':course.id,'title':course.title,'slug':course.slug,'price':str(course.price)},'chapters':[{'id':ch.id,'title':ch.title} for ch in chapters]})
@@ -301,14 +342,19 @@ class QuizSubmitView(LoginRequiredMixin, View):
         if not isinstance(answers, dict):
             return JsonResponse({'error': 'answers must be an object'}, status=400)
         total = quiz.questions.count()
+        questions = quiz.questions.prefetch_related('choices')
         correct = 0
-        for q in quiz.questions.all():
+        for q in questions:
             choice_id = answers.get(str(q.id))
-            if choice_id:
-                try:
-                    correct += q.choices.filter(id=int(choice_id), is_correct=True).exists()
-                except (TypeError, ValueError):
-                    continue
+            if not choice_id:
+                continue
+            try:
+                choice_id = int(choice_id)
+            except (TypeError, ValueError):
+                continue
+            correct += bool(
+                any(c.id == choice_id and c.is_correct for c in q.choices.all())
+            )
         score = int((correct/total)*100) if total else 0
         from courses.models import QuizAttempt
         QuizAttempt.objects.create(user=request.user, quiz=quiz, score=score)

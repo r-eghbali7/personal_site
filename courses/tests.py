@@ -18,6 +18,7 @@ from .models import (
 	Lesson,
 	Quiz,
 )
+from persian.templatetags.persian_filters import persian_date
 
 
 class CourseAccessTests(TestCase):
@@ -76,6 +77,68 @@ class CourseAccessTests(TestCase):
 		self.assertContains(response, self.paid_course.title)
 		self.assertContains(response, self.chapter.title)
 		self.assertContains(response, '1000')
+
+	def test_course_detail_metadata_and_included_features_are_database_backed(self):
+		self.paid_course.detail_badge = 'اطلاعات سفارشی دوره'
+		self.paid_course.level_description = 'سطح سفارشی'
+		self.paid_course.project_focus = 'پروژه سفارشی'
+		self.paid_course.language = 'زبان سفارشی'
+		self.paid_course.prerequisites = 'پیش‌نیاز سفارشی'
+		self.paid_course.access_details = 'دسترسی سفارشی'
+		self.paid_course.included_features = [
+			{'icon': 'folder-down', 'text': 'ویژگی سفارشی دوره'},
+		]
+		self.paid_course.save(update_fields=[
+			'detail_badge',
+			'level_description',
+			'project_focus',
+			'language',
+			'prerequisites',
+			'access_details',
+			'included_features',
+		])
+
+		expected_updated_date = persian_date(self.paid_course.updated_at, '%d %B %Y')
+		response = self.client.get(reverse('courses:detail', kwargs={'slug': self.paid_course.slug}))
+
+		self.assertEqual(response.status_code, 200)
+		for value in (
+			'اطلاعات سفارشی دوره',
+			'سطح سفارشی',
+			'پروژه سفارشی',
+			'زبان سفارشی',
+			'پیش‌نیاز سفارشی',
+			'دسترسی سفارشی',
+			'ویژگی سفارشی دوره',
+			'folder_zip',
+		):
+			self.assertContains(response, value)
+		self.assertNotContains(response, 'folder-down')
+		self.assertContains(response, expected_updated_date)
+
+	def test_course_detail_video_statistics_are_calculated_from_uploaded_videos(self):
+		self.preview.video_url = 'https://youtu.be/preview-video'
+		self.preview.duration_seconds = 3600
+		self.preview.save(update_fields=['video_url', 'duration_seconds'])
+		self.locked_lesson.video_url = 'https://youtu.be/locked-video'
+		self.locked_lesson.duration_seconds = 1800
+		self.locked_lesson.save(update_fields=['video_url', 'duration_seconds'])
+		Lesson.objects.create(
+			chapter=self.chapter,
+			title='Lesson without video',
+			duration_seconds=7200,
+		)
+		self.paid_course.enterprise_project_count = 3
+		self.paid_course.save(update_fields=['enterprise_project_count'])
+
+		response = self.client.get(reverse('courses:detail', kwargs={'slug': self.paid_course.slug}))
+
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, '۱:۳۰')
+		self.assertContains(response, '۲')
+		self.assertContains(response, '۳')
+		self.assertContains(response, 'ویدیوی آموزشی')
+		self.assertContains(response, 'درس در سرفصل‌ها')
 
 	def test_course_landing_content_and_inline_videos_are_database_backed(self):
 		self.paid_course.learning_outcomes = ['طراحی API اختصاصی']

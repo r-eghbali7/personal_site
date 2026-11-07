@@ -4,6 +4,7 @@ App: blog — مدل‌های وبلاگ و کامنت
 
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 from django_ckeditor_5.fields import CKEditor5Field
@@ -112,6 +113,10 @@ class BlogPost(models.Model):
     def increment_views(self):
         self.views_count += 1
         self.save(update_fields=['views_count'])
+
+    def get_absolute_url(self):
+        # با استفاده از نام namespace ('blog') و نام URL ('detail')
+        return reverse('blog:detail', kwargs={'slug': self.slug})
 
 
 class BlogCouponClaim(models.Model):

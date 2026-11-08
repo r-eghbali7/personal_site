@@ -1,5 +1,6 @@
 """Views: blog"""
 import json
+import random
 import secrets
 from datetime import timedelta
 
@@ -82,12 +83,30 @@ class BlogDetailView(View):
         claim_id = request.session.get('blog_coupon_claim_id')
         if claim_id:
             coupon_claim = BlogCouponClaim.objects.filter(pk=claim_id, post=post).first()
+        # مقالات مرتبط بر اساس تگ‌های مشترک (اولویت تعداد تگ مشترک، سپس تصادفی)
+        current_tags = set(post.get_tags_list())
+        related_posts = []
+        if current_tags:
+            candidates = (
+                BlogPost.objects.filter(is_published=True)
+                .exclude(pk=post.pk)
+                .select_related('author')
+            )
+            scored = []
+            for candidate in candidates:
+                shared = len(current_tags & set(candidate.get_tags_list()))
+                if shared:
+                    scored.append((shared, candidate))
+            scored.sort(key=lambda item: (-item[0], random.random()))
+            related_posts = [candidate for _, candidate in scored[:3]]
+
         stats = BlogPost.objects.filter(is_published=True).aggregate(
             total_articles=Count('id'),
             total_reading_minutes=Sum('read_time_minutes'),
         )
         context = {
             'post': post,
+            'related_posts': related_posts,
             'seo_image': request.build_absolute_uri(post.thumbnail.url) if post.thumbnail else '',
             'comments': comments,
             'post_content_html': post_content_html,

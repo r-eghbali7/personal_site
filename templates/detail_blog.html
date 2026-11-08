@@ -176,8 +176,8 @@
               <div class="flex flex-wrap items-center gap-4">
                 <img
                   class="w-12 h-12 rounded-full object-cover shadow-sm"
-                  data-alt="Professional modern portrait photo of a senior Iranian male software architect Parsa Eghbali wearing dark glasses and navy blazer, soft studio lighting, tech conference background, hyper-realistic, depth of field."
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuARlQkqapaHwcg2E-4leqlkoN9dvpz5lYNniPFot6ncJzXaU_IIQVOirgW0GXWEnqdYWp4DyC_vVzTwUS4P_N9JC6DYeKViR8VJTxP2ZS8nJkIWjdoDmv8LEZ_fgRfIeBVhzrjMbY1enl9G0i3t7xAaP8CXXsT-eZ1XH6R_f3YEQe9vactJSBG3MB5_HQs5v-DCHBb5M1TpebnMsVvbUWN4YE7HptD0eWudrEwIl3gFDTxhmPNQr9TORw"
+                  data-alt="پارسا اقبالی"
+                  src="/images/cover_parsa.webp"
                 />
                 <div class="flex flex-col">
                   <div class="flex items-center gap-2">
@@ -192,7 +192,7 @@
                     >
                   </div>
                   <span class="font-body-sm text-body-sm text-secondary"
-                    >معمار ارشد سیستم‌های توزیع‌شده</span
+                    >برنامه نویس بک اند جنگو | django backend</span
                   >
                 </div>
                 <div
@@ -1016,102 +1016,47 @@
                   >
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <!-- Related 1 -->
+                  {% for related in related_posts %}
                   <a
                     class="group rounded-2xl bg-card shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col"
-                    href="#"
+                    href="{% url 'blog:detail' related.slug %}"
                   >
                     <div class="h-36 overflow-hidden relative">
+                      {% if related.thumbnail %}
                       <img
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        data-alt="Microservices Saga pattern diagram and orchestrator code illustration on dark aesthetic screen."
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZaRsavPDlbWazdC1fvdVUxIgEYcuqrgNwSJo-JfoDpy6bMAxfXcvmuA1cKmU8sz29KQvTPAx758S1cnLQRNf8UzBVBZyAc_fyVi6YlMYNepL9_SSp_l72gM4_KlR-9JSCv9x3LBk8LD4Y0d-F1-FrT5N5hl5a1ugbqFi7I9ACLxEmsOJGlpsX2W9Yh1wJUvA2_ZmUi-3fDmApbpcUUw1prKYO_5mUSB0comfdJSy5dE0hPW6J7mitWg"
+                        data-alt="{{ related.summary|default:related.title }}"
+                        src="{{ related.thumbnail.url }}"
                       />
+                      {% endif %}
+                      {% with related.get_tags_list|first as first_tag %}
+                      {% if first_tag %}
                       <span
                         class="absolute top-2 right-2 bg-primary text-on-primary text-[10px] px-2 py-0.5 rounded-full font-bold"
-                        >معماری</span
+                        >{{ first_tag }}</span
                       >
+                      {% endif %}
+                      {% endwith %}
                     </div>
                     <div class="p-4 flex flex-col gap-2 flex-1">
                       <h4
                         class="font-headline-sm text-headline-sm text-primary font-bold line-clamp-2 group-hover:text-primary-container transition-colors"
                       >
-                        پیاده‌سازی الگوی Saga در تراکنش‌های توزیع‌شده
+                        {{ related.title }}
                       </h4>
                       <div
                         class="mt-auto flex items-center justify-between text-secondary font-body-sm text-body-sm pt-2"
                       >
-                        <span>۱۱ دقیقه مطالعه</span>
+                        <span>{{ related.read_time_minutes }} دقیقه مطالعه</span>
                         <span class="material-symbols-outlined text-[16px]"
                           >chevron_left</span
                         >
                       </div>
                     </div>
                   </a>
-                  <!-- Related 2 -->
-                  <a
-                    class="group rounded-2xl bg-card shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col"
-                    href="#"
-                  >
-                    <div class="h-36 overflow-hidden relative">
-                      <img
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        data-alt="PostgreSQL internals indexing B-Tree vs BRIN on modern developer workspace background."
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgywcH7as_FY9tfvh7x9QqiTont-DPCL_olwoMKbcuSgxL62BCcYp6sPul_zwwCRBrnRGw0fg6weLMsaW19bdjjnDXV3jqlkQMt13I8pn81GaQ-Ulj0UeUFRZekQK3jLzFMTMelRUzV8hps8QHhyJsb2zrghuhJAqtP31hIKxB_BwFx5OMUuX072XUIC6EZ-GU98SdhuWU1LWaXMjAfIQ9fMA-kknzymxEZyTVf3shYSNwSEMVq317qQ"
-                      />
-                      <span
-                        class="absolute top-2 right-2 bg-primary text-on-primary text-[10px] px-2 py-0.5 rounded-full font-bold"
-                        >پایگاه داده</span
-                      >
-                    </div>
-                    <div class="p-4 flex flex-col gap-2 flex-1">
-                      <h4
-                        class="font-headline-sm text-headline-sm text-primary font-bold line-clamp-2 group-hover:text-primary-container transition-colors"
-                      >
-                        بهینه‌سازی کوئری‌های میلیونی PostgreSQL در پروداکشن
-                      </h4>
-                      <div
-                        class="mt-auto flex items-center justify-between text-secondary font-body-sm text-body-sm pt-2"
-                      >
-                        <span>۱۶ دقیقه مطالعه</span>
-                        <span class="material-symbols-outlined text-[16px]"
-                          >chevron_left</span
-                        >
-                      </div>
-                    </div>
-                  </a>
-                  <!-- Related 3 -->
-                  <a
-                    class="group rounded-2xl bg-card shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col"
-                    href="#"
-                  >
-                    <div class="h-36 overflow-hidden relative">
-                      <img
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        data-alt="Kubernetes pod scaling auto horizontal metrics server dashboard on developer multi monitor setup."
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0RVKf0kOeMjvrBnf5JjljVv9Lxf8MRq4Q31_GW69hz-iX9D1uwuAD2DeHP_PRiON8so_6AcAt2if6mNlFJjabVHVgmLS-THElJhMVOZ75_ufy_oRiNuCdHIUBO3-XgGAQllJRQFumi-LkFJhMinWxfXTjLzGk0ZJVoC2C3URybeuIyQrsXjstdaY6QXa9Nm8THYrSb0vPRcVyjjCkal59lC7aIx0U_a8UVs801Lm4RpH0Sg9mLNYrZQ"
-                      />
-                      <span
-                        class="absolute top-2 right-2 bg-primary text-on-primary text-[10px] px-2 py-0.5 rounded-full font-bold"
-                        >دواپس</span
-                      >
-                    </div>
-                    <div class="p-4 flex flex-col gap-2 flex-1">
-                      <h4
-                        class="font-headline-sm text-headline-sm text-primary font-bold line-clamp-2 group-hover:text-primary-container transition-colors"
-                      >
-                        اتواسکیلینگ هوشمند پادهای کوبرنتیز بر اساس لاگ کافکا
-                      </h4>
-                      <div
-                        class="mt-auto flex items-center justify-between text-secondary font-body-sm text-body-sm pt-2"
-                      >
-                        <span>۹ دقیقه مطالعه</span>
-                        <span class="material-symbols-outlined text-[16px]"
-                          >chevron_left</span
-                        >
-                      </div>
-                    </div>
-                  </a>
+                  {% empty %}
+                  <p class="text-secondary col-span-3">مقاله‌ای مرتبط یافت نشد.</p>
+                  {% endfor %}
                 </div>
               </div>
               <!-- Comments & Discussion Section -->
@@ -1376,7 +1321,7 @@
               <section class="rounded-2xl bg-card p-6 shadow-sm flex flex-col gap-3">
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary-container text-[20px]">local_offer</span>
-                  <h4 class="font-headline-sm text-headline-sm text-primary font-bold">خبرنامه هفتگی معماری</h4>
+                  <h4 class="font-headline-sm text-headline-sm text-primary font-bold">دریافت کد تخفیف</h4>
                 </div>
                 <p class="font-body-sm text-body-sm text-secondary leading-relaxed">شماره موبایل خود را وارد کنید تا پس از تأیید، کد تخفیف {{ post.coupon_discount_percent }}٪ تهیه دوره برایتان نمایش داده شود.</p>
                 {% if coupon_claim %}

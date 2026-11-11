@@ -214,6 +214,22 @@ ZARINPAL_MERCHANT_ID = os.environ.get('ZARINPAL_MERCHANT_ID', '')
 ZARINPAL_SANDBOX = os.environ.get('ZARINPAL_SANDBOX', 'False').lower() in ('1', 'true', 'yes')
 
 # ──────────────────────────────────────────────────────────────
+# EMAIL — خبرنامه و کد تخفیف
+# ──────────────────────────────────────────────────────────────
+_default_backend = (
+    'django.core.mail.backends.smtp.EmailBackend'
+    if os.environ.get('EMAIL_HOST_USER')
+    else ('django.core.mail.backends.console.EmailBackend' if DEBUG else 'django.core.mail.backends.smtp.EmailBackend')
+)
+EMAIL_BACKEND = os.environ.get('DJANGO_EMAIL_BACKEND', _default_backend)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ('1', 'true', 'yes')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'True').lower() in ('1', 'true', 'yes')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@example.com')
+# ──────────────────────────────────────────────────────────────
 # MESSAGES
 # ──────────────────────────────────────────────────────────────
 from django.contrib.messages import constants as messages

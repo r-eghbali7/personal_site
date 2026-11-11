@@ -137,3 +137,27 @@ class OTPCode(models.Model):
         cls.objects.filter(phone_number=phone_number, is_used=False).update(is_used=True)
         code = cls.generate_code()
         return cls.objects.create(phone_number=phone_number, code=code)
+
+
+class NewsletterSubscriber(models.Model):
+    """مشترکین خبرنامه و گیرندگان کد تخفیف از طریق ایمیل."""
+
+    email = models.EmailField(max_length=200, unique=True, verbose_name='آدرس ایمیل')
+    is_active = models.BooleanField(default=True, verbose_name='فعال')
+    discount_code = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name='کد تخفیف تخصیص یافته',
+    )
+    subscribed_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان عضویت')
+    unsubscribed_at = models.DateTimeField(
+        null=True, blank=True, verbose_name='زمان لغو عضویت'
+    )
+
+    class Meta:
+        verbose_name = 'مشترک خبرنامه'
+        verbose_name_plural = 'مشترکین خبرنامه'
+        ordering = ['-subscribed_at']
+
+    def __str__(self):
+        return self.email

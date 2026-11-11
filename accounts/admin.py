@@ -4,7 +4,7 @@ Admin: accounts
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, OTPCode
+from .models import CustomUser, OTPCode, NewsletterSubscriber
 
 
 @admin.register(CustomUser)
@@ -35,3 +35,11 @@ class OTPCodeAdmin(admin.ModelAdmin):
     list_filter = ('is_used',)
     search_fields = ('phone_number',)
     readonly_fields = ('created_at', 'expires_at')
+
+
+@admin.register(NewsletterSubscriber)
+class NewsletterSubscriberAdmin(admin.ModelAdmin):
+    list_display = ("email", "is_active", "discount_code", "subscribed_at", "unsubscribed_at", )
+    list_filter = ('is_active',)
+    search_fields = ('email',)
+    

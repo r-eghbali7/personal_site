@@ -13,16 +13,16 @@
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg"
           />
           <h3 class="font-headline-sm text-headline-sm text-primary-container font-bold">
-            پارسا اقبالی | DevAcademy
+            پارسا اقبالی | parsa eghbali
           </h3>
         </div>
         <p class="font-body-sm sm:font-body-md text-body-sm sm:text-body-md text-on-surface-variant leading-relaxed text-justify">
-          پارسا اقبالی، مهندس ارشد نرم‌افزار و مدرس حوزه‌های Full-Stack با بیش از یک دهه تجربه طراحی سامانه‌های توزیع‌شده. رسالت ما در این آکادمی، تربیت متخصصان فنی، مسلط بر مهارت‌های کاربردی بازار کار جهانی و استانداردهای روز نرم‌افزار است.
+            پارسا اقبالی برنامه نویسی بک اند با جنگو ، توسعه دهنده نرم افزار، کارشناس تست و نفوذ وب
         </p>
         <div class="flex flex-col gap-2 pt-2 sm:pt-3 font-body-sm text-body-sm text-secondary">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-outline text-[18px]">location_on</span>
-            <span class="max-w-xs sm:max-w-none truncate">تهران، خیابان آزادی، تقاطع یادگار امام، مرکز فناوری‌های پیشرفته</span>
+            <span class="max-w-xs sm:max-w-none truncate">گیلان - رشت -بلوار انصاری -کوچه گل ها</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-outline text-[18px]">mail</span>
@@ -72,15 +72,22 @@
         <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
           جهت دریافت جدیدترین سرفصل‌های تخصصی، کد تخفیف‌ها و رویدادها عضو شوید.
         </p>
-        <div class="flex flex-col sm:flex-row gap-2 w-full">
+        <form
+          method="post"
+          action="{% url 'accounts:newsletter_subscribe' %}"
+          class="flex flex-col sm:flex-row gap-2 w-full"
+        >
+          {% csrf_token %}
           <input
+            name="email"
             class="flex-1 h-11 sm:h-11 px-4 bg-background rounded-xl border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner transition-colors"
             placeholder="ایمیل کاری خود را وارد کنید..."
             type="email"
+            required
           /><button class="h-11 sm:h-11 px-5 sm:px-5 bg-primary-container text-on-primary rounded-xl font-body-sm sm:font-body-md text-body-sm sm:text-body-md font-semibold hover:bg-tertiary-container hover:text-on-primary transition-colors whitespace-nowrap">
             عضویت
           </button>
-        </div>
+        </form>
         <div class="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-3">
           <div class="flex items-center gap-3">
             <div class="h-12 sm:h-14 w-12 sm:w-14 rounded-xl border border-border bg-background flex flex-col items-center justify-center text-center p-1">

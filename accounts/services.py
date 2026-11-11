@@ -1,11 +1,12 @@
 """
-سرویس ارسال OTP از طریق کاوه‌نگار
+سرویس ارسال OTP از طریق کاوه‌نگار و ارسال کد تخفیف خبرنامه از طریق ایمیل
 
-مستندات API: https://app.kavenegar.com/wiki/API/Send
+مستندات API پیامک: https://app.kavenegar.com/wiki/API/Send
 """
 
 import requests
 from django.conf import settings
+from django.core.mail import send_mail
 
 
 class KavenegarService:
@@ -34,7 +35,7 @@ class KavenegarService:
             'template': 'goldestone',   # نام قالب پیامک تعریف‌شده در پنل کاوه‌نگار
             'type': 'sms'
         }
-        
+
         try:
             response = requests.post(url, data=payload, timeout=10)
             data = response.json()
@@ -57,3 +58,34 @@ def send_otp_code(phone_number: str, code: str) -> dict:
     """تابع shortcut برای استفاده در View‌ها."""
     service = KavenegarService()
     return service.send_otp(phone_number, code)
+
+
+def send_discount_code_email(email: str, code: str) -> dict:
+    """
+    ارسال کد تخفیف خبرنامه به آدرس ایمیل کاربر.
+
+    Returns:
+        dict با کلیدهای: success (bool), message (str)
+    """
+    subject = 'کد تخفیف ویژه شما — آکادمی پارسا اقبالی'
+    message = (
+        'سلام و عرض ادب،\n\n'
+        'از ثبت‌نام شما در خبرنامه آکادمی پارسا اقبالی متشکریم.\n'
+        f'کد تخفیف ویژه شما: {code}\n'
+        'این کد را در صفحه پرداخت وارد کنید تا تخفیف مربوطه اعمال شود.\n\n'
+        'با تشکر، تیم آکادمی پارسا اقبالی'
+    )
+    try:
+        sent = send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        return {
+            'success': bool(sent),
+            'message': 'کد تخفیف به ایمیل شما ارسال شد.',
+        }
+    except Exception as e:
+        return {'success': False, 'message': f'خطا در ارسال ایمیل: {str(e)}'}

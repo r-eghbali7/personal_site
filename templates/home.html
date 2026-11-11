@@ -182,7 +182,7 @@
         <!-- Instructor Visual Column -->
         <div class="lg:col-span-4 flex flex-col items-center text-center">
           <div class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-3xl overflow-hidden border-4 border-surface-container-lowest shadow-md">
-            <img alt="پارسا اقبالی | مدرس و معمار ارشد نرم‌افزار" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q" />
+            <img alt="پارسا اقبالی | مدرس و معمار ارشد نرم‌افزار" class="w-full h-full object-cover" src="/images/cover_parsa.webp"/>
             <div class="absolute bottom-2 right-2 left-2 py-1.5 px-3 rounded-xl bg-primary-container/90 backdrop-blur-md text-surface-container-lowest flex items-center justify-center gap-1.5 shadow-sm">
               <span class="material-symbols-outlined text-accent-alt text-[16px]">verified</span>
               <span class="font-body-sm text-body-sm font-semibold">پارسا اقبالی | Parsa Eghbali</span>
@@ -541,15 +541,38 @@
             <span class="h-6 w-1 rounded-full bg-accent-alt"></span>
             <h3 class="font-headline-md text-headline-md text-primary-container font-bold">ما در شبکه‌های اجتماعی</h3>
           </div>
-          <p class="font-body-sm text-body-sm text-on-surface-variant">جدیدترین اخبار، Rollins و رویدادها را در شبکه‌های اجتماعی دنبال کنید.</p>
         </div>
-        <div class="flex flex-wrap justify-center gap-6 sm:gap-8">
-          {% for social in social_media %}
-          <a class="flex flex-col items-center gap-2 p-3 rounded-2xl bg-surface-container-low border border-border hover:bg-surface-container hover:border-primary-container hover:text-primary-container transition-all duration-200 group" href="{{ social.url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ social.name }}">
-            <span class="material-symbols-outlined text-[28px] text-outline group-hover:text-primary-container transition-colors">{{ social.icon }}</span>
-            <span class="font-body-xs text-body-xs text-on-surface-variant group-hover:text-primary-container transition-colors whitespace-nowrap">{{ social.name }}</span>
+        <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
+          
+          <!-- آیکون اینستاگرام -->
+          <a class="flex flex-col items-center justify-center gap-2 p-3 rounded-xl bg-surface-container-low border border-border hover:bg-surface-container hover:border-primary-container transition-all duration-200 group w-20 sm:w-24" href="https://www.instagram.com/parsa_.eghbali?srtk=eGl1OHhmbm05eGsy" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <img src="images/insta.webp" alt="Instagram" class="w-8 h-8 sm:w-10 sm:h-10 object-contain transition-transform duration-200 group-hover:scale-110">
+            <span class="font-body-xs text-body-xs text-on-surface-variant group-hover:text-primary-container transition-colors whitespace-nowrap text-xs">اینستاگرام</span>
           </a>
-          {% endfor %}
+        
+          <!-- آیکون تلگرام -->
+          <a class="flex flex-col items-center justify-center gap-2 p-3 rounded-xl bg-surface-container-low border border-border hover:bg-surface-container hover:border-primary-container transition-all duration-200 group w-20 sm:w-24" href="https://t.me/parsa_eghbali1" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+            <img src="images/telegra.webp" alt="Telegram" class="w-8 h-8 sm:w-10 sm:h-10 object-contain transition-transform duration-200 group-hover:scale-110">
+            <span class="font-body-xs text-body-xs text-on-surface-variant group-hover:text-primary-container transition-colors whitespace-nowrap text-xs">تلگرام</span>
+          </a>
+
+          <!-- آیکون اپارات -->
+          <a class="flex flex-col items-center justify-center gap-2 p-3 rounded-xl bg-surface-container-low border border-border hover:bg-surface-container hover:border-primary-container transition-all duration-200 group w-20 sm:w-24" href="https://www.aparat.com/parsa_eghbali" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+            <img src="images/aparat.webp" alt="Telegram" class="w-8 h-8 sm:w-10 sm:h-10 object-contain transition-transform duration-200 group-hover:scale-110">
+            <span class="font-body-xs text-body-xs text-on-surface-variant group-hover:text-primary-container transition-colors whitespace-nowrap text-xs">آپارت</span>
+          </a>
+        
+          <!-- آیکون بله -->
+          <a class="flex flex-col items-center justify-center gap-2 p-3 rounded-xl bg-surface-container-low border border-border hover:bg-surface-container hover:border-primary-container transition-all duration-200 group w-20 sm:w-24" href="http://ble.ir/parsaeghbali" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+            <img src="images/bale.webp" alt="Telegram" class="w-8 h-8 sm:w-10 sm:h-10 object-contain transition-transform duration-200 group-hover:scale-110">
+            <span class="font-body-xs text-body-xs text-on-surface-variant group-hover:text-primary-container transition-colors whitespace-nowrap text-xs">بله</span>
+          </a>
+          <!-- آیکون یوتیوب -->
+          <a class="flex flex-col items-center justify-center gap-2 p-3 rounded-xl bg-surface-container-low border border-border hover:bg-surface-container hover:border-primary-container transition-all duration-200 group w-20 sm:w-24" href="#" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+            <img src="images/youtub.webp" alt="Telegram" class="w-8 h-8 sm:w-10 sm:h-10 object-contain transition-transform duration-200 group-hover:scale-110">
+            <span class="font-body-xs text-body-xs text-on-surface-variant group-hover:text-primary-container transition-colors whitespace-nowrap text-xs">یوتیوب</span>
+          </a>
+          
         </div>
       </div>
     </section>

@@ -9,6 +9,7 @@ Views: accounts
 """
 
 import logging
+import secrets
 from django.http import HttpRequest
 from django.views import View
 from django.shortcuts import render, redirect
@@ -23,11 +24,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
 from django_ratelimit.decorators import ratelimit
 
-from .models import CustomUser, OTPCode
+from .models import CustomUser, OTPCode, NewsletterSubscriber
 from .forms import PasswordResetForm, RegisterForm, LoginForm, OTPVerifyForm, OTPRequestForm, ProfileForm
-from .services import send_otp_code
+from .services import send_otp_code, send_discount_code_email
 from tickets.forms import TicketCreateForm
 from tickets.models import Ticket, TicketMessage
 
@@ -574,3 +576,46 @@ class PasswordChangeView(LoginRequiredMixin, View):
         update_session_auth_hash(request, user)
         messages.success(request, 'رمز عبور با موفقیت تغییر کرد.')
         return redirect(f"{reverse('accounts:profile')}#tab-security")
+
+
+@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(
+    ratelimit(key='ip', rate='5/h', method='POST', block=True),
+    name='dispatch',
+)
+@method_decorator(
+    ratelimit(key='post:email', rate='3/h', method='POST', block=True),
+    name='dispatch',
+)
+class NewsletterSubscribeView(View):
+    """عضویت در خبرنامه و ارسال کد تخفیف به ایمیل."""
+
+    def post(self, request):
+        email = (request.POST.get('email') or '').strip().lower()
+        if not email or '@' not in email or '.' not in email.split('@')[-1]:
+            messages.error(request, 'لطفاً آدرس ایمیل معتبر وارد کنید.')
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+
+        subscriber, created = NewsletterSubscriber.objects.get_or_create(
+            email=email,
+            defaults={'is_active': True},
+        )
+        if not created and not subscriber.is_active:
+            subscriber.is_active = True
+            subscriber.unsubscribed_at = None
+            subscriber.save(update_fields=['is_active', 'unsubscribed_at'])
+
+        code = f'NEWS-{secrets.token_hex(3).upper()}'
+        subscriber.discount_code = code
+        subscriber.save(update_fields=['discount_code'])
+
+        result = send_discount_code_email(email, code)
+        if result['success']:
+            messages.success(
+                request,
+                f'عضویت شما ثبت شد. کد تخفیف {code} به ایمیل {email} ارسال شد.',
+            )
+        else:
+            messages.error(request, result['message'])
+
+        return redirect(request.META.get('HTTP_REFERER', '/'))

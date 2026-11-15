@@ -95,3 +95,23 @@ class TicketMessage(models.Model):
 
     def __str__(self):
         return f'پیام از {self.sender} در تیکت #{self.ticket.pk}'
+
+
+class ConsultationRequest(models.Model):
+    """درخواست مشاوره اختصاصی از طریق فرم صفحه اصلی."""
+
+    full_name = models.CharField(max_length=150, verbose_name='نام و نام خانوادگی')
+    phone_number = models.CharField(max_length=11, verbose_name='شماره موبایل')
+    message = models.TextField(
+        blank=True, verbose_name='درخواست یا توضیحات (اختیاری)'
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ایجاد')
+    is_processed = models.BooleanField(default=False, verbose_name='بررسی شده')
+
+    class Meta:
+        verbose_name = 'درخواست مشاوره'
+        verbose_name_plural = 'درخواست‌های مشاوره'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.full_name} — {self.phone_number}'

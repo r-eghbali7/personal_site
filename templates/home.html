@@ -195,13 +195,13 @@
         <div class="lg:col-span-8 flex flex-col gap-5">
           <div class="inline-flex items-center gap-2 text-primary-container font-body-sm text-body-sm font-semibold">
             <span class="w-2 h-2 rounded-full bg-accent-alt"></span>
-            <span>فلسفه آموزش در DevAcademy</span>
+            <span>آکادمی برنامه نویسی پارسا اقبالی</span>
           </div>
           <h2 class="font-headline-lg text-headline-lg text-primary-container font-bold leading-snug">
             تفاوت آموزش اصولی با بازتولید ساده داکیومنت‌ها
           </h2>
           <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify">
-            در DevAcademy باور داریم که یادگیری برنامه‌نویسی با حفظ کردن کدها حاصل نمی‌شود. برنامه‌نویس واقعی کسی است که تفکر الگوریتمی، درک معماری‌های پایدار، شیوه‌های آزمون خودکار و رفع باگ‌های پیچیده را فرا گرفته باشد. تمامی دوره‌ها با تکیه بر تجربیات واقعی در مقیاس‌های ترافیکی بزرگ، چالش‌های زیرساختی و اصول Clean Code تدوین شده‌اند تا دانشجویان پس از اتمام آموزش مستقیماً وارد چرخه‌های تولید محصول شوند.
+            در پارسا اقبالی یادگیری برنامه‌نویسی با حفظ کردن کدها حاصل نمی‌شود. برنامه‌نویس واقعی کسی است که تفکر الگوریتمی، درک معماری‌های پایدار، شیوه‌های آزمون خودکار و رفع باگ‌های پیچیده را فرا گرفته باشد. تمامی دوره‌ها با تکیه بر تجربیات واقعی در پروژهای مناسب بازار کار، چالش‌های زیرساختی و اصول Clean Code تدوین شده‌اند تا دانشجویان پس از اتمام آموزش با چالش ها و پروژه های بازار کار آشنا شوند تا به کسب درآمد برسند.
           </p>
           <!-- 3 Pillars Features -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
@@ -210,7 +210,7 @@
                 <span class="material-symbols-outlined text-[20px]">architecture</span>
               </span>
               <span class="font-headline-sm text-body-md font-bold text-on-surface">پروژه‌محور و واقعی</span>
-              <span class="font-body-sm text-body-sm text-secondary">پیاده‌سازی پلتفرم‌های کاربردی منطبق بر نیاز بازار کار بین‌المللی.</span>
+              <span class="font-body-sm text-body-sm text-secondary">پیاده‌سازی پلتفرم‌های کاربردی منطبق بر نیاز بازار کار .</span>
             </div>
             <div class="p-4 rounded-2xl bg-surface-container-lowest border border-border/70 flex flex-col gap-2">
               <span class="h-9 w-9 rounded-xl bg-primary-container text-surface-container-lowest flex items-center justify-center">
@@ -304,7 +304,7 @@
       </div>
     </section>
 
-    <!-- 4. NEWSLETTER CTA SECTION -->
+    <!-- 4. CONSULTATION CTA SECTION (Multi-step AJAX Form with OTP) -->
     <section class="w-full max-w-7xl mx-auto px-margin py-space-xl">
       <div class="bg-gradient-to-br from-primary via-primary-container to-tertiary rounded-[28px] p-8 sm:p-12 text-center relative overflow-hidden">
         <div class="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-accent-alt/20 blur-3xl"></div>
@@ -312,13 +312,113 @@
         <div class="relative z-10">
           <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-white/90 mb-4">
             <span class="material-symbols-outlined text-accent-alt text-[16px]">mail</span>
-            <span>عضویت در خبرنامه آموزشی</span>
+            <span>دریافت مشاوره اختصاصی</span>
           </span>
-          <h2 class="font-headline-lg text-headline-lg text-white font-bold mb-3">از آخرین دوره‌ها و مقالات باخبر شوید</h2>
-          <p class="font-body-md text-body-md text-slate-200 mb-6 max-w-2xl mx-auto">هر هفته محتوای ارزشمند فنی، تیپ‌های کاربردی و اعلام دوره‌های جدید مستقیماً به ایمیل شما ارسال می‌شود.</p>
-          <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input class="flex-1 h-12 px-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40" placeholder="ایمیل خود را وارد کنید" type="email" />
-            <button class="h-12 px-6 rounded-xl bg-white text-primary-container font-semibold hover:bg-accent-alt hover:text-white transition-colors" type="submit">عضویت</button>
+          <h2 class="font-headline-lg text-headline-lg text-white font-bold mb-3">آگاهانه مسیر تخصصیت رو انتخاب کن</h2>
+          <p class="font-body-md text-body-md text-slate-200 mb-6 max-w-2xl mx-auto">قبل هر شروعی ، آگاهی درباره مسیر میتونه از هدر رفت زمان و پول جلو گیری کنه. جلسه مشاوره رایگان شما رزرو شود</p>
+
+          <form id="consultation-form" class="max-w-md mx-auto" novalidate>
+            {% csrf_token %}
+
+            <!-- Step 1: Name -->
+            <div id="step-1" class="form-step animate-in">
+              <label class="block text-right text-white/90 font-body-sm mb-2">نام و نام خانوادگی</label>
+              <input
+                type="text"
+                name="full_name"
+                placeholder="نام و نام خانوادگی خود را وارد کنید"
+                class="w-full h-12 px-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40"
+                required
+              />
+              <button
+                type="button"
+                class="btn-next w-full h-12 mt-3 rounded-xl bg-white text-primary-container font-semibold hover:bg-accent-alt transition-colors"
+                data-next="2"
+              >
+                مراحل بعدی
+              </button>
+            </div>
+
+            <!-- Step 2: Phone -->
+            <div id="step-2" class="form-step hidden">
+              <label class="block text-right text-white/90 font-body-sm mb-2">شماره موبایل</label>
+              <input
+                type="tel"
+                name="phone_number"
+                placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                class="w-full h-12 px-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40"
+                required
+              />
+              <div id="otp-status-2" class="mt-2 text-body-sm text-center"></div>
+              <button
+                type="button"
+                class="btn-next w-full h-12 mt-3 rounded-xl bg-white text-primary-container font-semibold hover:bg-accent-alt transition-colors"
+                data-next="3"
+              >
+                ارسال کد تایید
+              </button>
+            </div>
+
+            <!-- Step 3: OTP Verification -->
+            <div id="step-3" class="form-step hidden">
+              <label class="block text-right text-white/90 font-body-sm mb-2">کد تایید دو مرحله‌ای</label>
+              <p class="text-xs text-white/70 text-center mb-3">کد ۶ رقمی ارسالی به شماره موبایل شما را وارد کنید</p>
+              <input
+                type="tel"
+                name="otp_code"
+                maxlength="6"
+                placeholder="۰۰۰۰۰۰"
+                class="w-full h-12 px-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40 text-center font-code-md tracking-widest"
+                required
+              />
+              <div id="otp-status-3" class="mt-2 text-body-sm text-center"></div>
+              <button
+                type="button"
+                class="btn-next w-full h-12 mt-3 rounded-xl bg-white text-primary-container font-semibold hover:bg-accent-alt transition-colors"
+                data-next="4"
+              >
+                تایید و ادامه
+              </button>
+            </div>
+
+            <!-- Step 4: Message (optional) -->
+            <div id="step-4" class="form-step hidden">
+              <label class="block text-right text-white/90 font-body-sm mb-2">درخواست یا توضیحات شما (اختیاری)</label>
+              <textarea
+                name="message"
+                rows="3"
+                placeholder="چه نوع مشاوره‌ای نیاز دارید؟ (اختیاری)"
+                class="w-full h-24 px-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40"
+              ></textarea>
+              <button
+                type="submit"
+                class="btn-submit w-full h-12 mt-3 rounded-xl bg-white text-primary-container font-semibold hover:bg-accent-alt transition-colors"
+              >
+                ارسال درخواست
+              </button>
+            </div>
+
+            <!-- Loading -->
+            <div id="form-loading" class="hidden flex flex-col items-center gap-2 py-4">
+              <span class="material-symbols-outlined text-[24px] text-white animate-spin">hourglass_empty</span>
+              <span class="text-white/90 font-body-sm">در حال پردازش...</span>
+            </div>
+
+            <!-- Success -->
+            <div id="form-success" class="hidden text-center py-5 px-4 rounded-2xl bg-green-50 border border-green-200 text-green-900" role="status" aria-live="polite">
+              <span class="material-symbols-outlined text-[48px] text-green-600 mb-2">check_circle</span>
+              <h3 class="font-headline-md mb-2">ثبت درخواست موفق بود</h3>
+              <p id="form-success-message" class="font-body-sm">درخواست شما با موفقیت ثبت شد و به‌زودی با شما تماس خواهیم گرفت.</p>
+              <button
+                type="button"
+                class="btn-restart mt-4 h-10 px-6 rounded-xl bg-green-700 text-white font-semibold hover:bg-green-800 transition-colors"
+              >
+                ثبت درخواست جدید
+              </button>
+            </div>
+
+            <!-- Error -->
+            <div id="form-error" class="hidden p-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-100 text-body-sm text-center mb-4"></div>
           </form>
         </div>
       </div>
@@ -648,8 +748,190 @@
   }
 
   /* =========================================
-  پخش‌کننده اپیزودهای پادکست از فایل مشترک بارگذاری می‌شود
+  فرم مشاوره چند مرحله‌ای با AJAX و تایید OTP
   ========================================= */
+  (function () {
+    const form = document.getElementById('consultation-form');
+    if (!form) return;
+
+    const csrfInput = form.querySelector('[name=csrfmiddlewaretoken]');
+    const csrfToken = csrfInput ? csrfInput.value : '';
+
+    const steps = document.querySelectorAll('.form-step');
+    const btnsNext = document.querySelectorAll('.btn-next');
+    const btnSubmit = form.querySelector('.btn-submit');
+    const loading = document.getElementById('form-loading');
+    const success = document.getElementById('form-success');
+    const error = document.getElementById('form-error');
+    const btnRestart = document.querySelector('.btn-restart');
+    const otpStatus2 = document.getElementById('otp-status-2');
+    const otpStatus3 = document.getElementById('otp-status-3');
+
+    let currentStep = 1;
+
+    function showMessage(el, text, type) {
+      if (!el) return;
+      el.textContent = text;
+      el.className = 'mt-2 text-body-sm text-center ' + (type === 'success' ? 'text-green-400' : 'text-red-400');
+      el.classList.remove('hidden');
+    }
+
+    function hideMessage(el) {
+      if (el) el.classList.add('hidden');
+    }
+
+    function showStep(stepNum) {
+      steps.forEach((step, idx) => {
+        const isActive = idx + 1 === stepNum;
+        if (isActive) {
+          step.classList.remove('hidden');
+          step.classList.remove('animate-in');
+          void step.offsetWidth;
+          step.classList.add('animate-in');
+        } else {
+          step.classList.add('hidden');
+        }
+      });
+      currentStep = stepNum;
+      hideMessage(error);
+    }
+
+    async function ajaxPost(url, extraData) {
+      const fd = new FormData();
+      if (csrfToken) fd.append('csrfmiddlewaretoken', csrfToken);
+      for (const [key, value] of Object.entries(extraData || {})) {
+        fd.append(key, value);
+      }
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: fd,
+      });
+      return resp.json();
+    }
+
+    btnsNext.forEach((btn) => {
+      btn.addEventListener('click', async function () {
+        const nextStep = parseInt(this.getAttribute('data-next'), 10);
+        const currentEl = document.getElementById('step-' + currentStep);
+
+        if (currentStep === 2) {
+          const phone = form.querySelector('[name=phone_number]').value.trim();
+          if (!phone) {
+            form.querySelector('[name=phone_number]').focus();
+            return;
+          }
+          this.disabled = true;
+          this.textContent = 'در حال ارسال...';
+          try {
+            const data = await ajaxPost('{% url "tickets:send_otp" %}', { phone_number: phone });
+            if (data.success) {
+              showMessage(otpStatus2, 'کد تایید ارسال شد. لطفاً کد را وارد کنید.', 'success');
+              currentEl.style.opacity = '0';
+              setTimeout(() => showStep(nextStep), 300);
+            } else {
+              showMessage(otpStatus2, data.error || 'خطا در ارسال کد تایید.', 'error');
+            }
+          } catch {
+            showMessage(otpStatus2, 'خطای ارتباط با سرور.', 'error');
+          } finally {
+            this.disabled = false;
+            this.textContent = 'ارسال کد تایید';
+          }
+          return;
+        }
+
+        if (currentStep === 3) {
+          const phone = form.querySelector('[name=phone_number]').value.trim();
+          const code = form.querySelector('[name=otp_code]').value.trim();
+          if (!phone || !code) {
+            form.querySelector('[name=otp_code]').focus();
+            return;
+          }
+          this.disabled = true;
+          this.textContent = 'در حال تایید...';
+          try {
+            const data = await ajaxPost('{% url "tickets:verify_otp" %}', { phone_number: phone, code: code });
+            if (data.success) {
+              showMessage(otpStatus3, 'شماره موبایل تایید شد.', 'success');
+              currentEl.style.opacity = '0';
+              setTimeout(() => showStep(nextStep), 300);
+            } else {
+              showMessage(otpStatus3, data.error || 'کد تایید اشتباه است.', 'error');
+            }
+          } catch {
+            showMessage(otpStatus3, 'خطای ارتباط با سرور.', 'error');
+          } finally {
+            this.disabled = false;
+            this.textContent = 'تایید و ادامه';
+          }
+          return;
+        }
+
+        // Step 1 -> 2 simple validation
+        const input = currentEl.querySelector('input');
+        if (!input || !input.value.trim()) {
+          input.focus();
+          return;
+        }
+
+        currentEl.style.opacity = '0';
+        setTimeout(() => showStep(nextStep), 300);
+      });
+    });
+
+    // Enter در مراحل intermédiaires باعث پیشرفت نشود؛ فقط در فیلد آخر (متن اختیاری) آزاد باشد
+    form.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        const target = e.target;
+        const isLastField = target.closest('#step-4');
+        if (!isLastField) {
+          e.preventDefault();
+        }
+      }
+    });
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      hideMessage(error);
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      loading.classList.remove('hidden');
+      form.style.opacity = '0.6';
+
+      try {
+        const result = await ajaxPost('{% url "tickets:consultation_request" %}', data);
+        loading.classList.add('hidden');
+        form.style.opacity = '1';
+        if (result.success) {
+          form.classList.add('hidden');
+          success.classList.remove('hidden');
+        } else {
+          error.textContent = result.error || 'خطایی در ثبت درخواست رخ داد.';
+          error.classList.remove('hidden');
+        }
+      } catch {
+        loading.classList.add('hidden');
+        form.style.opacity = '1';
+        error.textContent = 'خطای ارتباط با سرور. لطفاً دوباره تلاش کنید.';
+        error.classList.remove('hidden');
+      }
+    });
+
+    btnRestart.addEventListener('click', function () {
+      success.classList.add('hidden');
+      error.classList.add('hidden');
+      form.reset();
+      form.classList.remove('hidden');
+      showStep(1);
+    });
+
+    showStep(1);
+  })();
 </script>
 <script src="{% static 'js/podcast-player.js' %}"></script>
 {% endblock %}

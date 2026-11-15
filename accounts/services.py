@@ -60,6 +60,36 @@ def send_otp_code(phone_number: str, code: str) -> dict:
     return service.send_otp(phone_number, code)
 
 
+def verify_otp_code(phone_number: str, code: str) -> dict:
+    """
+    تأیید کد OTP یکبارمصرف برای شماره موبایل.
+
+    Args:
+        phone_number: شماره گیرنده (۰۹xxxxxxxxx)
+        code: کد ۶ رقمی
+
+    Returns:
+        dict با کلیدهای: success (bool), message (str)
+    """
+    from .models import OTPCode
+
+    otp = (
+        OTPCode.objects.filter(
+            phone_number=phone_number,
+            code=code,
+            is_used=False,
+        )
+        .order_by('-created_at')
+        .first()
+    )
+    if not otp or not otp.is_valid:
+        return {'success': False, 'message': 'کد تایید اشتباه است یا منقضی شده است.'}
+
+    otp.is_used = True
+    otp.save(update_fields=['is_used'])
+    return {'success': True, 'message': 'کد تایید با موفقیت تأیید شد.'}
+
+
 def send_discount_code_email(email: str, code: str) -> dict:
     """
     ارسال کد تخفیف خبرنامه به آدرس ایمیل کاربر.

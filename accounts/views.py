@@ -232,22 +232,14 @@ class OTPVerifyView(View):
         phone = register_data['phone_number']
         code = form.cleaned_data['code']
 
-        # بررسی کد OTP در دیتابیس
-        otp_obj = OTPCode.objects.filter(
-            phone_number=phone,
-            code=code,
-            is_used=False,
-        ).last()
-
-        if not otp_obj or not otp_obj.is_valid:
+        # تأیید کد OTP از طریق سرویس مشترکی
+        from .services import verify_otp_code
+        result = verify_otp_code(phone, code)
+        if not result['success']:
             return render(request, self.template_name, {
                 'form': form,
-                'error': 'کد وارد شده اشتباه یا منقضی شده است.',
+                'error': result['message'],
             })
-
-        # علامت‌گذاری کد به عنوان استفاده‌شده
-        otp_obj.is_used = True
-        otp_obj.save(update_fields=['is_used'])
 
         action = register_data.get('action', 'register')
 

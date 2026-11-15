@@ -3,7 +3,7 @@ Admin: tickets
 """
 
 from django.contrib import admin
-from .models import Ticket, TicketMessage
+from .models import ConsultationRequest, Ticket, TicketMessage
 
 
 class TicketMessageInline(admin.StackedInline):
@@ -20,3 +20,9 @@ class TicketAdmin(admin.ModelAdmin):
     list_editable = ('status', 'priority')
     inlines = [TicketMessageInline]
     readonly_fields = ('created_at', 'updated_at')
+
+
+
+@admin.register(ConsultationRequest)
+class ConsultationRequestAdmin(admin.ModelAdmin):
+    list_display = ("full_name","phone_number","created_at","is_processed")

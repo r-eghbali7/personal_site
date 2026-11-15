@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from accounts.models import CustomUser
-from .models import Ticket, TicketMessage
+from .models import ConsultationRequest, Ticket, TicketMessage
 
 
 class TicketFlowTests(TestCase):
@@ -50,5 +50,32 @@ class TicketFlowTests(TestCase):
 		)
 		self.assertRedirects(response, reverse('tickets:detail', kwargs={'pk': ticket.pk}))
 		self.assertEqual(ticket.messages.count(), 2)
+
+
+class ConsultationRequestTests(TestCase):
+	def test_final_submission_returns_success_message_and_saves_request(self):
+		session = self.client.session
+		session['consultation_verified_phones'] = {'09121112222': True}
+		session.save()
+
+		response = self.client.post(reverse('tickets:consultation_request'), {
+			'full_name': 'کاربر آزمایشی',
+			'phone_number': '09121112222',
+			'message': '',
+		})
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.json(), {
+			'success': True,
+			'message': 'درخواست شما با موفقیت ثبت شد و به‌زودی با شما تماس خواهیم گرفت.',
+		})
+		self.assertTrue(ConsultationRequest.objects.filter(
+			full_name='کاربر آزمایشی',
+			phone_number='09121112222',
+		).exists())
+		self.assertNotIn(
+			'09121112222',
+			self.client.session['consultation_verified_phones'],
+		)
 
 # Create your tests here.

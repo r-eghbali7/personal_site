@@ -132,6 +132,7 @@ class BlogCouponClaim(models.Model):
         verbose_name='مقاله درخواست‌کننده',
     )
     verified_at = models.DateTimeField(default=timezone.now, verbose_name='زمان تأیید شماره')
+    expires_at = models.DateTimeField(null=True, blank=True, verbose_name='زمان انقضا کد تخفیف')
 
     class Meta:
         verbose_name = 'دریافت کد تخفیف وبلاگ'

@@ -1318,34 +1318,164 @@
               </section>
               {% endif %}
 
-              <section class="rounded-2xl bg-card p-6 shadow-sm flex flex-col gap-3">
+              <section class="rounded-2xl p-6 shadow-sm flex flex-col gap-3 bg-green-50 border border-green-200">
                 <div class="flex items-center gap-2">
-                  <span class="material-symbols-outlined text-primary-container text-[20px]">local_offer</span>
-                  <h4 class="font-headline-sm text-headline-sm text-primary font-bold">دریافت کد تخفیف</h4>
+                  <span class="material-symbols-outlined text-green-700 text-[20px]">local_offer</span>
+                  <h4 class="font-headline-sm text-headline-sm text-green-800 font-bold">دریافت کد تخفیف</h4>
                 </div>
-                <p class="font-body-sm text-body-sm text-secondary leading-relaxed">شماره موبایل خود را وارد کنید تا پس از تأیید، کد تخفیف {{ post.coupon_discount_percent }}٪ تهیه دوره برایتان نمایش داده شود.</p>
-                {% if coupon_claim %}
-                <div class="rounded-xl border border-green-300 bg-green-50 p-4 text-green-800" role="status">
-                  <p class="font-semibold">کد تخفیف شما ({{ coupon_claim.discount_percent }}٪)</p>
-                  <code class="mt-2 block select-all text-lg font-bold" dir="ltr">{{ coupon_claim.coupon_code }}</code>
+                <p class="font-body-sm text-body-sm text-green-900/70 leading-relaxed">
+                  شماره موبایل خود را وارد کنید تا پس از تأیید، کد تخفیف {{ post.coupon_discount_percent }}٪ تهیه دوره برایتان نمایش داده شود.
+                </p>
+
+                {% csrf_token %}
+
+                <!-- Step 1: Phone number -->
+                <div id="coupon-step-phone">
+                  <form id="coupon-phone-form" class="flex flex-col gap-2">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <label class="text-sm font-semibold text-green-900" for="coupon-phone">شماره موبایل</label>
+                    <input id="coupon-phone" name="phone_number" class="h-11 rounded-lg border border-green-300 bg-white px-3 text-green-900 shadow-inner" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="09123456789" pattern="09[0-9]{9}" minlength="11" maxlength="11" required />
+                    <button type="submit" class="h-11 rounded-lg bg-green-700 font-semibold text-white hover:bg-green-800 transition-colors">دریافت کد تأیید پیامکی</button>
+                  </form>
+                  <div id="coupon-msg" class="mt-2 text-sm text-center"></div>
                 </div>
-                {% elif coupon_otp_sent %}
-                <form id="coupon-otp-box" class="flex flex-col gap-3 rounded-xl border border-green-300 bg-green-50 p-4" method="post" action="{% url 'blog:coupon_verify' post.slug %}">
-                  {% csrf_token %}
-                  <p class="text-sm text-green-800">کد پیامک‌شده به شماره {{ coupon_phone }} را وارد کنید.</p>
-                  <label class="text-sm font-semibold text-green-900" for="coupon-otp-code">کد تأیید ۶ رقمی</label>
-                  <input id="coupon-otp-code" class="h-11 rounded-lg border border-green-300 bg-white px-3 text-center font-code-md tracking-widest text-on-surface" name="otp_code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required />
-                  <button class="h-11 rounded-lg bg-green-700 font-semibold text-white hover:bg-green-800" type="submit">تأیید و دریافت کد تخفیف</button>
-                </form>
-                {% else %}
-                <form class="flex flex-col gap-2" method="post" action="{% url 'blog:coupon_request' post.slug %}">
-                  {% csrf_token %}
-                  <label class="text-sm font-semibold text-on-surface" for="coupon-phone">شماره موبایل</label>
-                  <input id="coupon-phone" class="h-11 rounded-lg bg-background px-3 text-on-surface shadow-inner" name="phone_number" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="09123456789" pattern="09[0-9]{9}" minlength="11" maxlength="11" required />
-                  <button class="h-11 rounded-lg bg-primary-container font-semibold text-on-primary hover:bg-tertiary-container" type="submit">دریافت کد تأیید پیامکی</button>
-                </form>
-                {% endif %}
+
+                <!-- Step 2: OTP code -->
+                <div id="coupon-step-otp" class="hidden">
+                  <form id="coupon-otp-form" class="flex flex-col gap-2">
+                    <p class="text-sm text-green-800">کد پیامک‌شده به شماره <span id="coupon-otp-phone" class="font-bold"></span> را وارد کنید.</p>
+                    <label class="text-sm font-semibold text-green-900" for="coupon-otp-code">کد تأیید ۶ رقمی</label>
+                    <input id="coupon-otp-code" name="otp_code" class="h-11 rounded-lg border border-green-300 bg-white px-3 text-center font-code-md tracking-widest text-green-900" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required />
+                    <button type="submit" class="h-11 rounded-lg bg-green-700 font-semibold text-white hover:bg-green-800 transition-colors">تأیید و دریافت کد تخفیف</button>
+                  </form>
+                  <div id="coupon-otp-msg" class="mt-2 text-sm text-center"></div>
+                </div>
+
+                <!-- Step 3: Discount code result -->
+                <div id="coupon-result" class="hidden rounded-xl border border-green-300 bg-green-50 p-4 text-green-800" role="status">
+                  <p class="font-semibold">کد تخفیف شما ({{ post.coupon_discount_percent }}٪)</p>
+                  <code id="coupon-code-display" class="mt-2 block select-all text-lg font-bold" dir="ltr"></code>
+                  <p id="coupon-expires-display" class="mt-1 text-xs text-green-700">مهلت استفاده: ۴۸ ساعت از تایید شماره</p>
+                  <p class="mt-2 text-xs text-green-700">برای استفاده از کد تخفیف، وارد حساب کاربری سایت شوید.</p>
+                </div>
               </section>
+
+              <script>
+                (function () {
+                  const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                  const csrfToken = csrfInput ? csrfInput.value : '';
+                  const postSlug = '{{ post.slug }}';
+                  const discountPercent = '{{ post.coupon_discount_percent }}';
+
+                  const stepPhone = document.getElementById('coupon-step-phone');
+                  const stepOtp = document.getElementById('coupon-step-otp');
+                  const stepResult = document.getElementById('coupon-result');
+                  const phoneForm = document.getElementById('coupon-phone-form');
+                  const otpForm = document.getElementById('coupon-otp-form');
+                  const phoneInput = document.getElementById('coupon-phone');
+                  const otpInput = document.getElementById('coupon-otp-code');
+                  const otpPhoneSpan = document.getElementById('coupon-otp-phone');
+                  const codeDisplay = document.getElementById('coupon-code-display');
+                  const phoneMsg = document.getElementById('coupon-msg');
+                  const otpMsg = document.getElementById('coupon-otp-msg');
+
+                  function showMsg(el, text, type) {
+                    if (!el) return;
+                    el.textContent = text;
+                    el.className = 'mt-2 text-sm text-center ' + (type === 'success' ? 'text-green-700' : 'text-red-600');
+                    el.classList.remove('hidden');
+                  }
+
+                  function hideMsg(el) {
+                    if (el) el.classList.add('hidden');
+                  }
+
+                  async function ajaxPost(url, data) {
+                    const fd = new FormData();
+                    if (csrfToken) fd.append('csrfmiddlewaretoken', csrfToken);
+                    for (const [k, v] of Object.entries(data || {})) {
+                      fd.append(k, v);
+                    }
+                    const resp = await fetch(url, {
+                      method: 'POST',
+                      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                      body: fd,
+                    });
+                    return resp.json();
+                  }
+
+                  phoneForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    hideMsg(phoneMsg);
+                    const phone = phoneInput.value.trim();
+                    if (!phone) {
+                      phoneInput.focus();
+                      return;
+                    }
+                    const btn = phoneForm.querySelector('button[type="submit"]');
+                    const origText = btn.textContent;
+                    btn.disabled = true;
+                    btn.textContent = 'در حال ارسال...';
+                    try {
+                      const data = await ajaxPost(
+                        '{% url "blog:coupon_request" post.slug %}',
+                        { phone_number: phone }
+                      );
+                      if (data.success) {
+                        otpPhoneSpan.textContent = phone;
+                        stepPhone.classList.add('hidden');
+                        stepOtp.classList.remove('hidden');
+                        otpInput.focus();
+                      } else {
+                        showMsg(phoneMsg, data.error || 'خطا در ارسال کد تأیید.', 'error');
+                      }
+                    } catch {
+                      showMsg(phoneMsg, 'خطای ارتباط با سرور.', 'error');
+                    } finally {
+                      btn.disabled = false;
+                      btn.textContent = origText;
+                    }
+                  });
+
+                  otpForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    hideMsg(otpMsg);
+                    const code = otpInput.value.trim();
+                    if (!code) {
+                      otpInput.focus();
+                      return;
+                    }
+                    const btn = otpForm.querySelector('button[type="submit"]');
+                    const origText = btn.textContent;
+                    btn.disabled = true;
+                    btn.textContent = 'در حال تایید...';
+                    try {
+                      const data = await ajaxPost(
+                        '{% url "blog:coupon_verify" post.slug %}',
+                        { otp_code: code }
+                      );
+                      if (data.success) {
+                        stepOtp.classList.add('hidden');
+                        stepResult.classList.remove('hidden');
+                        codeDisplay.textContent = data.coupon_code || '';
+                        if (data.expires_at) {
+                          const exp = new Date(data.expires_at);
+                          const opts = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                          document.getElementById('coupon-expires-display').textContent =
+                            'مهلت استفاده تا: ' + exp.toLocaleString('fa-IR', opts);
+                        }
+                      } else {
+                        showMsg(otpMsg, data.error || 'کد تأیید اشتباه است.', 'error');
+                      }
+                    } catch {
+                      showMsg(otpMsg, 'خطای ارتباط با سرور.', 'error');
+                    } finally {
+                      btn.disabled = false;
+                      btn.textContent = origText;
+                    }
+                  });
+                })();
+              </script>
 
             </aside>
           </div>
@@ -1445,5 +1575,5 @@
       </div>
     </main>
 {% endblock %}
-{% block footer %} {% include 'include/footer.html' %} {% endblock %}
+{% block footer %} {% include 'includes/footer.html' %} {% endblock %}
 {% block scripts %}<script src="{% static 'js/comments.js' %}"></script>{% endblock %}

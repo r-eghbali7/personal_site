@@ -23,6 +23,13 @@ from .models import BlogCouponClaim, BlogPost, Comment, PodcastComment, PodcastL
 def is_ajax(request):
     return request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('accept','')
 
+
+def normalize_phone(phone: str) -> str:
+    """تبدیل اعداد فارسی/عربی به اعداد انگلیسی."""
+    persian_to_english = str.maketrans('۰۱۲۳۴۵۶۷۸۹', '0123456789')
+    arabic_to_english = str.maketrans('٠١٢٣٤٥٦٧٨٩', '0123456789')
+    return phone.translate(persian_to_english).translate(arabic_to_english)
+
 class BlogListView(View):
     def get(self, request):
         posts = BlogPost.objects.filter(is_published=True).select_related('author')
@@ -126,22 +133,24 @@ class BlogDetailView(View):
 class BlogCouponRequestView(View):
     def post(self, request, slug):
         post = get_object_or_404(BlogPost, slug=slug, is_published=True)
-        phone = (request.POST.get('phone_number') or '').strip()
+        phone = normalize_phone((request.POST.get('phone_number') or '').strip())
         if len(phone) != 11 or not phone.startswith('09') or not phone.isdigit():
+            if is_ajax(request):
+                return JsonResponse({'success': False, 'error': 'شماره موبایل را با قالب ۰۹ و ۱۱ رقم وارد کنید.'}, status=400)
             messages.error(request, 'شماره موبایل را با قالب ۰۹ و ۱۱ رقم وارد کنید.')
             return redirect('blog:detail', slug=slug)
 
-        if CustomUser.objects.filter(phone_number=phone).exists():
-            messages.info(request, 'برای شماره‌های ثبت‌شده، وارد حساب کاربری شوید تا پیشنهادهای ویژه را ببینید.')
-            return redirect('blog:detail', slug=slug)
-
         if BlogCouponClaim.objects.filter(phone_number=phone).exists():
+            if is_ajax(request):
+                return JsonResponse({'success': False, 'error': 'برای هر شماره موبایل فقط یک کد تخفیف قابل دریافت است.'}, status=400)
             messages.info(request, 'برای هر شماره موبایل فقط یک کد تخفیف قابل دریافت است.')
             return redirect('blog:detail', slug=slug)
 
         now = timezone.now()
         recent_codes = OTPCode.objects.filter(phone_number=phone, created_at__gte=now - timedelta(hours=1))
         if recent_codes.count() >= 5 or recent_codes.filter(created_at__gte=now - timedelta(seconds=60)).exists():
+            if is_ajax(request):
+                return JsonResponse({'success': False, 'error': 'برای ارسال دوباره کد کمی صبر کنید.'}, status=400)
             messages.error(request, 'برای ارسال دوباره کد کمی صبر کنید.')
             return redirect('blog:detail', slug=slug)
 
@@ -150,11 +159,15 @@ class BlogCouponRequestView(View):
         if not result.get('success'):
             otp.is_used = True
             otp.save(update_fields=['is_used'])
+            if is_ajax(request):
+                return JsonResponse({'success': False, 'error': 'ارسال پیامک ناموفق بود. لطفاً کمی بعد دوباره تلاش کنید.'}, status=400)
             messages.error(request, 'ارسال پیامک ناموفق بود. لطفاً کمی بعد دوباره تلاش کنید.')
             return redirect('blog:detail', slug=slug)
 
         request.session['blog_coupon_pending'] = {'phone': phone, 'post_id': post.pk}
         request.session.set_expiry(settings.OTP_EXPIRY_MINUTES * 60)
+        if is_ajax(request):
+            return JsonResponse({'success': True, 'message': 'کد تأیید برای شماره واردشده ارسال شد.'})
         messages.success(request, 'کد تأیید برای شماره واردشده ارسال شد.')
         return redirect('blog:detail', slug=slug)
 
@@ -164,11 +177,15 @@ class BlogCouponVerifyView(View):
         post = get_object_or_404(BlogPost, slug=slug, is_published=True)
         pending = request.session.get('blog_coupon_pending', {})
         if pending.get('post_id') != post.pk or not pending.get('phone'):
+            if is_ajax(request):
+                return JsonResponse({'success': False, 'error': 'ابتدا شماره موبایل را برای دریافت کد تأیید ثبت کنید.'}, status=400)
             messages.error(request, 'ابتدا شماره موبایل را برای دریافت کد تأیید ثبت کنید.')
             return redirect('blog:detail', slug=slug)
 
         code = (request.POST.get('otp_code') or '').strip()
         if len(code) != 6 or not code.isdigit():
+            if is_ajax(request):
+                return JsonResponse({'success': False, 'error': 'کد تأیید باید ۶ رقم باشد.'}, status=400)
             messages.error(request, 'کد تأیید باید ۶ رقم باشد.')
             return redirect('blog:detail', slug=slug)
 
@@ -181,6 +198,8 @@ class BlogCouponVerifyView(View):
             ).update(is_used=True)
             request.session.pop('blog_coupon_pending', None)
             request.session.pop(attempts_key, None)
+            if is_ajax(request):
+                return JsonResponse({'success': False, 'error': 'تعداد تلاش‌ها بیش از حد مجاز بود. دوباره درخواست کد کنید.'}, status=400)
             messages.error(request, 'تعداد تلاش‌ها بیش از حد مجاز بود. دوباره درخواست کد کنید.')
             return redirect('blog:detail', slug=slug)
 
@@ -191,16 +210,13 @@ class BlogCouponVerifyView(View):
         ).order_by('-created_at').first()
         if not otp or not otp.is_valid:
             request.session[attempts_key] = attempts + 1
+            if is_ajax(request):
+                return JsonResponse({'success': False, 'error': 'کد واردشده اشتباه است یا اعتبار آن تمام شده است.'}, status=400)
             messages.error(request, 'کد واردشده اشتباه است یا اعتبار آن تمام شده است.')
-            return redirect('blog:detail', slug=slug)
-        if CustomUser.objects.filter(phone_number=pending['phone']).exists():
-            otp.is_used = True
-            otp.save(update_fields=['is_used'])
-            request.session.pop('blog_coupon_pending', None)
-            messages.info(request, 'برای شماره‌های ثبت‌شده، وارد حساب کاربری شوید.')
             return redirect('blog:detail', slug=slug)
 
         coupon_code = f'ARCH-{secrets.token_hex(4).upper()}'
+        expires_at = timezone.now() + timedelta(hours=48)
         try:
             with transaction.atomic():
                 otp.is_used = True
@@ -210,15 +226,25 @@ class BlogCouponVerifyView(View):
                     coupon_code=coupon_code,
                     discount_percent=post.coupon_discount_percent,
                     post=post,
+                    expires_at=expires_at,
                 )
         except IntegrityError:
             request.session.pop('blog_coupon_pending', None)
+            if is_ajax(request):
+                return JsonResponse({'success': False, 'error': 'برای هر شماره موبایل فقط یک کد تخفیف قابل دریافت است.'}, status=400)
             messages.info(request, 'برای هر شماره موبایل فقط یک کد تخفیف قابل دریافت است.')
             return redirect('blog:detail', slug=slug)
 
         request.session.pop('blog_coupon_pending', None)
         request.session.pop(attempts_key, None)
         request.session['blog_coupon_claim_id'] = claim.pk
+        if is_ajax(request):
+            return JsonResponse({
+                'success': True,
+                'coupon_code': coupon_code,
+                'discount_percent': post.coupon_discount_percent,
+                'expires_at': expires_at.isoformat(),
+            })
         messages.success(request, 'شماره تأیید شد. کد تخفیف شما در همین صفحه نمایش داده می‌شود.')
         return redirect('blog:detail', slug=slug)
 

@@ -216,20 +216,27 @@ class BlogFlowTests(TestCase):
 		self.assertEqual(response.status_code, 200)
 		claim = BlogCouponClaim.objects.get(phone_number=phone)
 		self.assertEqual(claim.discount_percent, 15)
+		self.assertIsNotNone(claim.expires_at)
 		self.assertContains(response, claim.coupon_code)
 		otp.refresh_from_db()
 		self.assertTrue(otp.is_used)
 
-	def test_registered_phone_does_not_receive_blog_coupon_otp(self):
+	def test_registered_phone_receives_blog_coupon_otp(self):
 		registered = CustomUser.objects.create_user(phone_number='09125550999', password='test-password-123')
 		request_url = reverse('blog:coupon_request', kwargs={'slug': self.post.slug})
+		verify_url = reverse('blog:coupon_verify', kwargs={'slug': self.post.slug})
 
-		with patch('blog.views.send_otp_code') as send_sms:
+		with patch('blog.views.send_otp_code', return_value={'success': True, 'message': 'sent'}) as send_sms:
 			response = self.client.post(request_url, {'phone_number': registered.phone_number})
 
-		self.assertRedirects(response, reverse('blog:detail', kwargs={'slug': self.post.slug}))
-		send_sms.assert_not_called()
-		self.assertFalse(OTPCode.objects.filter(phone_number=registered.phone_number).exists())
+		self.assertEqual(response.status_code, 302)
+		send_sms.assert_called_once()
+		otp = OTPCode.objects.get(phone_number=registered.phone_number, is_used=False)
+
+		response = self.client.post(verify_url, {'otp_code': otp.code}, follow=True)
+		self.assertEqual(response.status_code, 200)
+		claim = BlogCouponClaim.objects.get(phone_number=registered.phone_number)
+		self.assertEqual(claim.discount_percent, self.post.coupon_discount_percent)
 
 
 class PodcastPageTests(TestCase):

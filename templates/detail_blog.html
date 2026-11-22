@@ -118,8 +118,8 @@
             <span class="material-symbols-outlined text-[14px]"
               >chevron_left</span
             >
-            <a class="hover:text-primary-container transition-colors" href="{% url 'blog:list' %}?category={{ post.category.slug }}"
-              >{{ post.category.name }}</a
+            <a class="hover:text-primary-container transition-colors" href="{% url 'blog:list' %}?category={{ post.category|urlencode }}"
+              >{{ post.category }}</a
             >
             {% endif %}
             <span class="material-symbols-outlined text-[14px]"
@@ -176,8 +176,11 @@
               <div class="flex flex-wrap items-center gap-4">
                 <img
                   class="w-12 h-12 rounded-full object-cover shadow-sm"
-                  data-alt="پارسا اقبالی"
+                  alt="پارسا اقبالی"
                   src="/images/cover_parsa.webp"
+                  width="48"
+                  height="48"
+                  decoding="async"
                 />
                 <div class="flex flex-col">
                   <div class="flex items-center gap-2">
@@ -252,11 +255,17 @@
           <section
             class="mt-8 rounded-3xl overflow-hidden shadow-lg relative bg-primary-container min-h-[360px] md:h-[440px] flex items-end"
           >
+            {% if post.thumbnail %}
             <img
               class="absolute inset-0 w-full h-full object-cover"
-              data-alt="{{ post.summary }}"
+              alt="{{ post.summary|default:post.title }}"
               src="{{ post.thumbnail.url }}"
+              width="1216"
+              height="440"
+              fetchpriority="high"
+              decoding="async"
             />
+            {% endif %}
 
             <!-- Overlay Floating Badges & Metric Callout -->
             <div
@@ -274,7 +283,7 @@
             >
               {% if post.content %}
               <section class="article-body rounded-2xl bg-card p-6 text-on-surface-variant leading-8" id="article-body">
-                {{ post.content|safe }}
+                {{ post_content_html|safe }}
               </section>
               {% else %}
               <!-- Executive Summary Box -->
@@ -944,8 +953,12 @@
               >
                 <img
                   class="w-24 h-24 rounded-2xl object-cover shadow-md shrink-0"
-                  data-alt="Close up professional portrait of Parsa Eghbali software engineer and tech educator, navy blue themed background, confident smile, clean Iranian tech leader profile."
+                  alt="پارسا اقبالی — مدرس و مشاور ارشد سیستم"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8-1B_qvR_xrwZl8ftxFIoOsAKCPJCV1aLy7VatWoY_jCaz3D5adeqi_d52IEm_71OXE0tQwTTdDzKR9GbYVG49fft_LOgBCG7lver2liH5M8HiglHB-jGw8v3_lt9zyOO6arntMpYzGxmBTbVOhy6r52bPPElvrCgq7Mo3VzhhmQnyN7rD-GMeYYRd02jfeXu6cNg29kibwdi4_Jv4HFXLr9D1XWXplt2QaSR1Uun9Fe5DCI5_jG6DQ"
+                  width="96"
+                  height="96"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div class="flex flex-col gap-2">
                   <div
@@ -1025,8 +1038,12 @@
                       {% if related.thumbnail %}
                       <img
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        data-alt="{{ related.summary|default:related.title }}"
+                        alt="{{ related.summary|default:related.title }}"
                         src="{{ related.thumbnail.url }}"
+                        width="400"
+                        height="288"
+                        loading="lazy"
+                        decoding="async"
                       />
                       {% endif %}
                       {% with related.get_tags_list|first as first_tag %}
@@ -1187,8 +1204,12 @@
                         <div class="flex items-center gap-2">
                           <img
                             class="w-8 h-8 rounded-full object-cover"
-                            data-alt="Parsa Eghbali headshot instructor verified badge avatar."
+                            alt="پارسا اقبالی"
                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8gpHegvkjnI8ObM7Nl0c19q1viXz3aBggNZUxw2nHbE0aTw07vSRfn9_RvBzJbt_KX6BGifBJyUqPktR-1CPP3jCbQ6NeMFpxT89SrTak1_bwzIbwxpbCJiFM8FzbYLZwAQuLhhymg4VM5RN6wsxS-V-Ly2hWepUAYWM29PVOpe2ZFg9yVJBiVwNHqVqQjl-cAk6UUODwayMFoFPLAz7J3KzV1eL437bbHhJd8RJby88wiJ7w8tnHdg"
+                            width="32"
+                            height="32"
+                            loading="lazy"
+                            decoding="async"
                           />
                           <span
                             class="font-headline-sm text-headline-sm text-primary font-bold"

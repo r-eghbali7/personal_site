@@ -2,6 +2,14 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+    <!-- کدی که دریافت کردید را دقیقاً اینجا قرار می‌دهیم -->
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-KQ2MJS7X"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    </script>
+    <!-- پایان کد گوگل -->
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
@@ -21,6 +29,10 @@
 
     <title>{% block title %}آکادمی پارسا اقبالی{% endblock %}</title>
 
+    <link rel="icon" href="{% static 'favicon.ico' %}" sizes="any" />
+    <link rel="apple-touch-icon" href="{% static 'apple-touch-icon.png' %}" />
+    <link rel="preload" href="{% static 'fonts/vazirmatn-arabic.woff2' %}" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="{% static 'fonts/material-symbols-outlined.woff2' %}" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="{% static 'css/fonts.css' %}" />
     <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
     <link rel="stylesheet" href="{% static 'css/rich-text.css' %}" />

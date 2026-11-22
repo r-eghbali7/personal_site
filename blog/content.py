@@ -14,6 +14,11 @@ _BLOCK_TAG_RE = re.compile(
     re.IGNORECASE,
 )
 _ID_ATTR_RE = re.compile(r'\sid=("[^"]*"|\'[^\']*\')', re.IGNORECASE)
+_TABLE_RE = re.compile(r'<table\b[^>]*>.*?</table>', re.IGNORECASE | re.DOTALL)
+_TR_RE = re.compile(r'<tr\b[^>]*>.*?</tr>', re.IGNORECASE | re.DOTALL)
+_TH_RE = re.compile(r'<th\b', re.IGNORECASE)
+_TD_OPEN_RE = re.compile(r'<td(?=[\s>])', re.IGNORECASE)
+_TD_CLOSE_RE = re.compile(r'</td\s*>', re.IGNORECASE)
 
 
 def article_content_and_toc(content):
@@ -59,4 +64,31 @@ def article_content_and_toc(content):
         return f'<h{level}{attributes} id="{anchor}">{inner}</h{level}>'
 
     html = _HEADING_RE.sub(replace_heading, content)
+    html = ensure_table_headers(html)
     return mark_safe(html), toc
+
+
+def _add_table_header_cells(table_html):
+    """اولین ردیف جدول را به سرصفحهٔ ستون تبدیل می‌کند."""
+    if _TH_RE.search(table_html):
+        return table_html
+    row_match = _TR_RE.search(table_html)
+    if not row_match:
+        return table_html
+    row = row_match.group(0)
+    if not _TD_OPEN_RE.search(row):
+        return table_html
+    fixed_row = _TD_OPEN_RE.sub('<th scope="col"', row)
+    fixed_row = _TD_CLOSE_RE.sub('</th>', fixed_row)
+    return table_html.replace(row, fixed_row, 1)
+
+
+def ensure_table_headers(html):
+    """
+    جدول‌های ادیتور معمولاً ردیف عنوان را با <td> می‌سازند و همین باعث
+    خطای دسترس‌پذیری td-has-header می‌شود؛ ردیف اول را به <th scope="col">
+    تبدیل می‌کنیم (فقط وقتی جدول هیچ <th> ندارد).
+    """
+    if not html or '<table' not in html.lower():
+        return html
+    return _TABLE_RE.sub(lambda match: _add_table_header_cells(match.group(0)), html)

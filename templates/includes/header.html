@@ -5,6 +5,8 @@
   <div class="hidden xl:flex items-center gap-3 shrink-0">
       <img
         alt="HT Developer Logo"
+        width="32"
+        height="32"
         class="h-8 w-auto object-contain"
         src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg"
       />
@@ -29,7 +31,9 @@
         <input
           class="w-full h-10 pr-10 pl-4 bg-background rounded-full border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner transition-colors"
           placeholder="جستجوی آموزش، مقاله..."
+          role="combobox"
           aria-label="جست‌وجوی دوره و مقاله"
+          aria-haspopup="listbox"
           aria-autocomplete="list"
           aria-controls="site-search-results"
           aria-expanded="false"
@@ -42,7 +46,7 @@
       </div>
       <a class="h-10 w-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center hover:bg-tertiary-container hover:text-on-primary transition-colors" data-path="cart" href="{% url 'orders:cart' %}"><span class="material-symbols-outlined text-[20px]">shopping_bag</span></a>
       <div class="flex items-center gap-2 pr-1">
-        <img alt="Profile" class="w-7 h-7 rounded-full object-cover border border-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q" />
+        <img alt="Profile" width="28" height="28" class="w-7 h-7 rounded-full object-cover border border-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q" />
         {% if user.is_authenticated %}<a class="hidden sm:inline-block font-body-sm text-primary-container font-semibold hover:text-tertiary-container transition-colors" data-path="user-profile" href="{% url 'accounts:profile' %}">حساب کاربری</a>{% else %}<a class="hidden sm:inline-block font-body-sm text-primary-container font-semibold hover:text-tertiary-container transition-colors" href="{% url 'accounts:login' %}">ورود</a>{% endif %}
       </div>
     </div>
@@ -55,13 +59,13 @@
       </button>
       <!-- Center: logo -->
       <a href="{% url 'courses:home' %}" class="flex items-center justify-center shrink-0">
-        <img alt="HT Developer Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg" />
+        <img alt="HT Developer Logo" width="32" height="32" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK_YNCO96FaSAezDxPNRZCOyFYFB9wMltd80bu3AfzQVGt9gqrlFF4LxN4fR9slua34BaJN2wH40mvpiOr1N7ciHpR7wJzpy4n3nJ0AI4Et4DuSC-_dbtZVt6JfhRDwRhtp7o1UlHgt45joiebF9zY3OW9schZ1Kz9URpjxcVuooMc_7gfnTBaBSKrvIuRiKdlnfiRBWOeJgFnr1J8NzFBPKOaKom7gGBOGa7DUK1O_Q92_rhSWAViHg" />
       </a>
       <!-- Left: user icon -->
       <div class="shrink-0">
         {% if user.is_authenticated %}
           <a class="h-10 w-10 rounded-full object-cover border border-border flex items-center justify-center" data-path="user-profile" href="{% url 'accounts:profile' %}">
-            <img alt="Profile" class="w-7 h-7 rounded-full object-cover border border-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q" />
+            <img alt="Profile" width="28" height="28" class="w-7 h-7 rounded-full object-cover border border-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI0-wrBg5Gl7MYQP_7PlZViv1X1TFlGosejdVG0jeTKJ_szYX12-Gww_BIVCWV6yEzpnQ6otYQPcG6JiqkVWbaAHb9739iC3ZiwcsKbURlBFaQCwqmWauyFqMGTqScU-dqaS69btOnaaOjq31ajvWN-kPvlA6ZARuhScfeLA_SbZjjEVHif6mf2vlsV0L910NWvlhrtr7NK9JwdTrYq7mXOPbgs6W0bsVxeVyOgevW4QbhB-FKJxG-7Q" />
           </a>
         {% else %}
           <a class="h-10 w-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center" href="{% url 'accounts:login' %}">
@@ -91,7 +95,9 @@
       <input
         class="w-full h-11 pr-10 pl-4 bg-background rounded-full border border-border font-body-sm text-body-sm text-on-surface placeholder:text-muted-text focus:outline-none focus:border-primary-container shadow-inner transition-colors"
         placeholder="جستجوی آموزش، مقاله..."
+        role="combobox"
         aria-label="جست‌وجوی دوره و مقاله"
+        aria-haspopup="listbox"
         aria-autocomplete="list"
         aria-controls="site-search-results-mobile"
         aria-expanded="false"

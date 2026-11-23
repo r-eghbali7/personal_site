@@ -52,7 +52,7 @@ class Cart(models.Model):
     def get_subtotal(self):
         """جمع قیمت جاری دوره‌های سبد پیش از تخفیف."""
         total = sum(
-            (item.course.price for item in self.items.select_related('course')),
+            (item.course.final_price for item in self.items.select_related('course')),
             Decimal('0'),
         )
         return Decimal(total)
@@ -302,8 +302,8 @@ class Coupon(models.Model):
             if not eligible:
                 return None, f'این کد تخفیف فقط برای دوره «{self.course.title}» است و آن دوره در سبد خرید نیست.'
         else:
-            eligible = [item for item in items if item.course.price > 0]
-        base = sum((item.course.price for item in eligible), Decimal('0'))
+            eligible = [item for item in items if item.course.final_price > 0]
+        base = sum((item.course.final_price for item in eligible), Decimal('0'))
         if base <= 0:
             return None, 'این کد تخفیف روی محصولات فعلی سبد خرید قابل اعمال نیست.'
         discount = self.discount_for(base)

@@ -2,6 +2,9 @@
 App: courses — مدل‌های دوره، فصل، جلسه، کوییز، پروژه نهایی
 """
 
+from decimal import Decimal, ROUND_HALF_UP
+
+from django.core.validators import MaxValueValidator
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
@@ -74,8 +77,20 @@ class Course(models.Model):
         max_digits=12,
         decimal_places=0,
         default=0,
-        verbose_name='قیمت (تومان)',
-        help_text='صفر به معنای رایگان است.',
+        verbose_name='قیمت اصلی (تومان)',
+        help_text='صفر به معنای رایگان است. اگر تخفیف دارید، درصد را در فیلد بعدی وارد کنید.',
+    )
+    discount_percent = models.PositiveSmallIntegerField(
+        default=0,
+        validators=[MaxValueValidator(100)],
+        verbose_name='درصد تخفیف',
+        help_text='صفر یعنی بدون تخفیف. مبلغ قابل پرداخت به‌صورت خودکار محاسبه می‌شود.',
+    )
+    discount_title = models.CharField(
+        max_length=120,
+        blank=True,
+        verbose_name='عنوان تخفیف',
+        help_text='مثلاً: تخفیف جشنواره زمستانه. فقط وقتی تخفیف فعال است نمایش داده می‌شود.',
     )
     level = models.CharField(
         max_length=20,
@@ -153,7 +168,28 @@ class Course(models.Model):
 
     @property
     def is_free(self):
-        return self.price == 0
+        return self.final_price == 0
+
+    @property
+    def has_discount(self):
+        """آیا برای این دوره تخفیف فعال است؟"""
+        return 0 < self.discount_percent <= 100 and self.price > 0
+
+    @property
+    def discount_amount(self):
+        """مبلغ تخفیف به تومان."""
+        if not self.has_discount:
+            return Decimal('0')
+        return (self.price * self.discount_percent / Decimal('100')).quantize(
+            Decimal('1'), rounding=ROUND_HALF_UP
+        )
+
+    @property
+    def final_price(self):
+        """مبلغ قابل پرداخت پس از اعمال تخفیف دوره."""
+        if not self.has_discount:
+            return self.price
+        return max(self.price - self.discount_amount, Decimal('0'))
 
     def get_total_duration(self):
         """مجموع مدت زمان جلسات دوره (به ثانیه)."""
@@ -250,6 +286,19 @@ class Lesson(models.Model):
     def duration_minutes(self):
         return (self.duration_seconds + 59) // 60
 
+    @property
+    def stream_url(self):
+        """آدرس امن پخش ویدیو (به‌جای مسیر مستقیم فایل در MEDIA)."""
+        from django.urls import reverse
+
+        return reverse(
+            'courses:lesson_video',
+            kwargs={
+                'course_slug': self.chapter.course.slug,
+                'lesson_id': self.pk,
+            },
+        )
+
     def can_access(self, user):
         """
         بررسی دسترسی کاربر به این جلسه.
@@ -301,6 +350,29 @@ class CourseComment(models.Model):
 
     def __str__(self):
         return f'{self.user} روی دوره {self.course_id}'
+
+
+class CourseFAQ(models.Model):
+    """پرسش متداول هر دوره (نمایش در بخش «سوالات متداول» صفحه دوره)."""
+
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='faqs',
+        verbose_name='دوره',
+    )
+    question = models.CharField(max_length=300, verbose_name='سؤال')
+    answer = models.TextField(verbose_name='پاسخ')
+    order = models.PositiveIntegerField(default=0, verbose_name='ترتیب')
+    is_published = models.BooleanField(default=True, verbose_name='نمایش داده شود')
+
+    class Meta:
+        verbose_name = 'سؤال متداول دوره'
+        verbose_name_plural = 'سؤالات متداول دوره'
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f'{self.course.title} — {self.question[:60]}'
 
 
 class Enrollment(models.Model):

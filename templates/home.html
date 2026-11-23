@@ -283,7 +283,7 @@
                 {% if course.is_free %}
                 <span class="font-headline-sm text-headline-sm font-bold text-primary-container">رایگان</span>
                 {% else %}
-                <span class="font-headline-sm text-headline-sm font-bold text-primary-container">{{ course.price|floatformat:0 }}</span>
+                <span class="font-headline-sm text-headline-sm font-bold text-primary-container">{{ course.final_price|persian_int }}</span>
                 <span class="font-body-sm text-[11px] text-secondary">تومان</span>
                 {% endif %}
               </div>

@@ -241,10 +241,12 @@
                   <video
                     class="w-full aspect-video bg-black object-contain"
                     controls
+                    controlslist="nodownload"
                     preload="metadata"
                     playsinline
                     poster="{% if course.thumbnail %}{{ course.thumbnail.url }}{% endif %}"
                     data-course-video
+                    {% if request.user.is_authenticated %}data-watermark="{{ request.user.phone_number }}"{% endif %}
                   >
                     <source src="{{ course.intro_video.url }}" />
                     مرورگر شما از پخش ویدیو پشتیبانی نمیکند.
@@ -335,7 +337,7 @@
                     >
                       <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-[18px]"
-                          >ondemand_video</span
+                          >slideshow</span
                         >
                         <span class="font-medium"
                           >معرفی سرفصل‌ها، متدولوژی معماری نرم‌افزار و دمو نهایی
@@ -378,9 +380,9 @@
                   </a>
                   <a
                     class="px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-body-sm text-body-sm transition-all whitespace-nowrap"
-                    href="#projects"
+                    href="#articles"
                   >
-                    پروژه‌های عملی
+                    مقالات مرتبط
                   </a>
                   <a
                     class="px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-body-sm text-body-sm transition-all whitespace-nowrap"
@@ -734,11 +736,13 @@
                             aria-label="پخش ویدئوی {{ lesson.title }}"
                             class="w-full max-h-[560px] rounded-lg bg-black"
                             controls
+                            controlslist="nodownload"
                             playsinline
                             preload="metadata"
                             {% if course.thumbnail %}poster="{{ course.thumbnail.url }}"{% endif %}
+                            {% if request.user.is_authenticated %}data-watermark="{{ request.user.phone_number }}"{% endif %}
                           >
-                            <source src="{{ lesson.video_file.url }}" />
+                            <source src="{{ lesson.stream_url }}" />
                             مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.
                           </video>
                           {% elif lesson.can_play and lesson.player_kind == 'embed' %}
@@ -768,143 +772,101 @@
                 {% else %}
                 <p class="rounded-2xl bg-card p-8 text-center text-outline">هنوز سرفصلی برای این دوره ثبت نشده است.</p>
                 {% endif %}
-                <!-- Section: Showcase of Real-World Projects -->
+                <!-- Section: Related Articles (پروژه‌های عملی دوره در قالب مقاله) -->
                 <section
                   class="bg-card rounded-[28px] p-8 shadow-sm flex flex-col gap-space-md"
-                  id="projects"
+                  id="articles"
                 >
                   <div class="flex items-center gap-3">
                     <div
                       class="w-10 h-10 rounded-xl bg-primary-container/10 text-primary-container flex items-center justify-center"
                     >
                       <span class="material-symbols-outlined text-[22px]"
-                        >laptop_mac</span
+                        >menu_book</span
                       >
                     </div>
                     <div>
                       <h2
                         class="font-headline-md text-headline-md text-primary-container font-bold"
                       >
-                        پروژه‌های عملی این دوره
+                        مقالات مرتبط با این دوره
                       </h2>
                       <p class="font-body-sm text-body-sm text-outline">
-                        توسعه نرم‌افزارهای تجاری واقعی از صفر تا آماده‌سازی برای
-                        سرور عملیاتی
+                        پروژه‌های عملی این دوره در قالب مقاله‌های کاربردی و
+                        گام‌به‌گام
                       </p>
                     </div>
                   </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                    <!-- Project 1 Card -->
-                    <div
-                      class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm flex flex-col group"
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+                    {% for post in related_articles %}
+                    <a
+                      class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm hover:shadow-md flex flex-col group transition-all duration-300"
+                      href="{{ post.get_absolute_url }}"
                     >
-                      <div
-                        class="relative h-48 w-full bg-cover bg-center overflow-hidden"
-                        data-alt="Modern sleek web dashboard user interface for learning management system, displaying progress metrics, interactive charts, lecture cards, glassmorphic dark theme with navy and indigo accents"
-                        style="
-                          background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuBClExBJVUsVGD7rcGQ-rU_wfObQmzTF3eeYr4MH-NpFd_Y6TDBNIAXxnqgv_xez5sNzeXucoxmAGxny9g-M8blYbMJOi7IUd3dVYtnGnk8J3CJbYgOzxIqk5fGNEN-KGD_47pqgxQ7X6C2BX_jQc5pXu0fAiGuh_dbcdDNj0Jr8KrP8lxlsG5nMqPkRAZJh0cwPRBXxQQM1Wkhx7AVphaE1erxHJ1QFAbuDy8fp-YvZVJC8TDJ3kD_ig&quot;);
-                        "
-                      >
+                      <div class="relative h-40 w-full overflow-hidden bg-primary-container/10">
+                        {% if post.thumbnail %}
+                        <img
+                          alt="{{ post.title }}"
+                          class="h-full w-full object-cover"
+                          loading="lazy"
+                          src="{{ post.thumbnail.url }}"
+                        />
+                        {% else %}
                         <div
-                          class="absolute inset-0 bg-primary-container/20 group-hover:bg-transparent transition-colors"
-                        ></div>
-                        <span
-                          class="absolute top-3 right-3 px-3 py-1 rounded-full bg-primary-container text-on-primary font-label-badge text-label-badge font-bold"
+                          class="h-full w-full flex items-center justify-center bg-primary-container/90 text-on-primary"
                         >
-                          پروژه انترپرایز ۱
-                        </span>
-                      </div>
-                      <div class="p-5 flex flex-col flex-1 gap-2.5">
-                        <h3
-                          class="font-headline-sm text-headline-sm text-primary-container font-bold"
-                        >
-                          سامانه جامع آموزش الکترونیک (LMS)
-                        </h3>
-                        <p
-                          class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed text-justify"
-                        >
-                          پیاده‌سازی پنل مدیریت استاد، بارگذاری فایل‌های سنگین
-                          در فضای S3 با Presigned URL، پلیر ویدیویی
-                          رمزگذاری‌شده، کوئیزهای تعاملی و صدور خودکار مدرک در
-                          قالب PDF.
-                        </p>
-                        <div
-                          class="mt-auto pt-3 flex items-center gap-2 flex-wrap"
-                        >
-                          <span
-                            class="px-2.5 py-1 rounded-lg bg-surface-container font-code-sm text-code-sm text-primary-container"
-                            >Next.js 15</span
-                          >
-                          <span
-                            class="px-2.5 py-1 rounded-lg bg-surface-container font-code-sm text-code-sm text-primary-container"
-                            >Prisma</span
-                          >
-                          <span
-                            class="px-2.5 py-1 rounded-lg bg-surface-container font-code-sm text-code-sm text-primary-container"
-                            >PostgreSQL</span
-                          >
-                          <span
-                            class="px-2.5 py-1 rounded-lg bg-surface-container font-code-sm text-code-sm text-primary-container"
-                            >AWS S3</span
+                          <span class="material-symbols-outlined text-[42px]"
+                            >article</span
                           >
                         </div>
-                      </div>
-                    </div>
-                    <!-- Project 2 Card -->
-                    <div
-                      class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm flex flex-col group"
-                    >
-                      <div
-                        class="relative h-48 w-full bg-cover bg-center overflow-hidden"
-                        data-alt="E-commerce shopping cart web platform user interface showcase, displaying product grids, filter sidebars, checkout flow, analytics chart, refined modern light design with navy blue primary highlights"
-                        style="
-                          background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuC3qbXFDDDH2X0dccYxsUpkWl3BRXS0NTK4nigMjw2PCJMs_2lU9iedetBX8BPcF00FeOkLJ1U4Hb7jygXCPw-U3dPmjqc-EP_tmB8ZT-3-8mGF1ptV1D4_VSs1EbsUXTqWuyfWnghidC642mfJ5lb3Hj_TUNk_rOhK7CgVu7kfk8JCBW-2wI7-PM0pSJWZkBwwmPfmAXwM65RJWFATYDBR36fosH4lf75bRYICYSx3vtE5xapr8JR9dg&quot;);
-                        "
-                      >
-                        <div
-                          class="absolute inset-0 bg-primary-container/20 group-hover:bg-transparent transition-colors"
-                        ></div>
+                        {% endif %}
+                        {% if post.category %}
                         <span
-                          class="absolute top-3 right-3 px-3 py-1 rounded-full bg-primary-container text-on-primary font-label-badge text-label-badge font-bold"
+                          class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-primary-container text-on-primary font-label-badge text-label-badge"
+                          >{{ post.category }}</span
                         >
-                          پروژه انترپرایز ۲
-                        </span>
+                        {% endif %}
                       </div>
-                      <div class="p-5 flex flex-col flex-1 gap-2.5">
+                      <div class="p-5 flex flex-col flex-1 gap-2">
                         <h3
-                          class="font-headline-sm text-headline-sm text-primary-container font-bold"
+                          class="font-headline-sm text-headline-sm text-primary-container font-bold line-clamp-2 group-hover:text-tertiary-container transition-colors"
                         >
-                          فروشگاه مقیاس‌پذیر با سبد خرید هیبریدی
+                          {{ post.title }}
                         </h3>
                         <p
-                          class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed text-justify"
+                          class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed line-clamp-3"
                         >
-                          اتصال به درگاه بانکی شاپرک، اعتبارسنجی همزمان موجودی
-                          کالا در انبار، ارسال فاکتور پیامکی، سیستم کدهای تخفیف
-                          با لاجیک پیچیده و رهگیری هوشمند سفارشات پستی.
+                          {{ post.summary|default:post.content|striptags|truncatechars:120 }}
                         </p>
                         <div
-                          class="mt-auto pt-3 flex items-center gap-2 flex-wrap"
+                          class="mt-auto pt-3 flex items-center justify-between border-t border-border font-body-sm text-body-sm text-outline"
                         >
+                          <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px]"
+                              >schedule</span
+                            >
+                            {{ post.read_time_minutes|persian_number }} دقیقه مطالعه
+                          </span>
                           <span
-                            class="px-2.5 py-1 rounded-lg bg-surface-container font-code-sm text-code-sm text-primary-container"
-                            >Server Actions</span
+                            class="flex items-center gap-1 text-primary-container font-semibold"
                           >
-                          <span
-                            class="px-2.5 py-1 rounded-lg bg-surface-container font-code-sm text-code-sm text-primary-container"
-                            >Zod Validation</span
-                          >
-                          <span
-                            class="px-2.5 py-1 rounded-lg bg-surface-container font-code-sm text-code-sm text-primary-container"
-                            >Shaparak API</span
-                          >
-                          <span
-                            class="px-2.5 py-1 rounded-lg bg-surface-container font-code-sm text-code-sm text-primary-container"
-                            >Docker</span
-                          >
+                            مطالعه مقاله
+                            <span class="material-symbols-outlined text-[16px]"
+                              >chevron_left</span
+                            >
+                          </span>
                         </div>
                       </div>
+                    </a>
+                    {% empty %}
+                    <div
+                      class="md:col-span-2 lg:col-span-3 rounded-2xl bg-surface-container-lowest p-5 text-center"
+                    >
+                      <p class="font-body-sm text-body-sm text-outline">
+                        هنوز مقاله‌ای مرتبط با این دوره منتشر نشده است.
+                      </p>
                     </div>
+                    {% endfor %}
                   </div>
                 </section>
                 <!-- Section: Instructor Profile -->
@@ -1216,7 +1178,7 @@
                     </div>
                   </div>
                 </section>
-                <!-- Section: FAQ Accordion -->
+                <!-- Section: FAQ Accordion (از دیتابیس) -->
                 <section
                   class="bg-card rounded-[28px] p-8 shadow-sm flex flex-col gap-space-md"
                   id="faq"
@@ -1241,17 +1203,17 @@
                     </div>
                   </div>
                   <div class="flex flex-col gap-3 pt-2">
-                    <!-- FAQ 1 -->
+                    {% for faq in faqs %}
                     <div
                       class="faq-item bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm"
                     >
                       <button
                         class="faq-toggle w-full p-5 flex items-center justify-between text-right hover:bg-surface-container-low transition-colors"
+                        type="button"
                       >
                         <span
                           class="font-body-md text-body-md text-primary-container font-bold"
-                          >آیا برای گذراندن این دوره نیاز به یادگیری قبلی بک‌اند
-                          دارم؟</span
+                          >{{ faq.question }}</span
                         >
                         <span
                           class="material-symbols-outlined text-outline faq-icon transition-transform duration-200"
@@ -1261,118 +1223,16 @@
                       <div
                         class="faq-answer hidden p-5 pt-0 text-on-surface-variant font-body-sm text-body-sm leading-relaxed text-justify"
                       >
-                        خیر، تمام مفاهیم دیتابیس، ساخت API، مدیریت کوکی‌ها،
-                        احراز هویت و برقراری ارتباط با PostgreSQL با استفاده از
-                        Prisma ORM و Server Actions از پایه به شکلی روان و دقیق
-                        آموزش داده می‌شود. تنها پیش‌نیاز شما آشنایی کافی با زبان
-                        JavaScript و منطق اولیه کامپوننت‌های React است.
+                        {{ faq.answer|linebreaksbr }}
                       </div>
                     </div>
-                    <!-- FAQ 2 -->
-                    <div
-                      class="faq-item bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm"
-                    >
-                      <button
-                        class="faq-toggle w-full p-5 flex items-center justify-between text-right hover:bg-surface-container-low transition-colors"
-                      >
-                        <span
-                          class="font-body-md text-body-md text-primary-container font-bold"
-                          >پشتیبانی و رفع اشکال دوره به چه صورت انجام
-                          می‌شود؟</span
-                        >
-                        <span
-                          class="material-symbols-outlined text-outline faq-icon transition-transform duration-200"
-                          >expand_more</span
-                        >
-                      </button>
-                      <div
-                        class="faq-answer hidden p-5 pt-0 text-on-surface-variant font-body-sm text-body-sm leading-relaxed text-justify"
-                      >
-                        تمامی دانشجویان به بخش تیکت پشتیبانی اختصاصی وب‌سایت و
-                        همچنین گروه فنی VIP تلگرام دسترسی مستقیم دارند. سوالات
-                        فنی و بررسی کدهای شما توسط شخص مهندس پارسا اقبالی و
-                        منتورهای ارشد آکادمی حداکثر ظرف ۱۲ ساعت کاری پاسخ داده
-                        می‌شود.
-                      </div>
+                    {% empty %}
+                    <div class="rounded-2xl bg-surface-container-lowest p-5 text-center">
+                      <p class="font-body-sm text-body-sm text-outline">
+                        هنوز سوالی برای این دوره ثبت نشده است.
+                      </p>
                     </div>
-                    <!-- FAQ 3 -->
-                    <div
-                      class="faq-item bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm"
-                    >
-                      <button
-                        class="faq-toggle w-full p-5 flex items-center justify-between text-right hover:bg-surface-container-low transition-colors"
-                      >
-                        <span
-                          class="font-body-md text-body-md text-primary-container font-bold"
-                          >آیا آپدیت‌های بعدی Next.js و React نیز رایگان در
-                          اختیار خریداران قرار می‌گیرد؟</span
-                        >
-                        <span
-                          class="material-symbols-outlined text-outline faq-icon transition-transform duration-200"
-                          >expand_more</span
-                        >
-                      </button>
-                      <div
-                        class="faq-answer hidden p-5 pt-0 text-on-surface-variant font-body-sm text-body-sm leading-relaxed text-justify"
-                      >
-                        بله، با یک بار تهیه دوره به تمام به‌روزرسانی‌های آینده،
-                        ویدئوهای الحاقی، نسخه‌های جدید کتابخانه‌ها و سورس‌کدهای
-                        آپدیت‌شده در ریپازیتوری به صورت کاملاً رایگان و
-                        مادام‌العمر دسترسی خواهید داشت.
-                      </div>
-                    </div>
-                    <!-- FAQ 4 -->
-                    <div
-                      class="faq-item bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm"
-                    >
-                      <button
-                        class="faq-toggle w-full p-5 flex items-center justify-between text-right hover:bg-surface-container-low transition-colors"
-                      >
-                        <span
-                          class="font-body-md text-body-md text-primary-container font-bold"
-                          >نحوه اعطای گواهی‌نامه و سرتیفیکیت پایان دوره چگونه
-                          است؟</span
-                        >
-                        <span
-                          class="material-symbols-outlined text-outline faq-icon transition-transform duration-200"
-                          >expand_more</span
-                        >
-                      </button>
-                      <div
-                        class="faq-answer hidden p-5 pt-0 text-on-surface-variant font-body-sm text-body-sm leading-relaxed text-justify"
-                      >
-                        پس از تکمیل جلسات و ارسال پروژه نهایی و تایید کدها توسط
-                        تیم منتورینگ، یک سرتیفیکیت دوزبانه (فارسی و انگلیسی)
-                        رسمی با کد اعتبارسنجی یکتای آنلاین و قابلیت درج مستقیم
-                        در پروفایل لینکدین صادر می‌شود.
-                      </div>
-                    </div>
-                    <!-- FAQ 5 -->
-                    <div
-                      class="faq-item bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm"
-                    >
-                      <button
-                        class="faq-toggle w-full p-5 flex items-center justify-between text-right hover:bg-surface-container-low transition-colors"
-                      >
-                        <span
-                          class="font-body-md text-body-md text-primary-container font-bold"
-                          >شرایط ضمانت بازگشت وجه ۷ روزه چیست؟</span
-                        >
-                        <span
-                          class="material-symbols-outlined text-outline faq-icon transition-transform duration-200"
-                          >expand_more</span
-                        >
-                      </button>
-                      <div
-                        class="faq-answer hidden p-5 pt-0 text-on-surface-variant font-body-sm text-body-sm leading-relaxed text-justify"
-                      >
-                        ما به کیفیت فنی این دوره اطمینان ۱۰۰ درصدی داریم. اگر تا
-                        ۷ روز پس از خرید، به هر دلیلی از محتوای آموزشی رضایت
-                        نداشتید، بدون قید و شرط و تنها با ارسال یک تیکت، تمام
-                        مبلغ پرداختی ظرف ۲۴ ساعت کاری به حساب بانکی شما عودت
-                        داده خواهد شد.
-                      </div>
-                    </div>
+                    {% endfor %}
                   </div>
                 </section>
               </div>
@@ -1383,7 +1243,8 @@
                 <div
                   class="bg-card rounded-[28px] p-6 shadow-xl flex flex-col gap-space-md"
                 >
-                  <!-- Discount Tag & Countdown -->
+<!-- Discount Tag & Price Breakdown -->
+                  {% if course.has_discount %}
                   <div
                     class="flex items-center justify-between bg-primary-container/10 p-3 rounded-2xl"
                   >
@@ -1393,44 +1254,53 @@
                       <span class="material-symbols-outlined text-[18px]"
                         >timer</span
                       >
-                      <span>تخفیف جشنواره زمستانه</span>
+                      <span>{{ course.discount_title|default:"تخفیف ویژه" }}</span>
                     </div>
                     <span
                       class="px-2.5 py-0.5 rounded-full bg-accent-alt text-on-primary font-label-badge text-label-badge font-bold"
                     >
-                      ۲۹٪ تخفیف ویژه
+                      {{ course.discount_percent|persian_number }}٪ تخفیف
                     </span>
                   </div>
-                  <!-- Price Breakdown -->
+                  {% endif %}
                   <div class="flex flex-col gap-1">
+                    {% if course.has_discount %}
                     <div
                       class="flex items-center justify-between font-body-sm text-body-sm text-outline"
                     >
                       <span>قیمت اصلی دوره:</span>
                       <span class="line-through font-code-sm text-code-sm"
-                        >۳,۴۵۰,۰۰۰ تومان</span
+                        >{{ course.price|persian_int }} تومان</span
                       >
                     </div>
+                    {% endif %}
                     <div class="flex items-baseline justify-between pt-1">
                       <span
                         class="font-body-md text-body-md text-primary-container font-bold"
-                        >مبلغ قابل پرداخت:</span
+                        >{% if course.has_discount %}مبلغ قابل پرداخت:{% else %}قیمت دوره:{% endif %}</span
                       >
                       <div
                         class="flex items-baseline gap-1 text-primary-container"
                       >
+                        {% if course.is_free %}
+                        <span
+                          class="font-display-hero text-[28px] font-extrabold tracking-tight"
+                          >رایگان</span
+                        >
+                        {% else %}
                         <span
                           class="font-display-hero text-[32px] font-extrabold tracking-tight font-code-md"
-                          >{{ course.price|floatformat:0 }}</span
+                          >{{ course.final_price|persian_int }}</span
                         >
                         <span
                           class="font-body-sm text-body-sm text-outline font-medium"
                           >تومان</span
                         >
+                        {% endif %}
                       </div>
                     </div>
                   </div>
-                  <!-- Primary CTAs -->
+                                    <!-- Primary CTAs -->
                   <div class="flex flex-col gap-2.5">
                     <form method="post" action="{% url 'orders:add_to_cart' course.id %}">
                       {% csrf_token %}
@@ -1614,7 +1484,7 @@
                 <div class="flex flex-col gap-1">
                   <span
                     class="font-label-badge text-label-badge text-accent-alt uppercase font-bold tracking-wider"
-                    >نقشه راه تخصصی فول‌استک</span
+                    >نقشه راه تخصصی</span
                   >
                   <h2
                     class="font-headline-lg text-headline-lg text-primary-container font-extrabold"
@@ -1625,7 +1495,7 @@
                 <a
                   class="px-5 py-2.5 rounded-xl bg-surface-container-high text-primary-container font-body-md text-body-md font-semibold hover:bg-primary-container hover:text-on-primary transition-colors flex items-center gap-1.5"
                   data-path="courses"
-                  href="#"
+                  href="{% url 'courses:list' %}"
                 >
                   <span>مشاهده همه دوره‌ها</span>
                   <span class="material-symbols-outlined text-[18px]"
@@ -1636,56 +1506,78 @@
               <div
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter"
               >
-                <!-- Related Course 1 -->
+                {% for related in related_courses %}
                 <div
                   class="h-[380px] bg-card rounded-[28px] overflow-hidden shadow-sm hover:shadow-md flex flex-col group transition-all duration-300"
                 >
-                  <div
-                    class="relative h-44 w-full bg-cover bg-center overflow-hidden"
-                    data-alt="Modern NestJS backend architecture visual banner with microservices network diagram, dark blue glowing tech grid, sleek minimalist lighting"
-                    style="
-                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuDd3VFBv7SAAonZeLxNPywM7v2L_WDY6yRpB-FypcO2S8t8RK3jjteloiW6-eD1KYCi8_gMduXA7AWK57UzAXVD7aZ4oSWqvSLSmLeMw5zsaSuUEvpCWZxmOQJO3qt_XyX5bB7Wm3z28YyIS9KVH-drK9WIFmFEGSTeJXm1j7t6UuUcc3tqVN18bPCYr2Cg7iLYRGSlXB0Ks-cxLt1Pn9WJ1WvIowGqQo9TCYDHMN3PJOFQ80Q-xDdIsA&quot;);
-                    "
-                  >
+                  <div class="relative h-44 w-full overflow-hidden bg-primary-container/10">
+                    {% if related.thumbnail %}
+                    <img
+                      alt="{{ related.title }}"
+                      class="h-full w-full object-cover"
+                      loading="lazy"
+                      src="{{ related.thumbnail.url }}"
+                    />
+                    {% else %}
+                    <div
+                      class="h-full w-full flex items-center justify-center bg-primary-container/90 text-on-primary"
+                    >
+                      <span class="material-symbols-outlined text-[44px]"
+                        >{% if related.category.icon %}{{ related.category.icon }}{% else %}school{% endif %}</span
+                      >
+                    </div>
+                    {% endif %}
+                    {% if related.category %}
                     <span
                       class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-primary-container text-on-primary font-label-badge text-label-badge"
                     >
-                      میکروسرویس و بک‌اند
+                      {{ related.category.name }}
                     </span>
+                    {% endif %}
                   </div>
                   <div class="p-5 flex flex-col flex-1 gap-2">
                     <div
-                      class="flex items-center gap-1.5 text-amber-warning text-[13px]"
+                      class="flex items-center gap-1.5 text-outline text-[13px]"
                     >
-                      <span
-                        class="material-symbols-outlined text-[16px]"
-                        style="font-variation-settings: &quot;FILL&quot; 1"
-                        >star</span
+                      <span class="material-symbols-outlined text-[16px]"
+                        >psychology</span
                       >
-                      <span class="font-code-sm font-bold text-on-surface"
-                        >۴.۹</span
-                      >
-                      <span class="text-outline text-body-sm"
-                        >(۲۱۰ دانشجو)</span
-                      >
+                      <span>{{ related.level_description|default:related.get_level_display }}</span>
                     </div>
                     <h3
                       class="font-headline-sm text-headline-sm text-primary-container font-bold line-clamp-2 group-hover:text-tertiary-container transition-colors"
                     >
-                      مسترکلاس NestJS و معماری میکروسرویس‌ها با Kafka و Redis
+                      {{ related.title }}
                     </h3>
                     <div
                       class="mt-auto pt-3 flex items-center justify-between border-t border-border"
                     >
-                      <div class="flex flex-col">
+                      <div class="flex flex-col gap-0.5">
+                        {% if related.has_discount %}
+                        <span
+                          class="font-code-sm text-code-sm text-outline line-through"
+                          >{{ related.price|persian_int }} تومان</span
+                        >
                         <span
                           class="font-code-md text-code-md font-bold text-primary-container"
-                          >۲,۸۵۰,۰۰۰ تومان</span
+                          >{{ related.final_price|persian_int }} تومان</span
                         >
+                        {% elif related.is_free %}
+                        <span
+                          class="font-code-md text-code-md font-bold text-primary-container"
+                          >رایگان</span
+                        >
+                        {% else %}
+                        <span
+                          class="font-code-md text-code-md font-bold text-primary-container"
+                          >{{ related.price|persian_int }} تومان</span
+                        >
+                        {% endif %}
                       </div>
                       <a
                         class="h-9 w-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center hover:bg-tertiary-container transition-colors"
-                        href="#"
+                        href="{% url 'courses:detail' related.slug %}"
+                        title="{{ related.title }}"
                       >
                         <span class="material-symbols-outlined text-[18px]"
                           >chevron_left</span
@@ -1694,127 +1586,18 @@
                     </div>
                   </div>
                 </div>
-                <!-- Related Course 2 -->
-                <div
-                  class="h-[380px] bg-card rounded-[28px] overflow-hidden shadow-sm hover:shadow-md flex flex-col group transition-all duration-300"
-                >
-                  <div
-                    class="relative h-44 w-full bg-cover bg-center overflow-hidden"
-                    data-alt="DevOps and Docker container orchestration illustration banner, cloud servers, Kubernetes nodes glowing in deep slate and indigo hues"
-                    style="
-                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuB7W_sdAhoLGB16sSNOVtpbgS_vtTmuQRqT9JEU8bgBohBTy8UKiALQ61-YDcdiaTo0jRFBy5VWav-XZu30Tta1ZHuYG_ov5wvVWszDJ5Yf4XeToxivs1WleSct8XyMLtLF5lO4OWKO4PbgqVs1fDabaKIAkjg6Rg9UUQc4HM9LkZ8l3v1EYSdfR8ozeqDYCf2lsGa0t1GAi7iM_eKl3INRxqyMovU_2NQMGl4Eu43vg5JgkZEb491vew&quot;);
-                    "
-                  >
-                    <span
-                      class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-primary-container text-on-primary font-label-badge text-label-badge"
-                    >
-                      دواپس و زیرساخت
-                    </span>
-                  </div>
-                  <div class="p-5 flex flex-col flex-1 gap-2">
-                    <div
-                      class="flex items-center gap-1.5 text-amber-warning text-[13px]"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[16px]"
-                        style="font-variation-settings: &quot;FILL&quot; 1"
-                        >star</span
-                      >
-                      <span class="font-code-sm font-bold text-on-surface"
-                        >۴.۸</span
-                      >
-                      <span class="text-outline text-body-sm"
-                        >(۱۵۵ دانشجو)</span
-                      >
-                    </div>
-                    <h3
-                      class="font-headline-sm text-headline-sm text-primary-container font-bold line-clamp-2 group-hover:text-tertiary-container transition-colors"
-                    >
-                      دوره جامع Docker و CI/CD برای توسعه‌دهندگان Fullstack
-                    </h3>
-                    <div
-                      class="mt-auto pt-3 flex items-center justify-between border-t border-border"
-                    >
-                      <div class="flex flex-col">
-                        <span
-                          class="font-code-md text-code-md font-bold text-primary-container"
-                          >۱,۹۵۰,۰۰۰ تومان</span
-                        >
-                      </div>
-                      <a
-                        class="h-9 w-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center hover:bg-tertiary-container transition-colors"
-                        href="#"
-                      >
-                        <span class="material-symbols-outlined text-[18px]"
-                          >chevron_left</span
-                        >
-                      </a>
-                    </div>
-                  </div>
+                {% empty %}
+                <div class="md:col-span-2 lg:col-span-3 rounded-[28px] bg-card p-8 text-center">
+                  <p class="font-body-sm text-body-sm text-outline">
+                    دوره دیگری برای پیشنهاد وجود ندارد.
+                  </p>
                 </div>
-                <!-- Related Course 3 -->
-                <div
-                  class="h-[380px] bg-card rounded-[28px] overflow-hidden shadow-sm hover:shadow-md flex flex-col group transition-all duration-300"
-                >
-                  <div
-                    class="relative h-44 w-full bg-cover bg-center overflow-hidden"
-                    data-alt="Advanced TypeScript and Design Patterns programming code banner, glowing abstract geometric matrices, clean professional tech studio setting"
-                    style="
-                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuBzP4nc7spWuzkF9Nsigj-t5KsaNXQ5PTJ42rOdS236CTKmAIjQeL6JOmHjMBU8foDH02ocfNF2iKJ1Ns61cXtf6CzwoJexO6hFa8bHAp1a4yj6F9uz14YITPsoKAdi-cYP_Z1XrUOb8WBu6M_q4GyIlnCGpVOJbuw85ZAZxzerLOM7pHwSY6UjiROlIBHsJW0CZZ072zS3oVS_MrtpZ9C66eawMJ89OHHK8uKZS9fGo19kFj4jfBM4wQ&quot;);
-                    "
-                  >
-                    <span
-                      class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-primary-container text-on-primary font-label-badge text-label-badge"
-                    >
-                      معماری کد
-                    </span>
-                  </div>
-                  <div class="p-5 flex flex-col flex-1 gap-2">
-                    <div
-                      class="flex items-center gap-1.5 text-amber-warning text-[13px]"
-                    >
-                      <span
-                        class="material-symbols-outlined text-[16px]"
-                        style="font-variation-settings: &quot;FILL&quot; 1"
-                        >star</span
-                      >
-                      <span class="font-code-sm font-bold text-on-surface"
-                        >۵.۰</span
-                      >
-                      <span class="text-outline text-body-sm"
-                        >(۴۲۰ دانشجو)</span
-                      >
-                    </div>
-                    <h3
-                      class="font-headline-sm text-headline-sm text-primary-container font-bold line-clamp-2 group-hover:text-tertiary-container transition-colors"
-                    >
-                      مسترکلاس TypeScript پیشرفته و Design Patterns در وب مدرن
-                    </h3>
-                    <div
-                      class="mt-auto pt-3 flex items-center justify-between border-t border-border"
-                    >
-                      <div class="flex flex-col">
-                        <span
-                          class="font-code-md text-code-md font-bold text-primary-container"
-                          >۱,۷۵۰,۰۰۰ تومان</span
-                        >
-                      </div>
-                      <a
-                        class="h-9 w-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center hover:bg-tertiary-container transition-colors"
-                        href="#"
-                      >
-                        <span class="material-symbols-outlined text-[18px]"
-                          >chevron_left</span
-                        >
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                {% endfor %}
               </div>
             </section>
           </div>
         </div>
-        <!-- Inline Script for Accordion & Interactive Behaviors -->
+                <!-- Inline Script for Accordion & Interactive Behaviors -->
         <script>
           document.addEventListener("DOMContentLoaded", () => {
             // Chapter Accordions
@@ -1894,4 +1677,4 @@
     </main>
 {% endblock %}
 {% block footer %} {% include 'includes/footer.html' %} {% endblock %}
-{% block scripts %}<script src="{% static 'js/comments.js' %}"></script>{% endblock %}
+{% block scripts %}<script src="{% static 'js/comments.js' %}"></script><script src="{% static 'js/video-watermark.js' %}"></script>{% endblock %}

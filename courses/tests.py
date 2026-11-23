@@ -76,7 +76,7 @@ class CourseAccessTests(TestCase):
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, self.paid_course.title)
 		self.assertContains(response, self.chapter.title)
-		self.assertContains(response, '1000')
+		self.assertContains(response, '۱٬۰۰۰')
 
 	def test_course_detail_metadata_and_included_features_are_database_backed(self):
 		self.paid_course.detail_badge = 'اطلاعات سفارشی دوره'

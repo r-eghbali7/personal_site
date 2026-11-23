@@ -9,7 +9,7 @@
         <p><a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a></p>
         <section class="bg-card p-4 rounded-xl border border-border my-4">
           <h1 class="font-headline-lg text-headline-lg text-primary-container font-bold">{{ lesson.title }}</h1>
-          {% if lesson.video_file %}<video controls preload="metadata" src="{{ lesson.video_file.url }}" class="w-full rounded-xl"></video>
+          {% if lesson.video_file %}<video controls controlslist="nodownload" preload="metadata" src="{{ lesson.stream_url }}" class="w-full rounded-xl"{% if request.user.is_authenticated %} data-watermark="{{ request.user.phone_number }}"{% endif %}></video>
           {% elif lesson.video_url %}<p><a href="{{ lesson.video_url }}" target="_blank" rel="noopener noreferrer" class="text-primary-container hover:underline">مشاهده ویدئوی درس</a></p>
           {% else %}<p class="text-on-surface-variant">برای این درس هنوز ویدئویی بارگذاری نشده است.</p>{% endif %}
           {% if lesson.attachment %}<p><a href="{{ lesson.attachment.url }}" class="text-primary-container hover:underline">دریافت فایل پیوست</a></p>{% endif %}
@@ -17,3 +17,4 @@
       </div>
     </main>
 {% endblock %}
+{% block scripts %}<script src="{% static 'js/video-watermark.js' %}"></script>{% endblock %}

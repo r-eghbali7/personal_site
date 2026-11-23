@@ -1,8 +1,11 @@
 """Views: courses"""
 import json
+import mimetypes
+import os
+import re
 from urllib.parse import parse_qs, urlparse
 from django.views import View
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -36,7 +39,7 @@ def prepare_chapter_media(chapters, user):
                 continue
             if lesson.video_file:
                 lesson.player_kind = 'video'
-                lesson.player_url = lesson.video_file.url
+                lesson.player_url = lesson.stream_url
                 continue
             if not lesson.video_url:
                 continue
@@ -188,6 +191,38 @@ class CourseDetailView(View):
             total_lessons=Count('pk'),
         )
         total_video_duration = lesson_stats['total_video_duration']
+
+        # دوره‌های پیشنهادی: ابتدا هم‌دسته‌ها و در صورت کمبود، سایر دوره‌های منتشرشده سایت.
+        related_courses = list(
+            Course.objects.filter(is_published=True, category=course.category)
+            .exclude(pk=course.pk)
+            .select_related('category')[:3]
+        ) if course.category else []
+        if len(related_courses) < 3:
+            needed = 3 - len(related_courses)
+            related_courses += list(
+                Course.objects.filter(is_published=True)
+                .exclude(pk=course.pk)
+                .exclude(pk__in=[c.pk for c in related_courses])
+                .select_related('category')[:needed]
+            )
+
+        # مقالات مرتبط: مقالات هم‌موضوع دوره و در صورت کمبود، جدیدترین مقالات سایت.
+        article_qs = BlogPost.objects.filter(is_published=True)
+        related_articles = []
+        if course.category:
+            related_articles = list(
+                article_qs.filter(
+                    Q(category__icontains=course.category.name)
+                    | Q(tags__icontains=course.category.name)
+                )[:3]
+            )
+        if len(related_articles) < 3:
+            related_articles += list(
+                article_qs.exclude(pk__in=[p.pk for p in related_articles])
+                [:3 - len(related_articles)]
+            )
+
         context = {
             'course': course,
             'meta_description': meta_description,
@@ -202,10 +237,9 @@ class CourseDetailView(View):
             'final_project': FinalProject.objects.filter(course=course).first(),
             'course_comments': course_comments,
             'course_comment_count': len(course_comments),
-            'related_courses': Course.objects.filter(
-                is_published=True,
-                category=course.category,
-            ).exclude(pk=course.pk).select_related('category')[:3],
+            'faqs': course.faqs.filter(is_published=True),
+            'related_courses': related_courses,
+            'related_articles': related_articles,
             'total_video_duration_hours': total_video_duration // 3600,
             'total_video_duration_minutes': (total_video_duration % 3600) // 60,
             'total_video_count': lesson_stats['total_videos'],
@@ -315,6 +349,90 @@ class LessonView(View):
         if is_ajax(request):
             return JsonResponse({'lesson':{'id':lesson.id,'title':lesson.title,'video_url':lesson.video_url}})
         return render(request, 'lesson_detail.html', context)
+
+VIDEO_RANGE_RE = re.compile(r'^bytes=(\d*)-(\d*)$')
+VIDEO_CHUNK_SIZE = 64 * 1024
+
+
+def _iter_file(handle, length):
+    """خواندن تکه‌تکه فایل برای استریم ویدیو و بستن آن در پایان."""
+    try:
+        remaining = length
+        while remaining > 0:
+            chunk = handle.read(min(VIDEO_CHUNK_SIZE, remaining))
+            if not chunk:
+                break
+            remaining -= len(chunk)
+            yield chunk
+    finally:
+        handle.close()
+
+
+class LessonVideoView(View):
+    """پخش امن فایل ویدیوی جلسه با بررسی دسترسی و پشتیبانی از Range.
+
+    مسیر واقعی فایل در MEDIA داخل صفحه چاپ نمی‌شود و برای هر درخواست دسترسی
+    کاربر بررسی می‌شود؛ فایل هم با Content-Disposition: inline سرو می‌شود.
+    """
+
+    def get(self, request, course_slug, lesson_id):
+        course = get_object_or_404(Course, slug=course_slug, is_published=True)
+        lesson = get_object_or_404(
+            Lesson.objects.select_related('chapter__course'),
+            pk=lesson_id,
+            chapter__course=course,
+        )
+        if not lesson.can_access(request.user):
+            if not request.user.is_authenticated:
+                return redirect(f"{reverse('accounts:login')}?next={request.path}")
+            raise Http404
+        if not lesson.video_file:
+            raise Http404
+        try:
+            path = lesson.video_file.path
+        except (AttributeError, NotImplementedError, ValueError):
+            raise Http404
+        if not os.path.isfile(path):
+            raise Http404
+
+        size = os.path.getsize(path)
+        content_type = mimetypes.guess_type(path)[0] or 'video/mp4'
+        start, end, status = 0, size - 1, 200
+
+        range_header = request.headers.get('Range', '').strip()
+        if range_header:
+            match = VIDEO_RANGE_RE.match(range_header)
+            if match:
+                raw_start, raw_end = match.groups()
+                if raw_start:
+                    start = int(raw_start)
+                    end = int(raw_end) if raw_end else size - 1
+                elif raw_end:
+                    start = max(size - int(raw_end), 0)
+                if start >= size or start > end:
+                    response = HttpResponse(status=416)
+                    response['Content-Range'] = f'bytes */{size}'
+                    return response
+                end = min(end, size - 1)
+                status = 206
+
+        length = end - start + 1 if size else 0
+        handle = open(path, 'rb')
+        handle.seek(start)
+        response = StreamingHttpResponse(
+            _iter_file(handle, length),
+            status=status,
+            content_type=content_type,
+        )
+        response['Content-Length'] = str(length)
+        response['Accept-Ranges'] = 'bytes'
+        if status == 206:
+            response['Content-Range'] = f'bytes {start}-{end}/{size}'
+        response['Content-Disposition'] = 'inline'
+        response['Cache-Control'] = 'private, no-store, max-age=0'
+        response['X-Content-Type-Options'] = 'nosniff'
+        return response
+
 
 class QuizView(LoginRequiredMixin, View):
     def get(self, request, quiz_id):

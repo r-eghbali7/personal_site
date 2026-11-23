@@ -12,6 +12,7 @@ urlpatterns = [
     path('courses/<uslug:slug>/comment/', views.CourseCommentCreateView.as_view(), name='comment'),
     path('courses/<uslug:slug>/', views.CourseDetailView.as_view(), name='detail'),
     path('courses/<uslug:course_slug>/lessons/<int:lesson_id>/', views.LessonView.as_view(), name='lesson'),
+    path('courses/<uslug:course_slug>/lessons/<int:lesson_id>/video/', views.LessonVideoView.as_view(), name='lesson_video'),
     path('quiz/<int:quiz_id>/', views.QuizView.as_view(), name='quiz'),
     path('quiz/<int:quiz_id>/submit/', views.QuizSubmitView.as_view(), name='quiz_submit'),
     path('courses/<uslug:course_slug>/project/', views.FinalProjectView.as_view(), name='project'),

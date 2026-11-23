@@ -147,7 +147,7 @@ class AddToCartView(View):
         CartItem.objects.get_or_create(
             cart=cart,
             course=course,
-            defaults={'price_snapshot': course.price},
+            defaults={'price_snapshot': course.final_price},
         )
         messages.success(request, 'دوره به سبد خرید اضافه شد.')
         return redirect('orders:cart')
@@ -188,7 +188,7 @@ class PaymentRequestView(LoginRequiredMixin, View):
             messages.error(request, 'سبد خرید شما خالی است.')
             return redirect('orders:cart')
 
-        subtotal = sum((item.course.price for item in items), Decimal('0'))
+        subtotal = sum((item.course.final_price for item in items), Decimal('0'))
         coupon = cart.coupon if cart.coupon_id else None
         discount = Decimal('0')
         if coupon is not None:
@@ -210,7 +210,7 @@ class PaymentRequestView(LoginRequiredMixin, View):
                 total_amount=payable,
             )
             OrderItem.objects.bulk_create([
-                OrderItem(order=order, course=item.course, price=item.course.price)
+                OrderItem(order=order, course=item.course, price=item.course.final_price)
                 for item in items
             ])
             complete_paid_order(order)
@@ -233,7 +233,7 @@ class PaymentRequestView(LoginRequiredMixin, View):
             total_amount=payable,
         )
         OrderItem.objects.bulk_create([
-            OrderItem(order=order, course=item.course, price=item.course.price)
+            OrderItem(order=order, course=item.course, price=item.course.final_price)
             for item in items
         ])
         callback_url = request.build_absolute_uri(reverse('orders:payment_verify'))

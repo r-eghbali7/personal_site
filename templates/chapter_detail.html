@@ -27,7 +27,7 @@
             <span class="text-sm text-outline">{{ lesson.duration_minutes }} دقیقه{% if lesson.is_free_preview %} · پیش‌نمایش رایگان{% endif %}</span>
           </div>
           {% if lesson.can_play and lesson.player_kind == 'video' %}
-          <video class="w-full max-h-[640px] rounded-xl bg-black" controls preload="metadata" src="{{ lesson.player_url }}">مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.</video>
+          <video class="w-full max-h-[640px] rounded-xl bg-black" controls controlslist="nodownload" preload="metadata" src="{{ lesson.player_url }}"{% if request.user.is_authenticated %} data-watermark="{{ request.user.phone_number }}"{% endif %}>مرورگر شما از پخش ویدئو پشتیبانی نمی‌کند.</video>
           {% elif lesson.can_play and lesson.player_kind == 'embed' %}
           <div class="aspect-video overflow-hidden rounded-xl bg-black"><iframe class="h-full w-full" src="{{ lesson.player_url }}" title="{{ lesson.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>
           {% elif lesson.can_play %}<p class="text-outline">ویدئوی این درس هنوز بارگذاری نشده است.</p>
@@ -41,3 +41,4 @@
       </nav>
     </main>
 {% endblock %}
+{% block scripts %}<script src="{% static 'js/video-watermark.js' %}"></script>{% endblock %}

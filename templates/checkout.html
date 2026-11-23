@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load persian_filters %}
 {% block title %}تکمیل سفارش{% endblock %}
 {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
 {% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
@@ -32,24 +32,24 @@
             </div>
             <div class="min-w-0">
               <h4 class="font-headline-sm text-body-lg font-bold text-primary-container line-clamp-1">{{ item.course.title }}</h4>
-              <span class="font-body-sm text-body-sm text-on-surface-variant">{{ item.course.price|floatformat:0 }} تومان</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">{{ item.course.final_price|persian_int }} تومان</span>
             </div>
           </div>
           {% endfor %}
           <div class="mt-4 space-y-2 border-t border-border pt-4">
             <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
               <span>جمع کل</span>
-              <span>{{ subtotal|floatformat:0 }} تومان</span>
+              <span>{{ subtotal|floatformat:0|persian_int }} تومان</span>
             </div>
             {% if coupon and not coupon_error %}
             <div class="flex justify-between font-body-sm text-body-sm text-green-700">
               <span>تخفیف ({{ coupon.code }})</span>
-              <span>−{{ discount|floatformat:0 }} تومان</span>
+              <span>−{{ discount|floatformat:0|persian_int }} تومان</span>
             </div>
             {% endif %}
             <div class="flex justify-between font-headline-sm text-headline-sm font-bold text-primary-container">
               <span>مبلغ قابل پرداخت</span>
-              <span>{{ payable|floatformat:0 }} تومان</span>
+              <span>{{ payable|floatformat:0|persian_int }} تومان</span>
             </div>
           </div>
           {% else %}
@@ -91,7 +91,7 @@
           {% csrf_token %}
           <div class="bg-surface-container-low rounded-xl p-4 border border-border">
             <p class="font-body-sm text-body-sm text-on-surface-variant mb-2">پس از کلیک دکمه زیر، به درگاه پرداخت منتقل می‌شوید.</p>
-            <p class="font-body-sm text-body-sm text-on-surface"><strong>مبلغ قابل پرداخت:</strong> <span class="text-primary-container font-bold">{{ payable|floatformat:0 }} تومان</span></p>
+            <p class="font-body-sm text-body-sm text-on-surface"><strong>مبلغ قابل پرداخت:</strong> <span class="text-primary-container font-bold">{{ payable|floatformat:0|persian_int }} تومان</span></p>
           </div>
           <button type="submit" class="w-full h-11 rounded-xl bg-primary-container text-white font-semibold flex items-center justify-center gap-2 hover:bg-tertiary-container transition-colors shadow-md shadow-primary-container/25">
             <span>انتقال به درگاه پرداخت</span>

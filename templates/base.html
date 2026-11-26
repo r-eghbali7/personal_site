@@ -14,13 +14,26 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     {% block meta %}<meta content="web_standard" name="shell-type" />{% endblock %}
     <meta name="description" content="{% block seo_description %}آکادمی پارسا اقبالی؛ آموزش برنامه‌نویسی، توسعه وب و مهارت‌های کاربردی با دوره‌ها و مقالات تخصصی.{% endblock %}" />
-    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}" />
+    {% if canonical_url %}
+    <link rel="canonical" href="{{ canonical_url }}" />
+    {% elif request.GET.page and request.GET.page != '1' %}
+    <link rel="canonical" href="{{ site_origin }}{{ request.path }}?page={{ request.GET.page }}" />
+    {% else %}
+    <link rel="canonical" href="{{ site_origin }}{{ request.path }}" />
+    {% endif %}
+    {% block robots %}{% endblock %}
     <meta property="og:locale" content="fa_IR" />
     <meta property="og:site_name" content="آکادمی پارسا اقبالی" />
     <meta property="og:type" content="{% block og_type %}website{% endblock %}" />
     <meta property="og:title" content="{% block og_title %}آکادمی پارسا اقبالی | آموزش برنامه‌نویسی{% endblock %}" />
     <meta property="og:description" content="{% block og_description %}آموزش برنامه‌نویسی و توسعه وب با دوره‌ها و مقالات تخصصی آکادمی پارسا اقبالی.{% endblock %}" />
-    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}" />
+    {% if canonical_url %}
+    <meta property="og:url" content="{{ canonical_url }}" />
+    {% elif request.GET.page and request.GET.page != '1' %}
+    <meta property="og:url" content="{{ site_origin }}{{ request.path }}?page={{ request.GET.page }}" />
+    {% else %}
+    <meta property="og:url" content="{{ site_origin }}{{ request.path }}" />
+    {% endif %}
     {% if seo_image %}<meta property="og:image" content="{{ seo_image }}" />
     <meta name="twitter:image" content="{{ seo_image }}" />{% endif %}
     <meta name="twitter:card" content="{% block twitter_card %}summary{% endblock %}" />
@@ -69,6 +82,33 @@
         transform: translateY(0);
       }
     </style>
+
+    <!-- داده ساختاریافته سراسری: سازمان و وب‌سایت -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "{{ site_origin }}/#organization",
+          "name": "آکادمی پارسا اقبالی",
+          "url": "{{ site_origin }}/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "{{ site_origin }}{% static 'apple-touch-icon.png' %}"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "{{ site_origin }}/#website",
+          "url": "{{ site_origin }}/",
+          "name": "آکادمی پارسا اقبالی",
+          "inLanguage": "fa-IR",
+          "publisher": { "@id": "{{ site_origin }}/#organization" }
+        }
+      ]
+    }
+    </script>
 
     <!-- برای اضافه کردن CSS اختصاصی در فایل‌های دیگر -->
     {% block head %}{% endblock %}

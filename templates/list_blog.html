@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}مقالات | آکادمی پارسا اقبالی{% endblock %}
+{% block title %}{% if selected_category %}مقالات دسته «{{ selected_category }}» | آکادمی پارسا اقبالی{% elif search_query %}جستجو برای «{{ search_query }}» | آکادمی پارسا اقبالی{% else %}مقالات | آکادمی پارسا اقبالی{% endif %}{% endblock %}
+{% block head %}{% if search_query %}<meta name="robots" content="noindex, follow" />{% endif %}{% endblock %}
 {% block content %}
   <main class="w-full pt-16 bg-background min-h-screen">
       <div class="flex flex-col w-full">

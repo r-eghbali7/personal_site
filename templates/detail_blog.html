@@ -11,6 +11,38 @@
 {% block twitter_description %}{{ post.summary|default:post.content|striptags|truncatechars:160 }}{% endblock %}
 {% block twitter_card %}{% if post.thumbnail %}summary_large_image{% else %}summary{% endif %}{% endblock %}
 {% block head %}<meta content="web_standard" name="shell-type" />
+<!-- داده ساختاریافته: مقاله و مسیر راهنما -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ post.title|escapejs }}",
+  "description": "{{ post.summary|default:post.content|striptags|truncatechars:160|escapejs }}",
+  "url": "{{ site_origin }}{{ request.path }}",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "{{ site_origin }}{{ request.path }}" },
+  "datePublished": "{{ post.published_at|default:post.created_at|date:'c' }}",
+  "dateModified": "{{ post.updated_at|date:'c' }}",
+  "inLanguage": "fa-IR",
+  "author": { "@type": "Person", "name": "{{ post.author.full_name|default:'پارسا اقبالی'|escapejs }}" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "آکادمی پارسا اقبالی",
+    "logo": { "@type": "ImageObject", "url": "{{ site_origin }}{% static 'apple-touch-icon.png' %}" }
+  }{% if post.thumbnail %},
+  "image": "{{ site_origin }}{{ post.thumbnail.url }}"{% endif %}
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "خانه", "item": "{{ site_origin }}/" },
+    { "@type": "ListItem", "position": 2, "name": "مقالات", "item": "{{ site_origin }}{% url 'blog:list' %}" },
+    { "@type": "ListItem", "position": 3, "name": "{{ post.title|escapejs }}" }
+  ]
+}
+</script>
 <style>
   .article-body { color: #43474f; line-height: 2; }
   .article-body h2 {
@@ -1149,7 +1181,7 @@
                   </div>
                   </form>
                   {% else %}
-                  <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">برای ارسال دیدگاه وارد شوید.</a></p>
+                  <p><a href="{% url 'accounts:login' %}?next={{ request.path }}" rel="nofollow">برای ارسال دیدگاه وارد شوید.</a></p>
                   {% endif %}
                 </div>
                 <!-- Comments Feed -->
@@ -1386,6 +1418,9 @@
                   const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
                   const csrfToken = csrfInput ? csrfInput.value : '';
                   const postSlug = '{{ post.slug }}';
+                  // آدرس اندپوینت‌های کوپن از مسیر فعلی ساخته می‌شود تا رشتهٔ کامل
+                  // در HTML رندر نشود و خزنده‌ها آن را کشف نکنند.
+                  const couponBaseUrl = window.location.pathname.replace(/\/+$/, '') + '/';
                   const discountPercent = '{{ post.coupon_discount_percent }}';
 
                   const stepPhone = document.getElementById('coupon-step-phone');
@@ -1439,7 +1474,7 @@
                     btn.textContent = 'در حال ارسال...';
                     try {
                       const data = await ajaxPost(
-                        '{% url "blog:coupon_request" post.slug %}',
+                        couponBaseUrl + 'coupon/request/',
                         { phone_number: phone }
                       );
                       if (data.success) {
@@ -1472,7 +1507,7 @@
                     btn.textContent = 'در حال تایید...';
                     try {
                       const data = await ajaxPost(
-                        '{% url "blog:coupon_verify" post.slug %}',
+                        couponBaseUrl + 'coupon/verify/',
                         { otp_code: code }
                       );
                       if (data.success) {

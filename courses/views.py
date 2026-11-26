@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q, Sum
 from django.template.loader import render_to_string
 from django.urls import reverse
+from config.seo import canonical_origin
 from .models import Category, Course, Chapter, Lesson, CourseComment, Quiz, FinalProject
 from blog.models import BlogPost
 
@@ -226,11 +227,11 @@ class CourseDetailView(View):
         context = {
             'course': course,
             'meta_description': meta_description,
-            'seo_image': request.build_absolute_uri(course.thumbnail.url) if course.thumbnail else '',
+            'seo_image': f'{canonical_origin(request)}{course.thumbnail.url}' if course.thumbnail else '',
             'pages': {
                 'title': course.title,
                 'description': meta_description,
-                'canonical': request.build_absolute_uri(request.path),
+                'canonical': f'{canonical_origin(request)}{request.path}',
             },
             'chapters': chapters,
             'enrolled': course.is_enrolled(request.user),

@@ -121,6 +121,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # بنرهای فعال
                 'banners.context_processors.active_banners',
+                # مبدأ ثابت canonical/og:url (همیشه https در تولید)
+                'config.seo.site_origin',
             ],
         },
     },

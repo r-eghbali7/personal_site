@@ -2,7 +2,29 @@
 {% load static %}
 {% load persian_filters %}
 {% block title %}پادکست‌ها | آکادمی پارسا اقبالی{% endblock %}
-{% block head %}<link href="{% static 'css/podcast-player.css' %}" rel="stylesheet" />{% endblock %}
+{% block head %}<link href="{% static 'css/podcast-player.css' %}" rel="stylesheet" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "همه اپیزودهای پادکست آکادمی پارسا اقبالی",
+  "itemListElement": [
+    {% for post in posts %}{
+      "@type": "ListItem",
+      "position": {{ forloop.counter }},
+      "item": {
+        "@type": "PodcastEpisode",
+        "name": "{{ post.podcast_title|default:post.title|escapejs }}",
+        "url": "{{ site_origin }}{{ request.path }}#episode-{{ post.pk }}"{% if post.published_at %},
+        "datePublished": "{{ post.published_at|date:'c' }}"{% endif %}{% if post.podcast_audio_url %},
+        "associatedMedia": { "@type": "AudioObject", "contentUrl": "{{ post.podcast_audio_url|escapejs }}" }{% endif %}{% if post.podcast_duration_minutes %},
+        "timeRequired": "PT{{ post.podcast_duration_minutes }}M"{% endif %}
+      }
+    }{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}
+</script>
+{% endblock %}
 {% block body_class %}bg-background font-body-md text-on-surface-variant antialiased{% endblock %}
 {% block content %}<main class="w-full pt-16 min-h-screen bg-background">
   <div class="max-w-5xl mx-auto px-margin py-space-lg">
@@ -100,6 +122,7 @@
             aria-label="پسندیدن (نیاز به ورود)"
             class="flex flex-col items-center justify-center gap-0.5 w-14 h-14 rounded-2xl border border-border bg-surface-container-low text-outline hover:border-red-200 hover:text-red-600 transition-colors shrink-0"
             href="{% url 'accounts:login' %}?next={{ request.path }}"
+            rel="nofollow"
             title="برای پسندیدن وارد شوید"
           >
             <span class="material-symbols-outlined text-[24px]">favorite_border</span>
@@ -193,7 +216,7 @@
             {% else %}
             <p class="mt-3 text-body-sm text-on-surface-variant">
               برای ثبت دیدگاه
-              <a class="text-primary-container font-semibold hover:underline" href="{% url 'accounts:login' %}?next={{ request.path }}">وارد حساب کاربری</a>
+              <a class="text-primary-container font-semibold hover:underline" href="{% url 'accounts:login' %}?next={{ request.path }}" rel="nofollow">وارد حساب کاربری</a>
               شوید.
             </p>
             {% endif %}

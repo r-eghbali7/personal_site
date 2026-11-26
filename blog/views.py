@@ -3,6 +3,7 @@ import json
 import random
 import secrets
 from datetime import timedelta
+from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.conf import settings
@@ -18,6 +19,7 @@ from django.utils import timezone
 from accounts.models import CustomUser, OTPCode
 from accounts.services import send_otp_code
 from .content import article_content_and_toc
+from config.seo import canonical_origin
 from .models import BlogCouponClaim, BlogPost, Comment, PodcastComment, PodcastLike
 
 def is_ajax(request):
@@ -34,16 +36,6 @@ class BlogListView(View):
     def get(self, request):
         posts = BlogPost.objects.filter(is_published=True).select_related('author')
         article_count = posts.count()
-        selected_category = request.GET.get('category', '').strip()
-        if selected_category:
-            posts = posts.filter(category=selected_category)
-        search_query = request.GET.get('q', '').strip()
-        if search_query:
-            posts = posts.filter(
-                Q(title__icontains=search_query)
-                | Q(summary__icontains=search_query)
-                | Q(content__icontains=search_query)
-            )
         categories_query = (
             BlogPost.objects.filter(is_published=True)
             .exclude(category='')
@@ -52,6 +44,32 @@ class BlogListView(View):
             .order_by('category')
         )
         categories = list(categories_query)
+        selected_category = request.GET.get('category', '').strip()
+        search_query = request.GET.get('q', '').strip()
+
+        # پارامتر خالی (?category= یا ?q=) یا دسته‌بندی حذف‌شده، نسخه‌ای تکراری از
+        # صفحهٔ لیست می‌سازد؛ به آدرس تمیز ریدایرکت می‌شود تا ایندکس/گزارش نشود.
+        invalid_category = 'category' in request.GET and selected_category not in categories
+        invalid_search = 'q' in request.GET and not search_query
+        if invalid_category or invalid_search:
+            params = {}
+            if selected_category in categories:
+                params['category'] = selected_category
+            if search_query:
+                params['q'] = search_query
+            target = reverse('blog:list')
+            if params:
+                target = f"{target}?{urlencode(params)}"
+            return redirect(target, permanent=True)
+
+        if selected_category:
+            posts = posts.filter(category=selected_category)
+        if search_query:
+            posts = posts.filter(
+                Q(title__icontains=search_query)
+                | Q(summary__icontains=search_query)
+                | Q(content__icontains=search_query)
+            )
         paginator = Paginator(posts, 9)
         # در حالت بدون فیلتر، تعداد کلِ محاسبه‌شده را دوباره نشمار
         if not selected_category and not search_query:
@@ -66,6 +84,14 @@ class BlogListView(View):
             'selected_category': selected_category,
             'search_query': search_query,
         }
+        # صفحهٔ دسته‌بندی، کنونیکال مخصوص خودش را دارد (به‌جای ارجاع به لیست اصلی)
+        if selected_category and not search_query:
+            canonical_params = {'category': selected_category}
+            if page_obj.number > 1:
+                canonical_params['page'] = page_obj.number
+            context['canonical_url'] = (
+                f"{canonical_origin(request)}{request.path}?{urlencode(canonical_params)}"
+            )
         if is_ajax(request):
             return JsonResponse({
                 'posts': [
@@ -114,7 +140,7 @@ class BlogDetailView(View):
         context = {
             'post': post,
             'related_posts': related_posts,
-            'seo_image': request.build_absolute_uri(post.thumbnail.url) if post.thumbnail else '',
+            'seo_image': f'{canonical_origin(request)}{post.thumbnail.url}' if post.thumbnail else '',
             'comments': comments,
             'post_content_html': post_content_html,
             'toc': toc,
@@ -131,6 +157,11 @@ class BlogDetailView(View):
 
 
 class BlogCouponRequestView(View):
+    def get(self, request, slug):
+        # این آدرس فقط برای درخواست POST طراحی شده است؛ درخواست GET
+        # (مثلاً از طرف خزنده‌ها) به‌جای خطای ۴xx به خود مقاله هدایت می‌شود.
+        return redirect('blog:detail', slug=slug)
+
     def post(self, request, slug):
         post = get_object_or_404(BlogPost, slug=slug, is_published=True)
         phone = normalize_phone((request.POST.get('phone_number') or '').strip())
@@ -173,6 +204,11 @@ class BlogCouponRequestView(View):
 
 
 class BlogCouponVerifyView(View):
+    def get(self, request, slug):
+        # مانند BlogCouponRequestView؛ GET به صفحه مقاله هدایت می‌شود تا
+        # پاسخ ۴۰۵/۴xx تولید نشود.
+        return redirect('blog:detail', slug=slug)
+
     def post(self, request, slug):
         post = get_object_or_404(BlogPost, slug=slug, is_published=True)
         pending = request.session.get('blog_coupon_pending', {})

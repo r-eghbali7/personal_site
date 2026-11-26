@@ -11,6 +11,60 @@
 {% block twitter_description %}{{ meta_description|default:course.title|striptags|truncatechars:160 }}{% endblock %}
 {% block twitter_card %}{% if course.thumbnail %}summary_large_image{% else %}summary{% endif %}{% endblock %}
 {% block head %}<meta content="web_standard" name="shell-type" />
+<!-- داده ساختاریافته: دوره، قیمت، سوالات متداول و مسیر راهنما -->
+<!-- قیمت‌ها به تومان ذخیره می‌شوند؛ درج به ریال (IRR = تومان × ۱۰) نوشته می‌شود. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "{{ course.title|escapejs }}",
+  "description": "{{ meta_description|default:course.short_description|default:course.title|escapejs }}",
+  "url": "{{ site_origin }}{{ request.path }}",
+  "inLanguage": "fa-IR",
+  "provider": {
+    "@type": "Organization",
+    "name": "آکادمی پارسا اقبالی",
+    "url": "{{ site_origin }}/"
+  }{% if course.thumbnail %},
+  "image": "{{ site_origin }}{{ course.thumbnail.url }}"{% endif %}{% if course.category %},
+  "about": { "@type": "Thing", "name": "{{ course.category.name|escapejs }}" }{% endif %},
+  "offers": {
+    "@type": "Offer",
+    "category": "{% if course.is_free %}free{% else %}paid{% endif %}",
+    "price": "{% widthratio course.final_price 1 10 %}",
+    "priceCurrency": "IRR",
+    "availability": "https://schema.org/InStock",
+    "url": "{{ site_origin }}{{ request.path }}",
+    "seller": { "@type": "Organization", "name": "آکادمی پارسا اقبالی" }
+  }
+}
+</script>
+{% if faqs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in faqs %}{
+      "@type": "Question",
+      "name": "{{ faq.question|escapejs }}",
+      "acceptedAnswer": { "@type": "Answer", "text": "{{ faq.answer|striptags|escapejs }}" }
+    }{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}
+</script>
+{% endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "خانه", "item": "{{ site_origin }}/" },
+    { "@type": "ListItem", "position": 2, "name": "دوره‌ها", "item": "{{ site_origin }}{% url 'courses:list' %}" },
+    { "@type": "ListItem", "position": 3, "name": "{{ course.title|escapejs }}" }
+  ]
+}
+</script>
 <style>
   /* قسمت «درباره دوره»: نمایش بخشی از متن + دکمه مشاهده بیشتر */
   .course-about-expand { position: relative; }
@@ -1164,7 +1218,7 @@
                     {% else %}
                     <p class="mt-3 font-body-sm text-body-sm text-on-surface-variant">
                       برای ثبت دیدگاه
-                      <a class="text-primary-container font-semibold hover:underline" href="{% url 'accounts:login' %}?next={{ request.path }}">وارد حساب کاربری</a>
+                      <a class="text-primary-container font-semibold hover:underline" href="{% url 'accounts:login' %}?next={{ request.path }}" rel="nofollow">وارد حساب کاربری</a>
                       شوید.
                     </p>
                     {% endif %}

@@ -126,7 +126,7 @@ class CourseAdmin(admin.ModelAdmin):
     form = CourseAdminForm
     save_on_top = True
     list_per_page = 25
-    date_hierarchy = 'created_at'
+    
 
     list_display = (
         'title', 'category', 'instructor', 'price_display', 'level',
@@ -383,7 +383,7 @@ class QuizAttemptAdmin(admin.ModelAdmin):
     search_fields = ('user__phone_number', 'user__full_name', 'quiz__title')
     autocomplete_fields = ('user', 'quiz')
     readonly_fields = ('taken_at',)
-    date_hierarchy = 'taken_at'
+    
 
     @admin.display(boolean=True, description='قبول شده')
     def is_passed(self, obj):
@@ -430,7 +430,7 @@ class CourseCommentAdmin(admin.ModelAdmin):
     search_fields = ('user__phone_number', 'user__full_name', 'body', 'course__title')
     autocomplete_fields = ('user', 'course')
     readonly_fields = ('created_at',)
-    date_hierarchy = 'created_at'
+    
 
 
 @admin.register(CourseFAQ)
@@ -450,4 +450,4 @@ class EnrollmentAdmin(admin.ModelAdmin):
     search_fields = ('user__phone_number', 'user__full_name', 'course__title')
     autocomplete_fields = ('user', 'course')
     readonly_fields = ('enrolled_at',)
-    date_hierarchy = 'enrolled_at'
+    

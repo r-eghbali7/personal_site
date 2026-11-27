@@ -8,6 +8,11 @@
 <link href="{% static 'css/podcast-player.css' %}" rel="stylesheet" />
 <style>
   @layer base {
+
+    html {
+    scroll-behavior: smooth;
+    }
+
     /* کانتینر اصلی اسلایدر و ایجاد فضا برای نقطه‌ها در پایین */
     .one-keen-slider-container {
       position: relative;
@@ -122,6 +127,10 @@
 
   #one-slider-f104e3e-container .one-dot-active {
     opacity: 1;
+  }
+  
+  #consultation {
+    scroll-margin-top: 100px;
   }
 </style>
 {% endblock %}
@@ -305,24 +314,38 @@
     </section>
 
     <!-- 4. CONSULTATION CTA SECTION (Multi-step AJAX Form with OTP) -->
-    <section class="w-full max-w-7xl mx-auto px-margin py-space-xl">
+
+    <section id="consultation" class="w-full max-w-7xl mx-auto px-margin py-space-xl">
       <div class="bg-gradient-to-br from-primary via-primary-container to-tertiary rounded-[28px] p-8 sm:p-12 text-center relative overflow-hidden">
+
         <div class="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-accent-alt/20 blur-3xl"></div>
         <div class="absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-white/10 blur-3xl"></div>
+
         <div class="relative z-10">
+
           <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-white/90 mb-4">
             <span class="material-symbols-outlined text-accent-alt text-[16px]">mail</span>
             <span>دریافت مشاوره اختصاصی</span>
           </span>
-          <h2 class="font-headline-lg text-headline-lg text-white font-bold mb-3">آگاهانه مسیر تخصصیت رو انتخاب کن</h2>
-          <p class="font-body-md text-body-md text-slate-200 mb-6 max-w-2xl mx-auto">قبل هر شروعی ، آگاهی درباره مسیر میتونه از هدر رفت زمان و پول جلو گیری کنه. جلسه مشاوره رایگان شما رزرو شود</p>
+
+          <h2 class="font-headline-lg text-headline-lg text-white font-bold mb-3">
+            آگاهانه مسیر تخصصیت رو انتخاب کن
+          </h2>
+
+          <p class="font-body-md text-body-md text-slate-200 mb-6 max-w-2xl mx-auto">
+            قبل هر شروعی، آگاهی درباره مسیر می‌تونه از هدر رفت زمان و پول جلوگیری کنه.
+            جلسه مشاوره رایگان شما رزرو شود.
+          </p>
 
           <form id="consultation-form" class="max-w-md mx-auto" novalidate>
             {% csrf_token %}
 
             <!-- Step 1: Name -->
             <div id="step-1" class="form-step animate-in">
-              <label class="block text-right text-white/90 font-body-sm mb-2">نام و نام خانوادگی</label>
+              <label class="block text-right text-white/90 font-body-sm mb-2">
+                نام و نام خانوادگی
+              </label>
+
               <input
                 type="text"
                 name="full_name"
@@ -330,6 +353,7 @@
                 class="w-full h-12 px-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40"
                 required
               />
+
               <button
                 type="button"
                 class="btn-next w-full h-12 mt-3 rounded-xl bg-white text-primary-container font-semibold hover:bg-accent-alt transition-colors"
@@ -341,7 +365,10 @@
 
             <!-- Step 2: Phone -->
             <div id="step-2" class="form-step hidden">
-              <label class="block text-right text-white/90 font-body-sm mb-2">شماره موبایل</label>
+              <label class="block text-right text-white/90 font-body-sm mb-2">
+                شماره موبایل
+              </label>
+
               <input
                 type="tel"
                 name="phone_number"
@@ -349,7 +376,9 @@
                 class="w-full h-12 px-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40"
                 required
               />
+
               <div id="otp-status-2" class="mt-2 text-body-sm text-center"></div>
+
               <button
                 type="button"
                 class="btn-next w-full h-12 mt-3 rounded-xl bg-white text-primary-container font-semibold hover:bg-accent-alt transition-colors"
@@ -361,8 +390,14 @@
 
             <!-- Step 3: OTP Verification -->
             <div id="step-3" class="form-step hidden">
-              <label class="block text-right text-white/90 font-body-sm mb-2">کد تایید دو مرحله‌ای</label>
-              <p class="text-xs text-white/70 text-center mb-3">کد ۶ رقمی ارسالی به شماره موبایل شما را وارد کنید</p>
+              <label class="block text-right text-white/90 font-body-sm mb-2">
+                کد تایید دو مرحله‌ای
+              </label>
+
+              <p class="text-xs text-white/70 text-center mb-3">
+                کد ۶ رقمی ارسالی به شماره موبایل شما را وارد کنید
+              </p>
+
               <input
                 type="tel"
                 name="otp_code"
@@ -371,7 +406,9 @@
                 class="w-full h-12 px-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40 text-center font-code-md tracking-widest"
                 required
               />
+
               <div id="otp-status-3" class="mt-2 text-body-sm text-center"></div>
+
               <button
                 type="button"
                 class="btn-next w-full h-12 mt-3 rounded-xl bg-white text-primary-container font-semibold hover:bg-accent-alt transition-colors"
@@ -381,15 +418,19 @@
               </button>
             </div>
 
-            <!-- Step 4: Message (optional) -->
+            <!-- Step 4: Message -->
             <div id="step-4" class="form-step hidden">
-              <label class="block text-right text-white/90 font-body-sm mb-2">درخواست یا توضیحات شما (اختیاری)</label>
+              <label class="block text-right text-white/90 font-body-sm mb-2">
+                درخواست یا توضیحات شما (اختیاری)
+              </label>
+
               <textarea
                 name="message"
                 rows="3"
                 placeholder="چه نوع مشاوره‌ای نیاز دارید؟ (اختیاری)"
-                class="w-full h-24 px-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40"
+                class="w-full h-24 px-4 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/40"
               ></textarea>
+
               <button
                 type="submit"
                 class="btn-submit w-full h-12 mt-3 rounded-xl bg-white text-primary-container font-semibold hover:bg-accent-alt transition-colors"
@@ -400,15 +441,33 @@
 
             <!-- Loading -->
             <div id="form-loading" class="hidden flex flex-col items-center gap-2 py-4">
-              <span class="material-symbols-outlined text-[24px] text-white animate-spin">hourglass_empty</span>
-              <span class="text-white/90 font-body-sm">در حال پردازش...</span>
+              <span class="material-symbols-outlined text-[24px] text-white animate-spin">
+                hourglass_empty
+              </span>
+              <span class="text-white/90 font-body-sm">
+                در حال پردازش...
+              </span>
             </div>
 
             <!-- Success -->
-            <div id="form-success" class="hidden text-center py-5 px-4 rounded-2xl bg-green-50 border border-green-200 text-green-900" role="status" aria-live="polite">
-              <span class="material-symbols-outlined text-[48px] text-green-600 mb-2">check_circle</span>
-              <h3 class="font-headline-md mb-2">ثبت درخواست موفق بود</h3>
-              <p id="form-success-message" class="font-body-sm">درخواست شما با موفقیت ثبت شد و به‌زودی با شما تماس خواهیم گرفت.</p>
+            <div
+              id="form-success"
+              class="hidden text-center py-5 px-4 rounded-2xl bg-green-50 border border-green-200 text-green-900"
+              role="status"
+              aria-live="polite"
+            >
+              <span class="material-symbols-outlined text-[48px] text-green-600 mb-2">
+                check_circle
+              </span>
+
+              <h3 class="font-headline-md mb-2">
+                ثبت درخواست موفق بود
+              </h3>
+
+              <p id="form-success-message" class="font-body-sm">
+                درخواست شما با موفقیت ثبت شد و به‌زودی با شما تماس خواهیم گرفت.
+              </p>
+
               <button
                 type="button"
                 class="btn-restart mt-4 h-10 px-6 rounded-xl bg-green-700 text-white font-semibold hover:bg-green-800 transition-colors"
@@ -418,11 +477,18 @@
             </div>
 
             <!-- Error -->
-            <div id="form-error" class="hidden p-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-100 text-body-sm text-center mb-4"></div>
+            <div
+              id="form-error"
+              class="hidden p-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-100 text-body-sm text-center mb-4"
+            ></div>
+
           </form>
         </div>
       </div>
     </section>
+
+
+
 
     <!-- 5. LATEST BLOG POSTS SECTION -->
     <section class="w-full max-w-7xl mx-auto px-margin py-space-xl" id="blog">
